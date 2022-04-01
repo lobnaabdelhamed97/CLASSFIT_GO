@@ -1,0 +1,11 @@
+.vscode
+venv
+*.pyc
+.idea/
+__pycache__/
+_trial_temp/
+.coverage
+.env
+env/
+.DS_Store 
+README.md!/.pytest_cache/
