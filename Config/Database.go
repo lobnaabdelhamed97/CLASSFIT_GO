@@ -19,7 +19,7 @@ type DBConfig struct {
 
 func BuildDBConfig() *DBConfig {
 	dbConfig := DBConfig{
-		Host:     "classfit-clone.cluster-ro-cjwhdnfvi5np.us-east-2.rds.amazonaws.com",
+		Host:     "classfit-clone.cluster-cjwhdnfvi5np.us-east-2.rds.amazonaws.com",
 		Port:     3306,
 		User:     "admin",
 		Password: "admin3030",

@@ -9,7 +9,7 @@ import (
 )
 
 func GetGames(c *gin.Context) {
-	var game []Models.Game
+	var game Models.Game
 	err := Models.GetAllGames(&game)
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)

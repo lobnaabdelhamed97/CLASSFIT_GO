@@ -6,7 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func GetAllGames(game *[]Game) (err error) {
+func GetAllGames(game *Game) (err error) {
 	if err = Config.DB.Find(game).Error; err != nil {
 		return err
 	}
