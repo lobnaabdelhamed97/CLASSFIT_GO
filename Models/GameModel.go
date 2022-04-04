@@ -22,6 +22,18 @@ type Game struct {
 	Gm_end_time         string `json:"gm_end_time"`
 }
 
+type Players struct {
+	Gm_id               int    `json:"gm_id"`
+	Ply_fname           string `json:"ply_fname"`
+	Ply_lname           string `json:"ply_lname"`
+	Country_name        string `json:"country_name"`
+}
+
+
 func (b *Game) TableName() string {
 	return "game"
+}
+
+func (b *Players) TableName() string {
+	return "players"
 }

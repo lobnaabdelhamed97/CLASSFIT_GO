@@ -4,7 +4,7 @@ import (
 	"CLASSFIT_GO/Config"
 	"CLASSFIT_GO/Routes"
 	"fmt"
-
+	"github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 )
 

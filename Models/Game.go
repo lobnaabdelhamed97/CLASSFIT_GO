@@ -36,3 +36,11 @@ func DeleteGame(game *Game, id string) (err error) {
 	Config.DB.Where("gm_id = ?", id).Delete(game)
 	return nil
 }
+
+func Mem_info(players *Players, id int) (err error) {
+	Config.DB.Find(players)
+	return nil
+}
+
+
+
