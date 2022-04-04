@@ -52,6 +52,8 @@ func ViewGame(c *gin.Context) {
 		c.AbortWithStatus(http.StatusUnprocessableEntity)
 
 		return
+	} else {
+		c.JSON(http.StatusOK, viewgame)
 	}
 
 }
