@@ -41,3 +41,17 @@ func GetGameByID(c *gin.Context) {
 		c.JSON(http.StatusOK, game)
 	}
 }
+
+func ViewGame(c *gin.Context) {
+	var viewgame Models.ViewGame
+	c.BindJSON(&viewgame)
+	//create validation here
+	err := viewgame.Validate()
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusUnprocessableEntity)
+
+		return
+	}
+
+}

@@ -25,3 +25,14 @@ type Game struct {
 func (b *Game) TableName() string {
 	return "game"
 }
+
+type ViewGame struct {
+	GmID	int `json:"GmID"`
+	PlyID	int `json:"PlyID"`
+	ProjectSecret	string `json:"ProjectSecret"`
+	ProjectKey	string `json:"ProjectKey"`
+	Tkn	string  `json:"Tkn"`
+	DevID	string `json:"DevID"`
+	Source	string `json:"source"`
+}
+
