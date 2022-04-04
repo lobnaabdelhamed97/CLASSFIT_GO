@@ -3,7 +3,7 @@ package Models
 import (
 	"errors"
 	"CLASSFIT_GO/Config"
-	
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -63,3 +63,10 @@ func (v *ViewGame) Validate() error {
 	}
 	return nil
 }
+func Mem_info(players *Players, id int) (err error) {
+	Config.DB.Find(players)
+	return nil
+}
+
+
+
