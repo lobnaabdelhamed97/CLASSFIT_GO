@@ -20,7 +20,6 @@ func GetAbsences(c *gin.Context) {
 
 func GetAbsenceByID(c *gin.Context) {
 	id := c.Params.ByName("absence_id")
-	fmt.Println(id)
 
 	var absence Models.Absence
 	err := Models.GetAbsenceByID(&absence, id)
@@ -31,3 +30,16 @@ func GetAbsenceByID(c *gin.Context) {
 		c.JSON(http.StatusOK, absence)
 	}
 }
+
+func CreateAbsence(c *gin.Context) {
+	var absence Models.Absence
+	c.BindJSON(&absence)
+	err := Models.CreateAbsence(&absence)
+	if err != nil {
+		fmt.Println(err.Error())
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, absence)
+	}
+}
+

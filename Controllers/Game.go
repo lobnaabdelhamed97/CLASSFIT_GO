@@ -13,7 +13,7 @@ import (
 
 
 func GetGames(c *gin.Context) {
-	var game []Models.Game
+	var game Models.Game
 	err := Models.GetAllGames(&game)
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
@@ -56,4 +56,18 @@ func Mem_info(gm_id int , ply_id int) ( Models.Players,  error) {
 }
     fmt.Println(data)
     return data,nil
+}
+
+func ViewGame(c *gin.Context) {
+	var viewgame Models.ViewGame
+	c.BindJSON(&viewgame)
+	//create validation here
+	err := viewgame.Validate()
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusUnprocessableEntity)
+
+		return
+	}
+
 }
