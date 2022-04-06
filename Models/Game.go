@@ -86,8 +86,6 @@ func (v *Mem_info) Validate() error {
                     LEFT JOIN city ON ply_city_id = city_id
                     LEFT JOIN contacts ON contact_ply_id = ply_id and contact_org_id IN (SELECT gm_org_id from game WHERE gm_id=?)
                     where ply_id= ?`,v.GmID,v.PlyID).Scan(&result)
-
-
 	return nil
 }
 
