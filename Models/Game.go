@@ -1,9 +1,8 @@
 package Models
 
 import (
-	"errors"
 	"CLASSFIT_GO/Config"
-
+	"errors"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -35,9 +34,9 @@ func UpdateGame(game *Game, id string) (err error) {
 
 func DeleteGame(game *Game, id string) (err error) {
 	Config.DB.Where("gm_id = ?", id).Delete(game)
+
 	return nil
 }
-
 func (v *ViewGame) Validate() error {
 
 	if v.GmID < 0 {

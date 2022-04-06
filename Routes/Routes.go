@@ -2,7 +2,7 @@ package Routes
 
 import (
 	"CLASSFIT_GO/Controllers"
-	"github.com/go-sql-driver/mysql"
+
 	"github.com/gin-gonic/gin"
 )
 
