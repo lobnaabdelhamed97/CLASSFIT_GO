@@ -62,8 +62,31 @@ func (v *ViewGame) Validate() error {
 	}
 	return nil
 }
-func Mem_info(players *Players, id int) (err error) {
-	Config.DB.Find(players)
+func (v *Mem_info) Validate() error {
+	if (v.GmID < 0 || v.PlyID < 0) {
+		return errors.New("Data Required")
+    }
+	type Result struct {
+        PlyFname    string
+        PlyLname    string
+        PlyCountry  string
+        PlyCty      string
+        PlyID       int
+        Privecy     string
+        PlyAge      int
+        contact_id  int
+	}
+	var result Result
+	Config.DB.Raw(`SELECT distinct ply_fname AS PlyFname,ply_lname AS PlyLname , country_name AS PlyCountry, city_name AS PlyCty , ply_id AS PlyID,
+                    CASE WHEN ply_city_sett = 'y' THEN 'true' ELSE  'false' END AS Privecy,
+                    (YEAR(CURDATE()) - ply_brithdate) AS PlyAge, contact_id AS ContactID
+                    FROM players
+                    LEFT JOIN country ON ply_country_id= country_id
+                    LEFT JOIN city ON ply_city_id = city_id
+                    LEFT JOIN contacts ON contact_ply_id = ply_id and contact_org_id IN (SELECT gm_org_id from game WHERE gm_id=?)
+                    where ply_id= ?`,v.GmID,v.PlyID).Scan(&result)
+
+
 	return nil
 }
 

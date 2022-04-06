@@ -2,14 +2,18 @@ package Config
 
 import (
 	"fmt"
-    "log"
 	"github.com/jinzhu/gorm"
 	"database/sql"
 	_"github.com/go-sql-driver/mysql"
 
 )
 
-var DB *gorm.DB
+type Database struct {
+   SqlDb *sql.DB
+}
+
+
+ var DB *gorm.DB
 
 // DBConfig represents db configuration
 type DBConfig struct {
@@ -41,17 +45,4 @@ func DbURL(dbConfig *DBConfig) string {
 	)
 }
 
-func init() {
-    var db *sql.DB
-	var err error
-	db, err = sql.Open("mysql","admin:admin3030@tcp(classfit-clone.cluster-ro-cjwhdnfvi5np.us-east-2.rds.amazonaws.com)/fastplayapp_test")
-	if err != nil {
-		log.Fatalf("could not connect to database: %v", err)
-	}
-	// To verify the connection to our database instance, we can call the `Ping`
-	// method. If no error is returned, we can assume a successful connection
-	if err := db.Ping(); err != nil {
-		log.Fatalf("unable to reach database: %v", err)
-	}
-	fmt.Println("database is reachable")
-}
+
