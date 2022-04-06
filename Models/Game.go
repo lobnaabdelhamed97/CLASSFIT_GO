@@ -73,7 +73,9 @@ func (v *Mem_info) Validate() error {
         PlyCountry  string
         PlyCty      string
         PlyID       int
-
+        Privecy     string
+        PlyAge      int
+        contact_id  int
 	}
 	var result Result
 	data := Config.DB.Raw(`SELECT distinct ply_fname AS PlyFname,ply_lname AS PlyLname , country_name AS PlyCountry, city_name AS PlyCty , ply_id AS PlyID,
