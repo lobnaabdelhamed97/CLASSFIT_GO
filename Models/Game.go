@@ -63,8 +63,13 @@ func (v *ViewGame) Validate() error {
 	}
 	return nil
 }
-func Mem_info(players *Players, id int) (err error) {
-	Config.DB.Find(players)
+func (v *Mem_info) Validate() error {
+	if v.GmID < 0 {
+		return errors.New("Required Game ID")
+	}
+	if v.PlyID < 0 {
+		return errors.New("Required Player ID")
+	}
 	return nil
 }
 
