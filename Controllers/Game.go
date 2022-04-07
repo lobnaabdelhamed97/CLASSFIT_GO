@@ -61,10 +61,13 @@ func ViewGame(c *gin.Context) {
 	//create validation here
 	err := viewgame.Validate()
 	if err != nil{
-		fmt.Println(viewgame)
-
-		//c.AbortWithStatus(http.StatusUnprocessableEntity)
-		c.JSON(http.StatusUnprocessableEntity,err.Error())
+		c.JSON(http.StatusUnprocessableEntity,struct {
+			Code  int	`json:"code"`
+			Error string `json:"error"`
+		}{
+			Code: http.StatusUnprocessableEntity,
+			Error: err.Error(),
+		})
 
 	} else {
 		c.JSON(http.StatusOK, viewgame)
