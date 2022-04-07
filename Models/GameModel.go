@@ -22,12 +22,14 @@ type Game struct {
 	Gm_end_time         string `json:"gm_end_time"`
 }
 
-
-type Mem_info struct {
-    PlyID	int `json:"PlyID"`
-	Gm_id    int   `json:"gm_id"`
+ func (b *Mem_info) TableName() string {
+  	return "mem_info"
 }
 
+type Mem_info struct {
+    PlyID	 string    `json:"PlyID"`
+	Gm_id    string    `json:"gm_id"`
+}
 
 func (b *Game) TableName() string {
 	return "game"

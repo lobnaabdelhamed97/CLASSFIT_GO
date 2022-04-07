@@ -11,18 +11,13 @@ import (
   "bytes"
    "github.com/jinzhu/gorm"
   "encoding/json"
-
 )
 func Test_Mem_info(t *testing.T) {
     gin.SetMode(gin.TestMode)
     views := []Models.Mem_info{
         {
-            PlyID: 5286,
-            Gm_id: 279731,
-        },
-        {
-            PlyID: 5286,
-            Gm_id: -1,
+            PlyID: "5286",
+            Gm_id: "279731",
         },
     }
     for i := range views{
@@ -37,8 +32,6 @@ func Test_Mem_info(t *testing.T) {
     if err != nil {
         t.Fatalf("encoding problem")
     }
-        // Switch to test mode so you don't get such noisy output
-
 
     // Setup your router, just like you did in your main function, and
     // register your routes
