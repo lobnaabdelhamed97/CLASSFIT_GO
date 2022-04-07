@@ -4,9 +4,10 @@ import (
   "fmt"
   "github.com/gin-gonic/gin"
   "CLASSFIT_GO/Controllers"
+  "CLASSFIT_GO/Config"
   "net/http"
   "net/http/httptest"
-
+  "github.com/jinzhu/gorm"
 )
 func Test_absence(t *testing.T) {
         // Switch to test mode so you don't get such noisy output
@@ -15,6 +16,13 @@ func Test_absence(t *testing.T) {
 
     // Setup your router, just like you did in your main function, and
     // register your routes
+    var err error
+
+    Config.DB, err = gorm.Open("mysql", Config.DbURL(Config.BuildDBConfig()))
+	if err != nil {
+		fmt.Println("Status:", err)
+	}
+	defer Config.DB.Close()
     r := gin.Default()
 	r.GET("/absence", Controllers.GetAbsences)
 

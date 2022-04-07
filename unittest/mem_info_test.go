@@ -21,6 +21,13 @@ func Test_Mem_info(t *testing.T) {
         },
     }
     for i := range views{
+        var err error
+
+        Config.DB, err = gorm.Open("mysql", Config.DbURL(Config.BuildDBConfig()))
+        if err != nil {
+            fmt.Println("Status:", err)
+        }
+        defer Config.DB.Close()
     var buf bytes.Buffer
     err := json.NewEncoder(&buf).Encode(views[i])
     if err != nil {
