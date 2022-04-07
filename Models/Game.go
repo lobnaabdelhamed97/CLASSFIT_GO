@@ -77,16 +77,25 @@ func (v *Mem_info) Validate() error {
         Privecy     string
         contact_id  int
 	}
-	 var DB *gorm.DB
-//  	var result Result
-// 	res :=fmt.Sprintf(`SELECT distinct ply_fname AS PlyFname,ply_lname AS PlyLname , country_name AS PlyCountry, city_name AS PlyCty , ply_id AS PlyID
-//                     where ply_id= %s `,v.Gm_id)
+	var DB *gorm.DB
+  	var result Result
+ 	res :=fmt.Sprintf(`SELECT distinct ply_fname AS PlyFname,ply_lname AS PlyLname , country_name AS PlyCountry, city_name AS PlyCty ,ply_id AS PlyID, ply_img AS PlyImg,
+                CASE WHEN ply_city_sett = 'y' THEN 'true' ELSE  'false' END AS Privecy, gm_ply_ply_id AS member , guest_ply_id AS guest,
+                (YEAR(CURDATE()) - ply_brithdate) AS PlyAge, contact_id AS ContactID
+                FROM players
+                LEFT JOIN gm_players ON gm_ply_ply_id=ply_id
+                LEFT JOIN guests ON guest_ply_id=gm_ply_ply_id
+                LEFT JOIN gm_waitlist ON gm_wait_list_ply_id= ply_id
+                LEFT JOIN country ON ply_country_id= country_id
+                LEFT JOIN city ON ply_city_id = city_id
+                LEFT JOIN contacts ON contact_ply_id = ply_id and contact_org_id = (SELECT gm_org_id from game WHERE gm_id=%s)
+                where ply_id=%s;`,v.Gm_id,v.PlyID)
 
 // Select `id`, `name` automatically when querying
-rows :=DB.Model(&Game{}).Find(&Mem_info{})
+// rows :=DB.Model(&Game{}).Find(&Mem_info{})
 // 	rows := DB.Exec(res)
 // 	rows.Close()
-	fmt.Println(rows)
+	fmt.Println(res)
 	return nil
 }
 
