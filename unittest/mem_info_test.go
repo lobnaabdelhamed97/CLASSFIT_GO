@@ -11,15 +11,18 @@ import (
   "bytes"
    "github.com/jinzhu/gorm"
   "encoding/json"
-
 )
 func Test_Mem_info(t *testing.T) {
     gin.SetMode(gin.TestMode)
-    views := Models.Mem_info{
-        
-            PlyID: 5286,
-            Gm_id: 279731,
-        }
+    views := []Models.Mem_info{
+        {
+            PlyID: "5286",
+            Gm_id: "279731",
+        },
+    }
+
+         
+    for i := range views{
         var err error
         Config.DB, err = gorm.Open("mysql", Config.DbURL(Config.BuildDBConfig()))
         if err != nil {
@@ -27,12 +30,10 @@ func Test_Mem_info(t *testing.T) {
         }
     defer Config.DB.Close()
     var buf bytes.Buffer
-    err = json.NewEncoder(&buf).Encode(views)
+    err = json.NewEncoder(&buf).Encode(views[i])
     if err != nil {
         t.Fatalf("encoding problem")
     }
-        // Switch to test mode so you don't get such noisy output
-
 
     // Setup your router, just like you did in your main function, and
     // register your routes
@@ -62,3 +63,4 @@ func Test_Mem_info(t *testing.T) {
     }
 }
 
+}
