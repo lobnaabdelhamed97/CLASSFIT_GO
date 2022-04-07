@@ -2,9 +2,11 @@ package Controllers
 
 import (
 	"CLASSFIT_GO/Models"
+	"CLASSFIT_GO/Responses"
 	"fmt"
 	"net/http"
 	"github.com/gin-gonic/gin"
+	"encoding/json"
 )
 
 
@@ -61,16 +63,9 @@ func ViewGame(c *gin.Context) {
 	//create validation here
 	err := viewgame.Validate()
 	if err != nil{
-		c.JSON(http.StatusUnprocessableEntity,struct {
-			Code  int	`json:"code"`
-			Error string `json:"error"`
-		}{
-			Code: http.StatusUnprocessableEntity,
-			Error: err.Error(),
-		})
-
+Responses.ERROR(c,err.Error())
 	} else {
-		c.JSON(http.StatusOK, viewgame)
+		data,_:=json.Marshal(viewgame)
+		Responses.SUCCESS(c,string(data))
 	}
-
 }
