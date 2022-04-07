@@ -5,37 +5,40 @@ import (
   "github.com/gin-gonic/gin"
   "CLASSFIT_GO/Controllers"
   "CLASSFIT_GO/Models"
+  "CLASSFIT_GO/Config"
   "net/http"
   "net/http/httptest"
   "bytes"
+   "github.com/jinzhu/gorm"
   "encoding/json"
 
 )
 func Test_Mem_info(t *testing.T) {
+    gin.SetMode(gin.TestMode)
     views := []Models.Mem_info{
         {
+            PlyID: 5286,
             Gm_id: 279731,
         },
         {
+            PlyID: 5286,
             Gm_id: -1,
         },
     }
     for i := range views{
         var err error
-
         Config.DB, err = gorm.Open("mysql", Config.DbURL(Config.BuildDBConfig()))
         if err != nil {
             fmt.Println("Status:", err)
         }
-        defer Config.DB.Close()
+    defer Config.DB.Close()
     var buf bytes.Buffer
-    err := json.NewEncoder(&buf).Encode(views[i])
+    err = json.NewEncoder(&buf).Encode(views[i])
     if err != nil {
         t.Fatalf("encoding problem")
     }
         // Switch to test mode so you don't get such noisy output
 
-    gin.SetMode(gin.TestMode)
 
     // Setup your router, just like you did in your main function, and
     // register your routes

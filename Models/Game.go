@@ -2,7 +2,7 @@ package Models
 
 import (
 	"CLASSFIT_GO/Config"
-		"github.com/jinzhu/gorm"
+	"github.com/jinzhu/gorm"
 	"errors"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
@@ -79,7 +79,7 @@ func (v *Mem_info) Validate() error {
 	}
 	var DB *gorm.DB
   	var result Result
- 	res :=fmt.Sprintf(`SELECT distinct ply_fname AS PlyFname,ply_lname AS PlyLname , country_name AS PlyCountry, city_name AS PlyCty ,ply_id AS PlyID, ply_img AS PlyImg,
+ 	res := DB.Raw(`SELECT distinct ply_fname AS PlyFname,ply_lname AS PlyLname , country_name AS PlyCountry, city_name AS PlyCty ,ply_id AS PlyID, ply_img AS PlyImg,
                 CASE WHEN ply_city_sett = 'y' THEN 'true' ELSE  'false' END AS Privecy, gm_ply_ply_id AS member , guest_ply_id AS guest,
                 (YEAR(CURDATE()) - ply_brithdate) AS PlyAge, contact_id AS ContactID
                 FROM players
@@ -88,8 +88,8 @@ func (v *Mem_info) Validate() error {
                 LEFT JOIN gm_waitlist ON gm_wait_list_ply_id= ply_id
                 LEFT JOIN country ON ply_country_id= country_id
                 LEFT JOIN city ON ply_city_id = city_id
-                LEFT JOIN contacts ON contact_ply_id = ply_id and contact_org_id = (SELECT gm_org_id from game WHERE gm_id=%s)
-                where ply_id=%s;`,v.Gm_id,v.PlyID)
+                LEFT JOIN contacts ON contact_ply_id = ply_id and contact_org_id = (SELECT gm_org_id from game WHERE gm_id=?)
+                where ply_id=?;`,v.Gm_id,v.PlyID).Scan(&result)
 
 // Select `id`, `name` automatically when querying
 // rows :=DB.Model(&Game{}).Find(&Mem_info{})
