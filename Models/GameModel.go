@@ -24,8 +24,7 @@ type Game struct {
 
 
 type Mem_info struct {
-	GmID    int   `json:"GmID"`
-	PlyID	int   `json:"PlyID"`
+	Gm_id    int   `json:"gm_id"`
 }
 
 
