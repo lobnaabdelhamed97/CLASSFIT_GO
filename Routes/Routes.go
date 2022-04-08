@@ -1,7 +1,7 @@
 package Routes
 
 import (
-	"CLASSFIT_GO/Controllers"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Controllers"
 	"github.com/gin-gonic/gin"
 )
 

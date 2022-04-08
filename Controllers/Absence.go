@@ -1,7 +1,7 @@
 package Controllers
 
 import (
-	"CLASSFIT_GO/Models"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 	"fmt"
 	"net/http"
 

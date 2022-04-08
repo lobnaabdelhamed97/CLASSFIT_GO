@@ -1,7 +1,7 @@
 package Models
 
 import (
-	"CLASSFIT_GO/Config"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
 
 	_ "github.com/go-sql-driver/mysql"
 )

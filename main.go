@@ -1,8 +1,8 @@
 package main
 
 import (
-	"CLASSFIT_GO/Config"
-	"CLASSFIT_GO/Routes"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Routes"
 	"fmt"
 	"github.com/jinzhu/gorm"
 )

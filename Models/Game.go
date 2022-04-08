@@ -1,7 +1,7 @@
 package Models
 
 import (
-	"CLASSFIT_GO/Config"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
 	"github.com/jinzhu/gorm"
 	"errors"
 	_ "github.com/go-sql-driver/mysql"
@@ -103,8 +103,6 @@ func (v *Mem_info) Member_info() error {
     }
     return res
 }
-
-
 
 
 

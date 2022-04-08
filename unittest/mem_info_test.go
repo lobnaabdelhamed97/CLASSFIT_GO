@@ -1,44 +1,44 @@
 package Unittest
 import (
-  "testing"
-  "fmt"
-  "github.com/gin-gonic/gin"
-  "CLASSFIT_GO/Controllers"
-  "CLASSFIT_GO/Models"
-  "CLASSFIT_GO/Config"
-  "net/http"
-  "net/http/httptest"
-  "bytes"
-   "github.com/jinzhu/gorm"
-  "encoding/json"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Controllers"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 )
 func Test_Mem_info(t *testing.T) {
-    gin.SetMode(gin.TestMode)
-    views := []Models.Mem_info{
-        {
-            PlyID: "5286",
-            Gm_id: "279731",
-        },
-    }
+	gin.SetMode(gin.TestMode)
+	views := []Models.Mem_info{
+		{
+			PlyID: "5286",
+			Gm_id: "279731",
+		},
+		}
 
-         
-    for i := range views{
-        var err error
-        Config.DB, err = gorm.Open("mysql", Config.DbURL(Config.BuildDBConfig()))
-        if err != nil {
-            fmt.Println("Status:", err)
-        }
-    defer Config.DB.Close()
-    var buf bytes.Buffer
-    err = json.NewEncoder(&buf).Encode(views[i])
-    if err != nil {
-        t.Fatalf("encoding problem")
-    }
 
-    // Setup your router, just like you did in your main function, and
-    // register your routes
-    r := gin.Default()
-	r.POST("/mem-info", Controllers.Mem_info)
+	for i := range views {
+		var err error
+		Config.DB, err = gorm.Open("mysql", Config.DbURL(Config.BuildDBConfig()))
+		if err != nil {
+			fmt.Println("Status:", err)
+		}
+		defer Config.DB.Close()
+		var buf bytes.Buffer
+		err = json.NewEncoder(&buf).Encode(views[i])
+		if err != nil {
+			t.Fatalf("encoding problem")
+
+    }
+		// Setup your router, just like you did in your main function, and
+		// register your routes
+		r := gin.Default()
+		r.POST("/mem-info", Controllers.Mem_info)
 
     // Create the mock request you'd like to test. Make sure the second argument
     // here is the same as one of the routes you defined in the router setup
@@ -61,6 +61,4 @@ func Test_Mem_info(t *testing.T) {
         } else {
         t.Logf("Expected to get status %d but instead got %d\n", http.StatusOK, w.Code)
     }
-}
-
 }

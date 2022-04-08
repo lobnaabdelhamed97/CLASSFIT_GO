@@ -1,8 +1,8 @@
 package Controllers
 
 import (
-	"CLASSFIT_GO/Models"
-	"CLASSFIT_GO/Responses"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Responses"
 	"fmt"
 	"net/http"
 	"github.com/gin-gonic/gin"
