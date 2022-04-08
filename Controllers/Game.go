@@ -54,8 +54,9 @@ func Mem_info(c* gin.Context){
 		c.AbortWithStatus(http.StatusUnprocessableEntity)
 		return
 	}else {
-//  	    mem_info.Member_info()
-         c.JSON(http.StatusOK, mem_info)
+  	    res := mem_info.Member_info()
+  	    fmt.Println(res)
+//          c.JSON(http.StatusOK, mem_info)
 	}
 }
 func ViewGame(c *gin.Context) {
