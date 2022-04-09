@@ -1,19 +1,17 @@
 package Config
 
 import (
-	"fmt"
-	"github.com/jinzhu/gorm"
 	"database/sql"
-	_"github.com/go-sql-driver/mysql"
-
+	"fmt"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
 )
 
 type Database struct {
-   SqlDb *sql.DB
+	SqlDb *sql.DB
 }
 
-
- var DB *gorm.DB
+var DB *gorm.DB
 
 // DBConfig represents db configuration
 type DBConfig struct {
@@ -44,5 +42,3 @@ func DbURL(dbConfig *DBConfig) string {
 		dbConfig.DBName,
 	)
 }
-
-

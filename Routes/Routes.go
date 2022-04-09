@@ -1,8 +1,8 @@
 package Routes
 
 import (
-	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Controllers"
 	"github.com/gin-gonic/gin"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Controllers"
 )
 
 //SetupRouter ... Configure routes
@@ -22,7 +22,7 @@ func SetupRouter() *gin.Engine {
 
 	}
 	r.POST("/view-game", Controllers.ViewGame)
-    r.POST("/mem-info", Controllers.Mem_info)
+	r.POST("/mem-info", Controllers.Mem_info)
 
 	return r
 }
