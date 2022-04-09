@@ -53,7 +53,7 @@ func Mem_info(c *gin.Context) {
 		c.AbortWithStatus(http.StatusUnprocessableEntity)
 		return
 	}else {
-       	    res := mem_info.Member_info()
+       	    mem_info.Member_info()
 //   	    fmt.Println(res)
 //          c.JSON(http.StatusOK, mem_info)
 	}
