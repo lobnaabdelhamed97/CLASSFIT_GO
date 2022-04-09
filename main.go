@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
-	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Routes"
 	"fmt"
 	"github.com/jinzhu/gorm"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Routes"
 )
 
 var err error

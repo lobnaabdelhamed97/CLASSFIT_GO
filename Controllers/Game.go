@@ -1,12 +1,12 @@
 package Controllers
 
 import (
+	"encoding/json"
+	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Responses"
-	"fmt"
 	"net/http"
-	"github.com/gin-gonic/gin"
-	"encoding/json"
 )
 
 func GetGames(c *gin.Context) {
@@ -31,7 +31,6 @@ func CreateGame(c *gin.Context) {
 	}
 }
 
-
 func GetGameByID(c *gin.Context) {
 	id := c.Params.ByName("gm_id")
 	var game Models.Game
@@ -44,8 +43,8 @@ func GetGameByID(c *gin.Context) {
 	}
 }
 
-func Mem_info(c* gin.Context){
-    var mem_info Models.Mem_info
+func Mem_info(c *gin.Context) {
+	var mem_info Models.Mem_info
 	c.BindJSON(&mem_info)
 	//create validation here
 	err := mem_info.Validate()
@@ -64,10 +63,10 @@ func ViewGame(c *gin.Context) {
 	c.BindJSON(&viewgame)
 	//create validation here
 	err := viewgame.Validate()
-	if err != nil{
-Responses.ERROR(c,err.Error())
+	if err != nil {
+		Responses.ERROR(c, err.Error())
 	} else {
-		data,_:=json.Marshal(viewgame)
-		Responses.SUCCESS(c,string(data))
+		data, _ := json.Marshal(viewgame)
+		Responses.SUCCESS(c, string(data))
 	}
 }

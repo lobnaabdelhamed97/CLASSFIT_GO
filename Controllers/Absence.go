@@ -1,8 +1,8 @@
 package Controllers
 
 import (
-	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 	"fmt"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -42,4 +42,3 @@ func CreateAbsence(c *gin.Context) {
 		c.JSON(http.StatusOK, absence)
 	}
 }
-

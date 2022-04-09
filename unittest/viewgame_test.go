@@ -1,19 +1,19 @@
 package Unittest
 
 import (
-	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Controllers"
-	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Controllers"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
 func TestViewGame(t *testing.T) {
-	views := []Models.ViewGame{
+	var views = []Models.ViewGame{
 		{
 			GmID:          279731,
 			PlyID:         6236,
