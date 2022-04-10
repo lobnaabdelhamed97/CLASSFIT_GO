@@ -49,8 +49,7 @@ func Mem_info(c *gin.Context) {
 	//create validation here
 	err := mem_info.Validate()
 	if err != nil {
-		fmt.Println(err)
-		c.AbortWithStatus(http.StatusUnprocessableEntity)
+		Responses.ERROR(c, err.Error())
 		return
 	}else {
        	    mem_info.Member_info()

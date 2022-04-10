@@ -73,7 +73,7 @@ func (b *Mem_info) Validate() error {
 	return nil
 }
 
-func (b *Mem_info) Member_info() error {
+func (b *Mem_info) Member_info() (*gorm.DB , error) {
 	type Result struct {
 		PlyFname   string `json:"ply_fname"`
 		PlyLname   string `json:"ply_lname"`
@@ -97,9 +97,9 @@ func (b *Mem_info) Member_info() error {
                 LEFT JOIN country ON ply_country_id= country_id
                 LEFT JOIN city ON ply_city_id = city_id
                 LEFT JOIN contacts ON contact_ply_id = ply_id and contact_org_id = (SELECT gm_org_id from game WHERE gm_id=?)
-                where ply_id=?;`, b.Gm_id, b.PlyID).Scan(result).Error
+                where ply_id=?;`, b.Gm_id, b.PlyID).Scan(result)
     if res == nil {
-        return errors.New("There's no available data to this user")
+        return nil,errors.New("There's no available data to this user")
     }
-	return res
+	return res,nil
 }
