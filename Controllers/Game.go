@@ -49,10 +49,11 @@ func Mem_info(c *gin.Context) {
 	//create validation here
 	err := mem_info.Validate()
 	if err != nil {
-		Responses.ERROR(c, err.Error())
-		return
-	}else {
-       	    mem_info.Member_info()
+	fmt.Println("hi")
+            Responses.ERROR(c, err.Error())
+    }else {
+       	    data, _ := json.Marshal(mem_info)
+       	    Responses.SUCCESS(c, string(data))
 //   	    fmt.Println(res)
 //          c.JSON(http.StatusOK, mem_info)
 	}

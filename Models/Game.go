@@ -64,27 +64,27 @@ func (v *ViewGame) Validate() error {
 	return nil
 }
 func (b *Mem_info) Validate() error {
-	// 	if (v.Gm_id < 0) {
-	// 		return errors.New("Gm_id Required")
-	//     }
-	//     if (v.PlyID < 0) {
-	// 		return errors.New("PlyID Required")
-	//     }
+	 	if (b.Gm_id < 0) {
+	 		return errors.New("Gm_id Required")
+	     }
+	     if (b.PlyID < 0) {
+	 		return errors.New("PlyID Required")
+	     }
 	return nil
 }
 
 func (b *Mem_info) Member_info() (*gorm.DB , error) {
 	type Result struct {
-		PlyFname   string `json:"ply_fname"`
-		PlyLname   string `json:"ply_lname"`
-		PlyCountry string `json:"country_name"`
-		PlyCty     string `json:"city_name"`
-		PlyID      int    `json:"ply_id"`
-		Privecy    string `json:"ply_city_sett"`
-		ContactID  int    `json:"contact_id"`
-		PlyImg     string `json:"ply_img"`
-		Member     int    `json:"gm_ply_ply_id"`
-		Guest      int    `json:"guest_ply_id"`
+		PlyFname   string `json:"PlyFname"`
+		PlyLname   string `json:"PlyLname"`
+		PlyCountry string `json:"PlyCountry"`
+		PlyCty     string `json:"PlyCty"`
+		PlyID      int    `json:"PlyID"`
+		Privecy    string `json:"Privecy"`
+		ContactID  int    `json:"ContactID"`
+		PlyImg     string `json:"PlyImg"`
+		Member     int    `json:"member"`
+		Guest      int    `json:"guest"`
 	}
 	var DB *gorm.DB
 	var result Result

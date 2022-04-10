@@ -16,8 +16,8 @@ func Test_Mem_info(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	views := []Models.Mem_info{
 		{
-			PlyID: "5286",
-			Gm_id: "279731",
+			PlyID: -5286,
+			Gm_id: 279731,
 		},
 		}
 
@@ -59,7 +59,7 @@ func Test_Mem_info(t *testing.T) {
     if w.Code == http.StatusOK {
         t.Logf("Expected to get status %d is same as %d\n", http.StatusOK, w.Code)
         } else {
-        t.Logf("Expected to get status %d but instead got %d\n", http.StatusOK, w.Code)
+        t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, w.Code)
     }
     }
 }

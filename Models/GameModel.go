@@ -27,8 +27,8 @@ type Game struct {
 }
 
 type Mem_info struct {
-    PlyID	 string    `json:"PlyID"`
-	Gm_id    string    `json:"gm_id"`
+    PlyID	 int    `json:"PlyID"`
+	Gm_id    int    `json:"Gm_id"`
 }
 
 func (b *Game) TableName() string {
