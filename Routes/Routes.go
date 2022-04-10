@@ -23,6 +23,7 @@ func SetupRouter() *gin.Engine {
 	}
 	r.POST("/view-game", Controllers.ViewGame)
 	r.POST("/mem-info", Controllers.Mem_info)
+	r.GET("/DEMO", Controllers.Demo)
 
 	return r
 }
