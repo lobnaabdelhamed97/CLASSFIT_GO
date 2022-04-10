@@ -2,7 +2,6 @@ package Models
 
 import (
 	"errors"
-		"github.com/jinzhu/gorm"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
 )
@@ -72,18 +71,10 @@ func (b *Mem_info) Validate() error {
 	}
 	return nil
 }
-func (b *Mem_info) Member_info() (*gorm.DB, error) {
-    type Result struct {
-	PlyFname   string
-	PlyLname   string
-	PlyCountry string
-	PlyCty     string
-	PlyID      int
-	ContactID  int
-	PlyImg     string
-	Member     int
-	Guest      int
-}
-	result := Config.DB.Table("players").Select("ply_fname AS PlyFname,ply_lname AS PlyLname , country_name AS PlyCountry, city_name AS PlyCty ,ply_id AS PlyID, ply_img AS PlyImg, CASE WHEN ply_city_sett = 'y' THEN 'true' ELSE 'false' END AS Privecy,gm_ply_ply_id AS member,guest_ply_id AS guest,contact_id AS ContactID").Joins("LEFT JOIN gm_players ON gm_ply_ply_id=ply_id LEFT JOIN guests ON guest_ply_id=gm_ply_ply_id LEFT JOIN gm_waitlist ON gm_wait_list_ply_id= ply_id LEFT JOIN country ON ply_country_id= country_id LEFT JOIN city ON ply_city_id = city_id LEFT JOIN contacts ON contact_ply_id = ply_id and contact_org_id = (SELECT gm_org_id from game WHERE gm_id=283908) ").Where("ply_id = ?", "5286").Scan(&Result{})
-	return result, nil
+func Member_info(mem_info *[]Mem_info) (err error) {
+	query := "SELECT ply_id,contact_id,ply_fname ,ply_lname FROM players  LEFT JOIN fastplayapp_test.contacts ON contact_ply_id = ply_id and contact_org_id = (SELECT gm_org_id from fastplayapp_test.game WHERE gm_id=283908) where ply_id=5286;"
+	if err = Config.DB.Raw(query).Scan(&mem_info).Error; err != nil {
+		return err
+	}
+	return nil
 }

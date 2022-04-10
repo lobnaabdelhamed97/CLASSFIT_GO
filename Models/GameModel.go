@@ -27,8 +27,16 @@ func (b *Mem_info) TableName() string {
 }
 
 type Mem_info struct {
-	PlyID int `json:"PlyID"`
-	Gm_id int `json:"Gm_id"`
+	PlyID      int    `json:"PlyID"`
+	Gm_id      int    `json:"Gm_id"`
+	PlyFname   string `json:"PlyFname"`
+	PlyLname   string `json:"PlyLname"`
+	PlyCountry string `json:"PlyCountry"`
+	PlyCty     string `json:"PlyCty"`
+	ContactID  int    `json:"ContactID"`
+	PlyImg     string `json:"PlyImg"`
+	Member     int    `json:"Member"`
+	Guest      int    `json:"Guest"`
 }
 
 func (b *Game) TableName() string {
@@ -45,4 +53,14 @@ type ViewGame struct {
 	Source        string `json:"source"`
 }
 
-
+type Result struct {
+	PlyFname   string
+	PlyLname   string
+	PlyCountry string
+	PlyCty     string
+	PlyID      int
+	ContactID  int
+	PlyImg     string
+	Member     int
+	Guest      int
+}

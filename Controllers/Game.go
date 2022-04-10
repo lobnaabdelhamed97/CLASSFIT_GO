@@ -44,15 +44,12 @@ func GetGameByID(c *gin.Context) {
 }
 
 func Mem_info(c *gin.Context) {
-	var mem_info Models.Mem_info
-	c.BindJSON(&mem_info)
-	//create validation here
-	err := mem_info.Validate()
+	var mem_info []Models.Mem_info
+	err := Models.Member_info(&mem_info)
 	if err != nil {
-		Responses.ERROR(c, err.Error())
+		c.AbortWithStatus(http.StatusNotFound)
 	} else {
-		data, _ := mem_info.Member_info()
-		Responses.SUCCESS(c, fmt.Sprint(data))
+		c.JSON(http.StatusOK, mem_info)
 	}
 }
 func ViewGame(c *gin.Context) {
