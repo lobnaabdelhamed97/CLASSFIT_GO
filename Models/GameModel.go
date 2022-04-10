@@ -45,14 +45,4 @@ type ViewGame struct {
 	Source        string `json:"source"`
 }
 
-type Result struct {
-	PlyFname   string `json:"PlyFname"`
-	PlyLname   string `json:"PlyLname"`
-	PlyCountry string `json:"PlyCountry"`
-	PlyCty     string `json:"PlyCty"`
-	PlyID      int    `json:"PlyID"`
-	ContactID  int    `json:"ContactID"`
-	PlyImg     string `json:"PlyImg"`
-	Member     int    `json:"member"`
-	Guest      int    `json:"guest"`
-}
+
