@@ -61,5 +61,6 @@ func Test_Mem_info(t *testing.T) {
         } else {
         t.Logf("Expected to get status %d but instead got %d\n", http.StatusOK, w.Code)
     }
+    }
 }
 }
