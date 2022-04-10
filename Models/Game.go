@@ -3,7 +3,6 @@ package Models
 import (
 	"errors"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
 )
 
@@ -64,31 +63,17 @@ func (v *ViewGame) Validate() error {
 	return nil
 }
 func (b *Mem_info) Validate() error {
-	 	if (b.Gm_id < 0) {
-	 		return errors.New("Gm_id Required")
-	     }
-	     if (b.PlyID < 0) {
-	 		return errors.New("PlyID Required")
-	     }
+	if b.Gm_id < 0 {
+		return errors.New("Gm_id Required")
+	}
+	if b.PlyID < 0 {
+		return errors.New("PlyID Required")
+	}
 	return nil
 }
-
-func (b *Mem_info) Member_info() (*gorm.DB , error) {
-	type Result struct {
-		PlyFname   string `json:"PlyFname"`
-		PlyLname   string `json:"PlyLname"`
-		PlyCountry string `json:"PlyCountry"`
-		PlyCty     string `json:"PlyCty"`
-		PlyID      int    `json:"PlyID"`
-		Privecy    string `json:"Privecy"`
-		ContactID  int    `json:"ContactID"`
-		PlyImg     string `json:"PlyImg"`
-		Member     int    `json:"member"`
-		Guest      int    `json:"guest"`
-	}
-	var DB *gorm.DB
-	var result Result
-	res := DB.Raw(`SELECT distinct ply_fname AS PlyFname,ply_lname AS PlyLname , country_name AS PlyCountry, city_name AS PlyCty ,ply_id AS PlyID, ply_img AS PlyImg,
+func (b *Mem_info) Member_info() (*Result, error) {
+	var result *Result
+	Config.DB.Raw(`SELECT distinct ply_fname AS PlyFname,ply_lname AS PlyLname , country_name AS PlyCountry, city_name AS PlyCty ,ply_id AS PlyID, ply_img AS PlyImg,
                 CASE WHEN ply_city_sett = 'y' THEN 'true' ELSE 'false' END AS Privecy,gm_ply_ply_id AS member,guest_ply_id AS guest,contact_id AS ContactID
                 FROM players
                 LEFT JOIN gm_players ON gm_ply_ply_id=ply_id
@@ -96,10 +81,7 @@ func (b *Mem_info) Member_info() (*gorm.DB , error) {
                 LEFT JOIN gm_waitlist ON gm_wait_list_ply_id= ply_id
                 LEFT JOIN country ON ply_country_id= country_id
                 LEFT JOIN city ON ply_city_id = city_id
-                LEFT JOIN contacts ON contact_ply_id = ply_id and contact_org_id = (SELECT gm_org_id from game WHERE gm_id=?)
-                where ply_id=?;`, b.Gm_id, b.PlyID).Scan(result)
-    if res == nil {
-        return nil,errors.New("There's no available data to this user")
-    }
-	return res,nil
+                LEFT JOIN contacts ON contact_ply_id = ply_id and contact_org_id = (SELECT gm_org_id from game WHERE gm_id=279731)
+                where ply_id=5286;`).Scan(result)
+	return result, nil
 }

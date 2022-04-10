@@ -49,13 +49,13 @@ func Mem_info(c *gin.Context) {
 	//create validation here
 	err := mem_info.Validate()
 	if err != nil {
-	fmt.Println("hi")
-            Responses.ERROR(c, err.Error())
-    }else {
-       	    data, _ := json.Marshal(mem_info)
-       	    Responses.SUCCESS(c, string(data))
-//   	    fmt.Println(res)
-//          c.JSON(http.StatusOK, mem_info)
+		fmt.Println("hi")
+		Responses.ERROR(c, err.Error())
+	} else {
+		data, _ := mem_info.Member_info()
+		Responses.SUCCESS(c, fmt.Sprint(data))
+		//   	    fmt.Println(res)
+		//          c.JSON(http.StatusOK, mem_info)
 	}
 }
 func ViewGame(c *gin.Context) {

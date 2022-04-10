@@ -22,13 +22,13 @@ type Game struct {
 	Gm_end_time         string `json:"gm_end_time"`
 }
 
- func (b *Mem_info) TableName() string {
-  	return "mem_info"
+func (b *Mem_info) TableName() string {
+	return "mem_info"
 }
 
 type Mem_info struct {
-    PlyID	 int    `json:"PlyID"`
-	Gm_id    int    `json:"Gm_id"`
+	PlyID int `json:"PlyID"`
+	Gm_id int `json:"Gm_id"`
 }
 
 func (b *Game) TableName() string {
@@ -36,13 +36,23 @@ func (b *Game) TableName() string {
 }
 
 type ViewGame struct {
-	GmID	int `json:"GmID"`
-	PlyID	int `json:"PlyID"`
-	ProjectSecret	string `json:"ProjectSecret"`
-	ProjectKey	string `json:"ProjectKey"`
-	Tkn	string  `json:"Tkn"`
-	DevID	string `json:"DevID"`
-	Source	string `json:"source"`
+	GmID          int    `json:"GmID"`
+	PlyID         int    `json:"PlyID"`
+	ProjectSecret string `json:"ProjectSecret"`
+	ProjectKey    string `json:"ProjectKey"`
+	Tkn           string `json:"Tkn"`
+	DevID         string `json:"DevID"`
+	Source        string `json:"source"`
 }
 
-
+type Result struct {
+	PlyFname   string `json:"PlyFname"`
+	PlyLname   string `json:"PlyLname"`
+	PlyCountry string `json:"PlyCountry"`
+	PlyCty     string `json:"PlyCty"`
+	PlyID      int    `json:"PlyID"`
+	ContactID  int    `json:"ContactID"`
+	PlyImg     string `json:"PlyImg"`
+	Member     int    `json:"member"`
+	Guest      int    `json:"guest"`
+}
