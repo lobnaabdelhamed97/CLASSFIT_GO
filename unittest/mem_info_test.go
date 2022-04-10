@@ -16,10 +16,10 @@ import (
 
 func Test_Mem_info(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	views := []Models.Mem_info{
+	views := []Models.Input{
 		{
-			PlyID: 5286,
-			Gm_id: 279731,
+			PlyID: "5286",
+			Gm_id: "279731",
 		},
 	}
 

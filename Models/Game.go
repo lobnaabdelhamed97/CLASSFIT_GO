@@ -62,17 +62,15 @@ func (v *ViewGame) Validate() error {
 	}
 	return nil
 }
-func (b *Mem_info) Validate() error {
-	if b.Gm_id < 0 {
-		return errors.New("Gm_id Required")
-	}
-	if b.PlyID < 0 {
-		return errors.New("PlyID Required")
-	}
-	return nil
-}
-func Member_info(mem_info *[]Mem_info) (err error) {
-	query := "SELECT ply_id,contact_id,ply_fname ,ply_lname FROM players  LEFT JOIN fastplayapp_test.contacts ON contact_ply_id = ply_id and contact_org_id = (SELECT gm_org_id from fastplayapp_test.game WHERE gm_id=283908) where ply_id=5286;"
+
+func Member_info(in *Input, mem_info *[]Mem_info) (err error) {
+	query := "SELECT distinct ply_fname,ply_lname , country_name , city_name  , ply_id , contact_id,gm_ply_ply_id,guest_ply_id,ply_img  " +
+		"FROM players " +
+		"LEFT JOIN country ON ply_country_id= country_id " +
+		"LEFT JOIN city ON ply_city_id = city_id " +
+		"LEFT JOIN fastplayapp_test.gm_players ON gm_ply_ply_id=ply_id " +
+		"LEFT JOIN fastplayapp_test.guests ON guest_ply_id=gm_ply_ply_id " +
+		"LEFT JOIN contacts ON contact_ply_id = ply_id and contact_org_id IN (SELECT gm_org_id from game WHERE gm_id=" + in.Gm_id + ") where ply_id=" + in.PlyID + ";"
 	if err = Config.DB.Raw(query).Scan(&mem_info).Error; err != nil {
 		return err
 	}

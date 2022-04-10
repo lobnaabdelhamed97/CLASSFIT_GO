@@ -27,16 +27,19 @@ func (b *Mem_info) TableName() string {
 }
 
 type Mem_info struct {
-	PlyID      int    `json:"PlyID"`
-	Gm_id      int    `json:"Gm_id"`
-	PlyFname   string `json:"PlyFname"`
-	PlyLname   string `json:"PlyLname"`
-	PlyCountry string `json:"PlyCountry"`
-	PlyCty     string `json:"PlyCty"`
-	ContactID  int    `json:"ContactID"`
-	PlyImg     string `json:"PlyImg"`
-	Member     int    `json:"Member"`
-	Guest      int    `json:"Guest"`
+	PlyID         int    `json:"PlyID"`
+	Ply_fname     string `json:"ply_fname"`
+	Ply_lname     string `json:"ply_lname"`
+	Country_name  string `json:"country_name"`
+	City_name     string `json:"city_name"`
+	Contact_id    int    `json:"contact_id"`
+	Ply_img       string `json:"ply_img"`
+	Gm_ply_ply_id int    `json:"gm_ply_ply_id"`
+	Guest_ply_id  int    `json:"guest_ply_id"`
+}
+type Input struct {
+	PlyID string `json:"PlyID"`
+	Gm_id string `json:"Gm_id"`
 }
 
 func (b *Game) TableName() string {
@@ -51,16 +54,4 @@ type ViewGame struct {
 	Tkn           string `json:"Tkn"`
 	DevID         string `json:"DevID"`
 	Source        string `json:"source"`
-}
-
-type Result struct {
-	PlyFname   string
-	PlyLname   string
-	PlyCountry string
-	PlyCty     string
-	PlyID      int
-	ContactID  int
-	PlyImg     string
-	Member     int
-	Guest      int
 }
