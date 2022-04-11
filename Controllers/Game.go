@@ -70,17 +70,15 @@ func GetGameByID(c *gin.Context) {
 }
 
 func Mem_info(c *gin.Context) {
-	var mem_info Models.Mem_info
-	c.BindJSON(&mem_info)
+	var mem_info []Models.Mem_info
 	//create validation here
-	err := mem_info.Validate()
+	var in Models.Input
+	c.BindJSON(&in)
+    err := Models.Member_info(&in, &mem_info)
 	if err != nil {
-		Responses.ERROR(c, err.Error())
-		return
-	}else {
-       	    mem_info.Member_info()
-//   	    fmt.Println(res)
-//          c.JSON(http.StatusOK, mem_info)
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, mem_info)
 	}
 }
 

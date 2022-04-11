@@ -22,17 +22,27 @@ type Game struct {
 	Gm_end_time         string `json:"gm_end_time"`
 }
 
-func (b *Game) TableName() string {
-	return "game"
-}
 
  func (b *Mem_info) TableName() string {
   	return "mem_info"
-}
+ }
 
 type Mem_info struct {
-    PlyID	 string    `json:"PlyID"`
-	Gm_id    string    `json:"gm_id"`
+	PlyID         string    `json:"PlyID"`
+	PlyFname     string `json:"ply_fname"`
+	PlyLname     string `json:"ply_lname"`
+	PlyCountry  string `json:"country_name"`
+	PlyCty     string `json:"city_name"`
+	ContactID    int    `json:"contact_id"`
+	Ply_img       string `json:"ply_img"`
+	Gm_ply_ply_id int    `json:"gm_ply_ply_id" gorm:"-"`
+	Guest_ply_id  int    `json:"guest_ply_id" gorm:"-"`
+	Privecy       string `json:"CASE WHEN ply_city_sett = 'y' THEN 'true' ELSE 'false' END"`
+	PlyType         string
+}
+type Input struct {
+	PlyID string `json:"PlyID"`
+	Gm_id string `json:"Gm_id"`
 }
 
 type User_infoandflags struct {
@@ -42,13 +52,11 @@ type User_infoandflags struct {
 	RemindPeriod string	`json:"RemindPeriod"`}
 
 type ViewGame struct {
-	GmID	int `json:"GmID"`
-	PlyID	int `json:"PlyID"`
-	ProjectSecret	string `json:"ProjectSecret"`
-	ProjectKey	string `json:"ProjectKey"`
-	Tkn	string  `json:"Tkn"`
-	DevID	string `json:"DevID"`
-	Source	string `json:"source"`
+	GmID          int    `json:"GmID"`
+	PlyID         int    `json:"PlyID"`
+	ProjectSecret string `json:"ProjectSecret"`
+	ProjectKey    string `json:"ProjectKey"`
+	Tkn           string `json:"Tkn"`
+	DevID         string `json:"DevID"`
+	Source        string `json:"source"`
 }
-
-

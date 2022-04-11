@@ -2,8 +2,8 @@ package Models
 
 import (
 	"errors"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
 )
 
@@ -63,6 +63,7 @@ func (v *ViewGame) Validate() error {
 	}
 	return nil
 }
+
 func (v *User_infoandflags) Validate() error {
 	if v.GmID < 0 {
 		return errors.New("required Game ID")
@@ -81,43 +82,25 @@ var result User_infoandflagsResult
  return r,err
 }
 
-func (b *Mem_info) Validate() error {
-	// 	if (v.Gm_id < 0) {
-	// 		return errors.New("Gm_id Required")
-	//     }
-	//     if (v.PlyID < 0) {
-	// 		return errors.New("PlyID Required")
-	//     }
-	return nil
-}
+func Member_info(in *Input, mem_info *[]Mem_info) (err error) {
 
-func (b *Mem_info) Member_info() (*gorm.DB , error) {
-	type Result struct {
-		PlyFname   string `json:"ply_fname"`
-		PlyLname   string `json:"ply_lname"`
-		PlyCountry string `json:"country_name"`
-		PlyCty     string `json:"city_name"`
-		PlyID      int    `json:"ply_id"`
-		Privecy    string `json:"ply_city_sett"`
-		ContactID  int    `json:"contact_id"`
-		PlyImg     string `json:"ply_img"`
-		Member     int    `json:"gm_ply_ply_id"`
-		Guest      int    `json:"guest_ply_id"`
+	query := "SELECT distinct ply_fname,ply_lname , country_name , city_name  , ply_id , contact_id,gm_ply_ply_id,guest_ply_id,CASE WHEN ply_city_sett = 'y' THEN 'true' ELSE 'false' END AS Privecy,gm_ply_ply_id ,guest_ply_id  " +
+		"FROM players " +
+		"LEFT JOIN country ON ply_country_id= country_id " +
+		"LEFT JOIN city ON ply_city_id = city_id " +
+		"LEFT JOIN gm_players ON gm_ply_ply_id=ply_id " +
+		"LEFT JOIN guests ON guest_ply_id=gm_ply_ply_id " +
+		"LEFT JOIN contacts ON contact_ply_id = ply_id and contact_org_id IN (SELECT gm_org_id from game WHERE gm_id=" + in.Gm_id + ") where ply_id=" + in.PlyID + ";"
+	if err = Config.DB.Raw(query).Scan(&mem_info).Error; err != nil {
+		return err
 	}
-	var DB *gorm.DB
-	var result Result
-	res := DB.Raw(`SELECT distinct ply_fname AS PlyFname,ply_lname AS PlyLname , country_name AS PlyCountry, city_name AS PlyCty ,ply_id AS PlyID, ply_img AS PlyImg,
-                CASE WHEN ply_city_sett = 'y' THEN 'true' ELSE 'false' END AS Privecy,gm_ply_ply_id AS member,guest_ply_id AS guest,contact_id AS ContactID
-                FROM players
-                LEFT JOIN gm_players ON gm_ply_ply_id=ply_id
-                LEFT JOIN guests ON guest_ply_id=gm_ply_ply_id
-                LEFT JOIN gm_waitlist ON gm_wait_list_ply_id= ply_id
-                LEFT JOIN country ON ply_country_id= country_id
-                LEFT JOIN city ON ply_city_id = city_id
-                LEFT JOIN contacts ON contact_ply_id = ply_id and contact_org_id = (SELECT gm_org_id from game WHERE gm_id=?)
-                where ply_id=?;`, b.Gm_id, b.PlyID).Scan(result)
-    if res == nil {
-        return nil,errors.New("There's no available data to this user")
-    }
-	return res,nil
+
+	fmt.Println(Mem_info{"5952" ,"" ,"" ,"","",0,"",0,0,"" ,""})
+
+//         if result.Gm_ply_ply_id > 0 && result.Guest_ply_id == 0{
+//                 result.PlyType = "member"
+//         }else if (result.Gm_ply_ply_id == 0 && result.Guest_ply_id > 0) || (result.Gm_ply_ply_id > 0 && result.Guest_ply_id > 0){
+//                 result.PlyType = "guest"
+// 	}
+	return nil
 }
