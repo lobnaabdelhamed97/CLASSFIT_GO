@@ -48,7 +48,7 @@ func Mem_info(c *gin.Context) {
 	//create validation here
 	var in Models.Input
 	c.BindJSON(&in)
-	var err = Models.Member_info(&in, &mem_info)
+    err := Models.Member_info(&in, &mem_info)
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {

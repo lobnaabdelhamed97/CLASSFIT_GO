@@ -27,15 +27,17 @@ func (b *Mem_info) TableName() string {
 }
 
 type Mem_info struct {
-	PlyID         int    `json:"PlyID"`
-	Ply_fname     string `json:"ply_fname"`
-	Ply_lname     string `json:"ply_lname"`
-	Country_name  string `json:"country_name"`
-	City_name     string `json:"city_name"`
-	Contact_id    int    `json:"contact_id"`
+	PlyID         string    `json:"PlyID"`
+	PlyFname     string `json:"ply_fname"`
+	PlyLname     string `json:"ply_lname"`
+	PlyCountry  string `json:"country_name"`
+	PlyCty     string `json:"city_name"`
+	ContactID    int    `json:"contact_id"`
 	Ply_img       string `json:"ply_img"`
-	Gm_ply_ply_id int    `json:"gm_ply_ply_id"`
-	Guest_ply_id  int    `json:"guest_ply_id"`
+	Gm_ply_ply_id int    `json:"gm_ply_ply_id" gorm:"-"`
+	Guest_ply_id  int    `json:"guest_ply_id" gorm:"-"`
+	Privecy       string `json:"CASE WHEN ply_city_sett = 'y' THEN 'true' ELSE 'false' END"`
+	PlyType         string
 }
 type Input struct {
 	PlyID string `json:"PlyID"`
