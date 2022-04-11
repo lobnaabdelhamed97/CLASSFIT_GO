@@ -22,6 +22,10 @@ type Game struct {
 	Gm_end_time         string `json:"gm_end_time"`
 }
 
+func (b *Game) TableName() string {
+	return "game"
+}
+
  func (b *Mem_info) TableName() string {
   	return "mem_info"
 }
@@ -31,9 +35,11 @@ type Mem_info struct {
 	Gm_id    string    `json:"gm_id"`
 }
 
-func (b *Game) TableName() string {
-	return "game"
-}
+type User_infoandflags struct {
+	GmID	int `json:"GmID"`
+	PlyID	int `json:"PlyID"`
+	RemindStat int `json:"RemindStat"`
+	RemindPeriod string	`json:"RemindPeriod"`}
 
 type ViewGame struct {
 	GmID	int `json:"GmID"`

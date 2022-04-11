@@ -83,6 +83,22 @@ func Mem_info(c *gin.Context) {
 //          c.JSON(http.StatusOK, mem_info)
 	}
 }
+
+func User_infoandflags(c *gin.Context) {
+	var User_infoandflags Models.User_infoandflags
+
+	c.BindJSON(&User_infoandflags)
+	err := User_infoandflags.Validate()
+	if err != nil {
+		Responses.ERROR(c, err.Error())
+	} else {
+		var r *Models.User_infoandflagsResult
+		r,err =User_infoandflags.User_infoandflags()
+		data, _ := json.Marshal(User_infoandflags)
+		Responses.SUCCESS(c, string(data))
+	}
+}
+
 func ViewGame(c *gin.Context) {
 	var viewgame Models.ViewGame
 	c.BindJSON(&viewgame)

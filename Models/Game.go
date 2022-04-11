@@ -63,6 +63,24 @@ func (v *ViewGame) Validate() error {
 	}
 	return nil
 }
+func (v *User_infoandflags) Validate() error {
+	if v.GmID < 0 {
+		return errors.New("required Game ID")
+	}
+	if v.PlyID < 0 {
+		return errors.New("required Player ID")
+	}
+	return nil
+}
+
+func (u *User_infoandflags) User_infoandflags() (r *User_infoandflagsResult ,err error) {
+var result User_infoandflagsResult
+ if err = Config.DB.Table("custom_notifications").Where("custom_notification_gm_id = ? AND custom_notification_ply_id = ?",u.PlyID,u.GmID).Select("custom_notification_reminder_status, custom_notification_period").Scan(result).Error; err != nil {
+	return nil,err
+}
+ return r,err
+}
+
 func (b *Mem_info) Validate() error {
 	// 	if (v.Gm_id < 0) {
 	// 		return errors.New("Gm_id Required")
