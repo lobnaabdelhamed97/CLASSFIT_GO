@@ -2,6 +2,7 @@ package Models
 
 import (
 	"errors"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
 )
@@ -75,13 +76,13 @@ func Member_info(in *Input, mem_info *[]Mem_info) (err error) {
 	if err = Config.DB.Raw(query).Scan(&mem_info).Error; err != nil {
 		return err
 	}
-	var result Mem_info
-	if result.Gm_ply_ply_id > 0 && result.Guest_ply_id == 0{
 
+	fmt.Println(Mem_info{"5952" ,"" ,"" ,"","",0,"",0,0,"" ,""})
 
-        }else if (result.Gm_ply_ply_id == 0 && result.Guest_ply_id > 0) || (result.Gm_ply_ply_id > 0 && result.Guest_ply_id > 0){
-//                 new_data := Mem_info{
-//                    PlyType: "guest"}
-	}
+//         if result.Gm_ply_ply_id > 0 && result.Guest_ply_id == 0{
+//                 result.PlyType = "member"
+//         }else if (result.Gm_ply_ply_id == 0 && result.Guest_ply_id > 0) || (result.Gm_ply_ply_id > 0 && result.Guest_ply_id > 0){
+//                 result.PlyType = "guest"
+// 	}
 	return nil
 }
