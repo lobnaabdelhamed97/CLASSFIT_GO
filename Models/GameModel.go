@@ -1,7 +1,5 @@
 package Models
 
-
-
 type Game struct {
 	Gm_id               int    `json:"gm_id"`
 	Gm_title            string `json:"gm_title"`
@@ -24,9 +22,8 @@ type Game struct {
 	Gm_end_time         string `json:"gm_end_time"`
 }
 
-
- func (b *Mem_info) TableName() string {
-  	return "mem_info"
+ func (b *Game) TableName() string {
+  	return "game"
  }
 
 type Mem_info struct {
