@@ -20,6 +20,30 @@ func Test_Mem_info(t *testing.T) {
 			PlyID: "5286",
 			Gm_id: "279731",
 		},
+		{
+			PlyID: "",
+			Gm_id: "279731",
+		},
+		{
+			PlyID: "-5",
+			Gm_id: "279731",
+		},
+		{
+			PlyID: "",
+			Gm_id: "",
+		},
+		{
+			PlyID: "-5",
+			Gm_id: "-10",
+		},
+		{
+			PlyID: "123",
+			Gm_id: "279731",
+		},
+		{
+            PlyID: "6003",
+			Gm_id: "284136",
+            },
 	}
 
 	for i := range views {
