@@ -45,11 +45,14 @@ type Input struct {
 	Gm_id string `json:"Gm_id"`
 }
 
+
 type User_infoandflags struct {
-	GmID	int `json:"GmID"`
-	PlyID	int `json:"PlyID"`
-	RemindStat int `json:"RemindStat"`
-	RemindPeriod string	`json:"RemindPeriod"`}
+	Custom_notification_reminder_status int `json:"RemindStat"`
+	Custom_notification_period string	`json:"RemindPeriod"`
+	PlyID         int    `json:"PlyID"`
+	GmMem	string    `json:"GmMem"`  
+
+}
 
 type ViewGame struct {
 	GmID          int    `json:"GmID"`

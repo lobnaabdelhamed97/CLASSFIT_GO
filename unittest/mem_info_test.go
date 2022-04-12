@@ -62,3 +62,4 @@ func Test_Mem_info(t *testing.T) {
 			t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, w.Code)
 		}
 	}}
+

@@ -46,42 +46,50 @@ func (v *ViewGame) Validate() error {
 	if v.PlyID < 0 {
 		return errors.New("required Player ID")
 	}
-	if v.DevID == "" {
-		return errors.New("required Device ID")
-	}
-	if v.Source == "" {
-		return errors.New("required Source")
-	}
-	if v.Tkn == "" {
-		return errors.New("required token")
-	}
-	if v.ProjectKey == "" {
-		return errors.New("required project key")
-	}
-	if v.ProjectSecret == "" {
-		return errors.New("required project Secret")
-	}
+	// if v.DevID == "" {
+	// 	return errors.New("required Device ID")
+	// }
+	// if v.Source == "" {
+	// 	return errors.New("required Source")
+	// }
+	// if v.Tkn == "" {
+	// 	return errors.New("required token")
+	// }
+	// if v.ProjectKey == "" {
+	// 	return errors.New("required project key")
+	// }
+	// if v.ProjectSecret == "" {
+	// 	return errors.New("required project Secret")
+	// }
 	return nil
 }
 
-func (v *User_infoandflags) Validate() error {
-	if v.GmID < 0 {
-		return errors.New("required Game ID")
-	}
-	if v.PlyID < 0 {
-		return errors.New("required Player ID")
-	}
-	return nil
-}
+// func (v *User_infoandflags) Validate() error {
+// 	if v.GmID < 0 {
+// 		return errors.New("required Game ID")
+// 	}
+// 	if v.PlyID < 0 {
+// 		return errors.New("required Player ID")
+// 	}
+// 	return nil
+// }
+func Userinfoandflags(in *ViewGame, user_infoandflags *User_infoandflags) (err error) {
+ if err = Config.DB.Table("custom_notifications").Where("custom_notification_gm_id = ? AND custom_notification_ply_id = ?",in.GmID,in.PlyID).Select("custom_notification_reminder_status, custom_notification_period").Scan(&user_infoandflags).Error; err != nil {
+	if string(err.Error()) == "record not found"{
+		user_infoandflags.Custom_notification_reminder_status=0
+		user_infoandflags.Custom_notification_period="" } else {
+	return err 
+}}
+user_infoandflags.PlyID=in.PlyID
+if err = Config.DB.Table("gm_players").Where("gm_ply_gm_id = ? AND gm_ply_ply_id = ? AND gm_ply_status = 'y'",in.GmID,in.PlyID).Select("gm_ply_id as GmMem").Scan(&user_infoandflags).Error; err != nil {
+if string(err.Error()) == "record not found"{
+user_infoandflags.GmMem="no"
+} else {
+	return err}}
+	user_infoandflags.GmMem="mem"
 
-func (u *User_infoandflags) User_infoandflags() (r *User_infoandflagsResult ,err error) {
-var result User_infoandflagsResult
- if err = Config.DB.Table("custom_notifications").Where("custom_notification_gm_id = ? AND custom_notification_ply_id = ?",u.PlyID,u.GmID).Select("custom_notification_reminder_status, custom_notification_period").Scan(result).Error; err != nil {
-	return nil,err
+ return nil
 }
- return r,err
-}
-
 func Member_info(in *Input, mem_info *[]Mem_info) (err error) {
 
 	query := "SELECT distinct ply_fname,ply_lname , country_name , city_name  , ply_id , contact_id,gm_ply_ply_id,guest_ply_id,CASE WHEN ply_city_sett = 'y' THEN 'true' ELSE 'false' END AS Privecy,gm_ply_ply_id ,guest_ply_id  " +
