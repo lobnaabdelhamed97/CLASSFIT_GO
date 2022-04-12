@@ -75,17 +75,17 @@ func Mem_info(c *gin.Context) {
 	var in Models.Input
 	c.BindJSON(&in)
 	err_validate := in.Validate()
-	if err_validate != nil {
+	 if err_validate != nil {
 		Responses.ERROR(c, err_validate.Error())
 	}else {
         err := Models.Member_info(&in, &mem_info)
-        if err != nil {
+     if err != nil {
         Responses.ERROR(c, err.Error())
-//             c.AbortWithStatus(http.StatusNotFound)
-        } else {
-            c.JSON(http.StatusOK, mem_info)
-        }
-        }
+//       c.AbortWithStatus(http.StatusNotFound)
+    }else {
+        c.JSON(http.StatusOK, mem_info)
+    }
+    }
 }
 
 func User_infoandflags(c *gin.Context) {
@@ -118,4 +118,22 @@ func ViewGame(c *gin.Context) {
 		data, _ := json.Marshal(viewgame)
 		Responses.SUCCESS(c, string(data))
 	}
+}
+
+func Wait_list_info(c *gin.Context) {
+	var wait_list_info Models.Wait_list_info
+	//create validation here
+	var in Models.Wait_list_input
+	c.BindJSON(&in)
+	err_validate := in.Validate()
+	  if err_validate != nil {
+		Responses.ERROR(c, err_validate.Error())
+	} else {
+        err := Models.Wait_list_info_func(&in, &wait_list_info)
+        if err != nil {
+        Responses.ERROR(c, err.Error())
+    } else {
+            c.JSON(http.StatusOK, wait_list_info)
+    }
+    }
 }

@@ -118,3 +118,18 @@ func Member_info(in *Input, mem_info *Mem_info) (err error) {
  	}
 	return nil
 }
+
+func (in *Wait_list_input) Validate() error {
+    Gm_id, _:= strconv.Atoi(in.Gm_id)
+    if Gm_id  <= 0 {
+		return errors.New("GmID Required")
+	}
+	return nil
+}
+
+
+func Wait_list_info_func(in *Wait_list_input, wait_list_info *Wait_list_info) (err error) {
+
+
+	return nil
+}

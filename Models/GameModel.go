@@ -43,6 +43,20 @@ type Input struct {
 	Gm_id string `json:"Gm_id"`
 }
 
+type Wait_list_info struct {
+	PlyID         string     `json:"PlyID"`
+	PlyFname      string     `json:"PlyFname"`
+	PlyLname      string     `json:"PlyLname"`
+	Country_name  string     `json:"PlyCountry"`
+	City_name     string     `json:"PlyCty"`
+    Ply_img       string     `json:"PlyImg"`
+    Privecy       string     `json:"Privecy"`
+}
+
+type Wait_list_input struct {
+	Gm_id string `json:"Gm_id"`
+}
+
 
 type User_infoandflags struct {
 	Custom_notification_reminder_status int `json:"RemindStat"`
