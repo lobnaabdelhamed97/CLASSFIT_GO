@@ -3,7 +3,6 @@ package Models
 import (
 	"errors"
     "strconv"
-    "reflect"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
 )
@@ -136,9 +135,8 @@ func Wait_list_info_func(in *Wait_list_input, wait_list_info *[]Wait_list_info) 
         return errors.New("No Available Data")
         }
 
-
          (*wait_list_info)[0].PlyType = "member"
-         (*wait_list_info)[0].PlyImg = "https://classfit-assets.s3.amazonaws.com/backup" + (*wait_list_info)[0].PlyImg
+         (*wait_list_info)[0].Ply_img = "https://classfit-assets.s3.amazonaws.com/backup" + (*wait_list_info)[0].Ply_img
 
 //         edit := Wait_list_info["wait_list_info"].(map[string]interface{})
 //         for key, value := range edit{
