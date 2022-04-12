@@ -44,13 +44,14 @@ type Input struct {
 }
 
 type Wait_list_info struct {
-	PlyID         string     `json:"PlyID"`
-	PlyFname      string     `json:"PlyFname"`
-	PlyLname      string     `json:"PlyLname"`
-	Country_name  string     `json:"PlyCountry"`
-	City_name     string     `json:"PlyCty"`
-    Ply_img       string     `json:"PlyImg"`
-    Privecy       string     `json:"Privecy"`
+	Ply_id         string     `json:"PlyID"`
+	Ply_fname      string     `json:"PlyFname"`
+	Ply_lname      string     `json:"PlyLname"`
+	Country_name   string     `json:"PlyCountry"`
+	City_name      string     `json:"PlyCty"`
+    Ply_img        string     `json:"PlyImg"`
+    Privecy        string     `json:"Privecy"`
+    PlyType        string     `json:"PlyType"`
 }
 
 type Wait_list_input struct {

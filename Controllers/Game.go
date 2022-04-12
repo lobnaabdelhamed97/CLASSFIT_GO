@@ -121,7 +121,7 @@ func ViewGame(c *gin.Context) {
 }
 
 func Wait_list_info(c *gin.Context) {
-	var wait_list_info Models.Wait_list_info
+	var wait_list_info []Models.Wait_list_info
 	//create validation here
 	var in Models.Wait_list_input
 	c.BindJSON(&in)

@@ -2,8 +2,8 @@ package Models
 
 import (
 	"errors"
-"strconv"
-
+    "strconv"
+    "reflect"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
 )
@@ -105,7 +105,7 @@ func (in *Input) Validate() error {
 
 func Member_info(in *Input, mem_info *Mem_info) (err error) {
 
-  if err = Config.DB.Table("players").Select("ply_id, ply_fname ,ply_lname ,country_name, city_name ,contact_id,gm_ply_ply_id,guest_ply_id,CASE WHEN ply_city_sett = 'y' THEN 'true' ELSE 'false' END AS privecy").
+  if err = Config.DB.Table("players").Select("distinct ply_id, ply_fname ,ply_lname ,country_name, city_name ,contact_id,gm_ply_ply_id,guest_ply_id,CASE WHEN ply_city_sett = 'y' THEN 'true' ELSE 'false' END AS privecy").
   Joins("LEFT JOIN country ON ply_country_id= country_id").Joins("LEFT JOIN city ON ply_city_id = city_id").Joins("LEFT JOIN gm_players ON gm_ply_ply_id=ply_id and gm_ply_gm_id= " + in.Gm_id + " ").
   Joins("LEFT JOIN guests ON guest_ply_id=gm_ply_ply_id and guest_gm_id= " + in.Gm_id + " ").Joins("LEFT JOIN contacts ON contact_ply_id = ply_id and contact_org_id IN (SELECT gm_org_id from game WHERE gm_id= " + in.Gm_id + ") ").Where("ply_id= "+in.PlyID+" ").
   Scan(&mem_info).Error; err != nil {
@@ -127,9 +127,25 @@ func (in *Wait_list_input) Validate() error {
 	return nil
 }
 
+func Wait_list_info_func(in *Wait_list_input, wait_list_info *[]Wait_list_info) (err error) {
 
-func Wait_list_info_func(in *Wait_list_input, wait_list_info *Wait_list_info) (err error) {
+   if err = Config.DB.Table("players").Select("ply_fname,ply_lname,country_name,city_name,ply_id,CASE WHEN ply_city_sett = 'y' THEN 'true' ELSE 'false' END AS privecy,ply_img").
+        Joins("LEFT JOIN country ON ply_country_id= country_id").Joins("LEFT JOIN city ON ply_city_id = city_id").
+        Joins(" LEFT JOIN gm_waitlist ON gm_wait_list_ply_id= ply_id").
+        Where("gm_wait_list_gm_id= "+in.Gm_id+" AND gm_wait_list_withdrew = 0 AND gm_wait_list_removed_by_admin = 0").Scan(&wait_list_info).Error; err != nil {
+        return errors.New("No Available Data")
+        }
 
 
-	return nil
-}
+         (*wait_list_info)[0].PlyType = "member"
+         (*wait_list_info)[0].PlyImg = "https://classfit-assets.s3.amazonaws.com/backup" + (*wait_list_info)[0].PlyImg
+
+//         edit := Wait_list_info["wait_list_info"].(map[string]interface{})
+//         for key, value := range edit{
+//             for _, e := range value.([]interface{}){
+//                 key.PlyType="member"
+//             }
+//         }
+//           wait_list_info[[1]].PlyType= "member"
+    return nil
+	}
