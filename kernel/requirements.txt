@@ -1,8 +1,0 @@
-datetime
-requests
-mysql-connector-python
-pytz
-# jsonschema
-python-dateutil
-# pandas
-mysql
