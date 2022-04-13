@@ -39,8 +39,13 @@ type Mem_info struct {
 	PlyType       string     `json:"PlyType"`
 }
 type Input struct {
-	PlyID string `json:"PlyID"`
 	Gm_id string `json:"Gm_id"`
+}
+
+type Final struct {
+     Member      []Mem_info         `json:"member"`
+     Waitlist    []Wait_list_info   `json:"waitlist"`
+
 }
 
 type Wait_list_info struct {
@@ -53,11 +58,6 @@ type Wait_list_info struct {
     Privecy        string     `json:"Privecy"`
     PlyType        string     `json:"PlyType"`
 }
-
-type Wait_list_input struct {
-	Gm_id string `json:"Gm_id"`
-}
-
 
 type User_infoandflags struct {
 	Custom_notification_reminder_status int `json:"RemindStat"`
