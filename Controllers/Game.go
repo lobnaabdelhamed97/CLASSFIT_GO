@@ -1,28 +1,26 @@
 package Controllers
 
 import (
+	"bytes"
+	b64 "encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Responses"
 	"net/http"
 	"os/exec"
-	"bytes"
+	"strings"
 )
 
-func Demo(c *gin.Context) {
-	app := "C:\\Users\\lobna\\AppData\\Local\\Programs\\Python\\Python39\\python.exe"
-    //arg0 := "-m"
-	//arg1 := "pip"
-	//arg2 := "install"
-	//arg3 := "-r"
-	//arg4 := "kernel/requirements.txt"
+func python_binds(c *gin.Context, arg1 string, input map[string]string) (string, error) {
+	app := "venv/bin/python3.10"
 	arg0 := "kernel/main.py"
-    arg1 := "view_game"
-	arg2 := "eyJHbUlEIjowLCJQbHlJRCI6IjYyMzYiLCJQcm9qZWN0U2VjcmV0IjoiMTIzNCIsIlByb2plY3RLZXkiOiIxMjM0IiwidGtuIjoiZDlhNDAxM2I5Y2JhMTA4ZjEyYWU5NTBmOGFlMzhhNWMwYWVjMzYyMiIsImRldl9pZCI6IndpbmRvd3NfQ2hyb21lXzE3Mi4zMS4zNS4yMzYifQ=="
+	arg2, _ := json.Marshal(input)
+	arg2 = []byte(b64.StdEncoding.EncodeToString(arg2))
 	arg3 := "2>&1"
-    cmd := exec.Command(app,arg0,arg1,arg2,arg3)
+	cmd := exec.Command(app, arg0, arg1, string(arg2), arg3)
 	var out bytes.Buffer
 	var stderr bytes.Buffer
 	cmd.Stdout = &out
@@ -30,11 +28,14 @@ func Demo(c *gin.Context) {
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
-		return
+		return "", nil
 	}
-	fmt.Println("Result: " + out.String())
+	if strings.Contains(out.String(), "error") {
+		return "", errors.New(out.String())
+	} else {
+		return out.String(), nil
+	}
 }
-
 func GetGames(c *gin.Context) {
 	var game Models.Game
 	err := Models.GetAllGames(&game)
@@ -97,14 +98,14 @@ func User_infoandflags(c *gin.Context) {
 		Responses.ERROR(c, err.Error())
 	} else {
 		var User_infoandflags Models.User_infoandflags
-		err := Models.Userinfoandflags(&viewgame,&User_infoandflags)
+		err := Models.Userinfoandflags(&viewgame, &User_infoandflags)
 		if err != nil {
 			Responses.ERROR(c, err.Error())
 		} else {
-		data, _ := json.Marshal(User_infoandflags)
-		Responses.SUCCESS(c, string(data))
+			data, _ := json.Marshal(User_infoandflags)
+			Responses.SUCCESS(c, string(data))
+		}
 	}
-}
 }
 
 func ViewGame(c *gin.Context) {

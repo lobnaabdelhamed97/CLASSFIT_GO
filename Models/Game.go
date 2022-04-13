@@ -2,9 +2,9 @@ package Models
 
 import (
 	"errors"
-    "strconv"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
+	"strconv"
 )
 
 func GetAllGames(game *Game) (err error) {
