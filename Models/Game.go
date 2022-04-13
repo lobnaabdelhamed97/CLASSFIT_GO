@@ -2,9 +2,7 @@ package Models
 
 import (
 	"errors"
-	"encoding/json"
     "strconv"
-    "fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
 )
@@ -136,19 +134,9 @@ func Wait_list_info_func(in *Wait_list_input, wait_list_info *[]Wait_list_info) 
         Where("gm_wait_list_gm_id= "+in.Gm_id+" AND gm_wait_list_withdrew = 0 AND gm_wait_list_removed_by_admin = 0").Scan(&wait_list_info).Error; err != nil {
         return errors.New("No Available Data")
         }
-        x := map[string]string{}
-        json.Unmarshal([]byte(wait_list_info), &x)
-        fmt.Println(json.Unmarshal([]byte(wait_list_info), &x))
-        for i :=0; i < len(x); i++ {
-         (*wait_list_info)[i].PlyType = "member"
-         (*wait_list_info)[i].Ply_img = "https://classfit-assets.s3.amazonaws.com/backup" + (*wait_list_info)[0].Ply_img
-}
-//         edit := Wait_list_info["wait_list_info"].(map[string]interface{})
-//         for key, value := range edit{
-//             for _, e := range value.([]interface{}){
-//                 key.PlyType="member"
-//             }
-//         }
-//           wait_list_info[[1]].PlyType= "member"
+          for i := 0; i < len(*wait_list_info) ;i++{
+               (*wait_list_info)[i].PlyType = "member"
+               (*wait_list_info)[i].Ply_img = "https://classfit-assets.s3.amazonaws.com/backup" + (*wait_list_info)[i].Ply_img
+               }
     return nil
 	}
