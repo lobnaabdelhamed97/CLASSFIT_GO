@@ -8,15 +8,16 @@ RUN apk update && apk add alpine-sdk git python3-dev \
 	 apk add --no-cache python3 py3-pip \
   && echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; options(repos = r);" > ~/.Rprofile \
  
-RUN R -e "install.packages(c('reticulate','purrr', 'jsonlite', 'stringi', 'stringr','urltools','Dict','foreach'))" \
-    python -m pip install --upgrade pip
+RUN R -e "install.packages(c('reticulate','purrr', 'jsonlite', 'stringi', 'stringr','urltools','Dict','foreach'))" && \
+    python3 -m pip install --upgrade pip
+
 RUN mkdir -p /api
 WORKDIR /api
 
 COPY go.mod .
 COPY go.sum .
 RUN go mod download
-
+RUN pip install -r ./app ./kernel/requirements.txt
 COPY . .
 RUN go build -o ./app ./main.go
 
@@ -29,7 +30,6 @@ WORKDIR /api
 COPY --from=builder /api/app .
 
 EXPOSE 8080
-RUN pip3 install -r kernel/requirements.txt
 
 
 ENTRYPOINT ["./app"]
