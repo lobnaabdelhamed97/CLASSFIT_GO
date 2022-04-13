@@ -81,16 +81,47 @@ func Userinfoandflags(in *ViewGame, user_infoandflags *User_infoandflags) (err e
 	return err 
 }}
 user_infoandflags.PlyID=in.PlyID
-if err = Config.DB.Table("gm_players").Where("gm_ply_gm_id = ? AND gm_ply_ply_id = ? AND gm_ply_status = 'y'",in.GmID,in.PlyID).Select("gm_ply_id as GmMem").Scan(&user_infoandflags).Error; err != nil {
+if err = Config.DB.Table("admin_terms").Where("admin_id = ?",in.PlyID).Select("terms as IssetOrgTerms").Scan(&user_infoandflags).Error; err != nil {
+	if string(err.Error()) == "record not found"{
+		user_infoandflags.IssetOrgTerms="false"
+		}else {
+			return err
+		}	
+}
+if user_infoandflags.IssetOrgTerms != "false"{
+	user_infoandflags.IssetOrgTerms="true"
+}
+type IdDummy struct {
+	Gm_org_id int
+	Gm_ply_id int
+}
+var iddata IdDummy
+if err = Config.DB.Table("gm_players").Where("gm_ply_gm_id = ? AND gm_ply_ply_id = ? AND gm_ply_status = 'y'",in.GmID,in.PlyID).Select("gm_ply_id").Scan(&iddata).Error; err != nil {
 if string(err.Error()) == "record not found"{
 user_infoandflags.GmMem="no"
 } else {
 	return err}}
-	user_infoandflags.GmMem="mem"
-
+	if user_infoandflags.GmMem != "no"{
+		user_infoandflags.GmMem="mem"
+	}
+	if err = Config.DB.Table("game").Where("gm_id = ?",in.GmID).Select("gm_org_id").Scan(&iddata).Error; err != nil {
+				return err
+			}	
+	if iddata.Gm_org_id == in.PlyID {
+		user_infoandflags.IsOrg="true"
+	} else {
+		user_infoandflags.IsOrg="false"
+	}
+	if err = Config.DB.Table("gm_players").Where("gm_ply_gm_id = ? AND gm_ply_ply_id = ? AND gm_ply_status = 'y' AND (gm_ply_leave IS NULL OR gm_ply_leave = '')",in.GmID,in.PlyID).Select("gm_ply_id").Scan(&iddata).Error; err != nil {
+		if string(err.Error()) == "record not found"{
+		user_infoandflags.IsMem="false"
+		} else {
+			return err}}
+			if user_infoandflags.IsMem != "false"{
+				user_infoandflags.IsMem="true"
+			}	
  return nil
 }
-
 func (in *Input) Validate() error {
     Gm_id, _:= strconv.Atoi(in.Gm_id)
     PlyID, _:= strconv.Atoi(in.PlyID)

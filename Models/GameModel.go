@@ -49,7 +49,9 @@ type User_infoandflags struct {
 	Custom_notification_period string	`json:"RemindPeriod"`
 	PlyID         int    `json:"PlyID"`
 	GmMem	string    `json:"GmMem"`  
-
+	IssetOrgTerms string `json:"IssetOrgTerms"`
+	IsOrg string `json:"IsOrg"`
+	IsMem string `json:"IsMem"`
 }
 
 type ViewGame struct {
