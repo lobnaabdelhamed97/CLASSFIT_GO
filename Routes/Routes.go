@@ -3,7 +3,6 @@ package Routes
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Controllers"
-	"github.com/lobnaabdelhamed97/CLASSFIT_GO/helper"
 )
 
 //SetupRouter ... Configure routes
@@ -26,7 +25,7 @@ func SetupRouter() *gin.Engine {
 	r.POST("/mem-info", Controllers.Mem_info)
 	r.POST("/user-info", Controllers.User_infoandflags)
 	r.POST("/wait-list-info", Controllers.Wait_list_info)
-	r.GET("/DEMO", helper.python_binds)
+	r.GET("/DEMO", Controllers.python_binds)
 
 	return r
 }
