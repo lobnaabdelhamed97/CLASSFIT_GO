@@ -44,24 +44,6 @@ func GetGameByID(c *gin.Context) {
 	}
 }
 
-// func Mem_info(c *gin.Context) {
-// 	var mem_info Models.Mem_info
-// 	//create validation here
-// 	var in Models.Input
-// 	c.BindJSON(&in)
-// 	err_validate := in.Validate()
-// 	 if err_validate != nil {
-// 		Responses.ERROR(c, err_validate.Error())
-// 	}else {
-//         err := Models.Member_info(&in, &mem_info)
-//      if err != nil {
-//         Responses.ERROR(c, err.Error())
-// //       c.AbortWithStatus(http.StatusNotFound)
-//     }else {
-//         c.JSON(http.StatusOK, mem_info)
-//     }
-//     }
-// }
 
 func User_infoandflags(c *gin.Context) {
 	var viewgame Models.ViewGame
@@ -95,23 +77,6 @@ func ViewGame(c *gin.Context) {
 	}
 }
 
-// func Wait_list_info(c *gin.Context) {
-// 	var wait_list_info []Models.Wait_list_info
-// 	//create validation here
-// 	var in Models.Wait_list_input
-// 	c.BindJSON(&in)
-// 	err_validate := in.Validate()
-// 	  if err_validate != nil {
-// 		Responses.ERROR(c, err_validate.Error())
-// 	} else {
-//         err := Models.Wait_list_info_func(&in, &wait_list_info)
-//         if err != nil {
-//         Responses.ERROR(c, err.Error())
-//     } else {
-//             c.JSON(http.StatusOK, wait_list_info)
-//     }
-//     }
-// }
 
 func Participants(c *gin.Context) {
 	var wait_list_info []Models.Wait_list_info
@@ -122,14 +87,7 @@ func Participants(c *gin.Context) {
 	  if err_validate_mem != nil {
 		Responses.ERROR(c, err_validate_mem.Error())
 	   }else {
-//         waiting_list,err_wait := Models.Wait_list_info_func(&validate, &wait_list_info,&mem_info)
         members,err_mem  := Models.Member_info(&validate, &mem_info,&wait_list_info)
-//         if err_wait != nil {
-//             Responses.ERROR(c, err_wait.Error())
-//        }
-//        else {
-//             c.JSON(http.StatusOK, waiting_list)
-//     }
         if err_mem != nil{
             Responses.ERROR(c, err_mem.Error())
         }else{

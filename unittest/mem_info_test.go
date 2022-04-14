@@ -17,31 +17,24 @@ func Test_Mem_info(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	views := []Models.Input{
 		{
-			PlyID: "5286",
+			Gm_id: "6681",
+		},
+		{
+			Gm_id: "89212",
+		},
+		{
 			Gm_id: "279731",
 		},
 		{
-			PlyID: "",
-			Gm_id: "279731",
-		},
-		{
-			PlyID: "-5",
-			Gm_id: "279731",
-		},
-		{
-			PlyID: "",
 			Gm_id: "",
 		},
 		{
-			PlyID: "-5",
 			Gm_id: "-10",
 		},
 		{
-			PlyID: "123",
 			Gm_id: "279731",
 		},
 		{
-            PlyID: "6003",
 			Gm_id: "284136",
             },
 	}
@@ -62,12 +55,12 @@ func Test_Mem_info(t *testing.T) {
 		// Setup your router, just like you did in your main function, and
 		// register your routes
 		r := gin.Default()
-		r.POST("/mem-info", Controllers.Mem_info)
+		r.POST("/participants", Controllers.Participants)
 
 		// Create the mock request you'd like to test. Make sure the second argument
 		// here is the same as one of the routes you defined in the router setup
 		// block!
-		req, err := http.NewRequest(http.MethodPost, "/mem-info", &buf)
+		req, err := http.NewRequest(http.MethodPost, "/participants", &buf)
 		if err != nil {
 			t.Fatalf("Couldn't create request: %v\n", err)
 		}
