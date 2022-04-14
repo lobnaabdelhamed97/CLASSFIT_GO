@@ -1,5 +1,9 @@
+<<<<<<< HEAD
+package Helper
+=======
 package common
 
+>>>>>>> 5355630f18718810fc1d99a9717a53bd3406cc9a
 import (
 	"bytes"
 	b64 "encoding/base64"
@@ -8,8 +12,15 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
+<<<<<<< HEAD
+	//"github.com/hiroakis/go-requests"
+	"github.com/gin-gonic/gin"
+	//"moul.io/http2curl"
+	//"log"
+=======
 
 	"github.com/gin-gonic/gin"
+>>>>>>> 5355630f18718810fc1d99a9717a53bd3406cc9a
 )
 
 func python_binds(c *gin.Context, arg1 string, input map[string]string) (string, error) {
@@ -34,3 +45,46 @@ func python_binds(c *gin.Context, arg1 string, input map[string]string) (string,
 		return out.String(), nil
 	}
 }
+
+func PaymentCurl(keysec string,url string, input []byte)([]byte){
+
+req, _ := http.NewRequest("POST", url, bytes.NewBuffer(input))
+req.Header.Add("content-type", "application/json")
+req.Header.Add("cache-control", "no-cache")
+req.Header.Add("Key-Sec", keysec)
+res, _ := http.DefaultClient.Do(req)
+
+defer res.Body.Close()
+body, _ := ioutil.ReadAll(res.Body)
+
+return body
+}
+func KeySecured(projectkey string,projectsecret string)(string){
+	key := projectkey+"-"+projectsecret
+	EncodedKey := b64.StdEncoding.EncodeToString([]byte(key))
+	return EncodedKey
+}
+
+//  func curl(arg1 string, input map[string]string) (string, error){
+
+// payload = "{\n\t\"dict\": {\n\t\t\"key1\": \"value1\",\n\t\t\"key2\": \"value2\"\n\t}\n}"
+// headers = {
+//     'Content-Type': "application/json",
+//     'cache-control': "no-cache",
+//     'Postman-Token': <TOKEN>
+//     }
+
+// resp, err := requests.Get("https://httpbin.org/", headers, nil)
+
+// postData := &bytes.Buffer{}
+// postData.WriteString("postdata")
+// resp, err := requests.Post("https://httpbin.org/", headers, &requests.RequestParams{
+//     Data:    postData,
+// })
+// 	if err != nil {
+// 		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
+// 		return "", nil
+// 	} else {
+// 		return resp, nil
+// 	}
+//  }

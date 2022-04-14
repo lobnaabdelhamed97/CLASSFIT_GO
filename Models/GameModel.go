@@ -84,7 +84,24 @@ type User_infoandflags struct {
 	Custom_notification_period string	`json:"RemindPeriod"`
 	PlyID         int    `json:"PlyID"`
 	GmMem	string    `json:"GmMem"`  
+	IssetOrgTerms string `json:"IssetOrgTerms"`
+	IsOrg string `json:"IsOrg"`
+	IsMem string `json:"IsMem"`
+	Offline_payments_status string `json:"offline_payments_status"`
+	Offline_payments_currency_amount string `json:"offline_payments_currency_amount"`
+}
 
+type StripeData struct {
+	CardName string `json:"CardName"`
+	CardLast4 string `json:"CardLast4"`
+}
+
+type Organizer_info struct {
+	PlyImg string `json:"PlyImg"`
+	Bio string `json:"Bio"`
+	Business string `json:"Business"`
+	OrgName string `json:"OrgName"` 
+	StripeData StripeData `json:"StripeData"` 
 }
 
 type ViewGame struct {
@@ -96,3 +113,18 @@ type ViewGame struct {
 	DevID         string `json:"DevID"`
 	Source        string `json:"source"`
 }
+type CountryCurrData struct{
+	Currency_code string `json:"currency_code"`
+	Currrency_symbol string  `json:"currrency_symbol"`
+	Currrency_symbol_formatted string `json:"currrency_symbol_formatted"`
+	Country_monthly_commission_cap int `json:"country_monthly_commission_cap"`
+	Country_monthly_offline_payment_fees int `json:"country_monthly_offline_payment_fees"`
+}
+
+type OfflinePayment struct {
+	Result string `json:"Result"`
+	Status string `json:"status"`
+	Next_billing_date string `json:"next_billing_date"`
+	Admin_country_currency_data CountryCurrData  `json:"admin_country_currency_data"`
+}
+

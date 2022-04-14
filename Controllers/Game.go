@@ -64,6 +64,25 @@ func User_infoandflags(c *gin.Context) {
 	}
 }
 
+func Organizer_info(c *gin.Context) {
+var viewgame Models.ViewGame
+c.BindJSON(&viewgame)
+err := viewgame.Validate()
+if err != nil {
+	Responses.ERROR(c, err.Error())
+} else {
+	var Organizer_info Models.Organizer_info
+	err := Models.Organizerinfo(&viewgame, &Organizer_info)
+	if err != nil {
+		Responses.ERROR(c, err.Error())
+	} else {
+		data, _ := json.Marshal(Organizer_info)
+		Responses.SUCCESS(c, string(data))
+	}
+}
+}
+
+
 func ViewGame(c *gin.Context) {
 	var viewgame Models.ViewGame
 	c.BindJSON(&viewgame)
