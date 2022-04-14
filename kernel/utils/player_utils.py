@@ -276,19 +276,18 @@ def player_view(player_id=0, token='', dev_id='', project_id=1):
         LEFT JOIN ply_typed_city ON player_id = ply_id 
         LEFT JOIN ply_timezone ON ply_timezone.player_id = players.ply_id
         WHERE ply_id = {player_id}  AND ply_pid ={project_id}''')
-    
-    if  player_row==[]:
+
+    if player_row == []:
         return {}
-    
+
     notification_state = 'on'
-    
+
     notif_row = execution.execute(
         f'SELECT notifications_state FROM notifications WHERE notifications_ply_id = {player_id}')[0]
     if (notif_row['notifications_state'] and notif_row['notifications_state'] == 0):
         notification_state = 'off'
 
-    
-    # get player image 
+    # get player image
     if player_row[0]['s3_profile'] == 1:
         player_row[0]['OrgImg'] = s3_bucket_url + "/upload/ply/" + str(player_row[0]['ply_img'])
         player_row[0]['ply_img'] = str(player_row[0]['ply_img']).replace("profile", "profile/thumb")
@@ -296,7 +295,6 @@ def player_view(player_id=0, token='', dev_id='', project_id=1):
     else:
         player_row[0]['OrgImg'] = s3_bucket_url + "/backup/upload/ply/" + str(player_row[0]['ply_img'])
         player_row[0]['OrgImgThumb'] = s3_bucket_url + "/backup/upload/ply/" + str(player_row[0]['ply_img'])
-    
 
     if player_row[0]['s3_cover'] and int(player_row[0]['s3_cover']) == 1:
         header_img = s3_bucket_url + str(player_row[0]['ply_header_img'])
@@ -305,160 +303,168 @@ def player_view(player_id=0, token='', dev_id='', project_id=1):
 
     player_payment_data = game_utils.get_ply_verified_methods(player_row[0]["ply_id"])
 
-    #stripe_acc_type = player_payment_data['StripeAccountType']
-    #player_dashcode = player_payment_data['PlyHasExpressDashCode']
+    # stripe_acc_type = player_payment_data['StripeAccountType']
+    # player_dashcode = player_payment_data['PlyHasExpressDashCode']
 
     if player_payment_data['stripe'] == 'y':
         stripe_admin_conn = 'True'
     else:
         stripe_admin_conn = 'False'
 
-   
-    date = str(datetime.now().year)+'-'+str(datetime.now().month)+'-'+'01'
-    
+    date = str(datetime.now().year) + '-' + str(datetime.now().month) + '-' + '01'
+
     limit = execution.execute(
         f'''SELECT SUM(stripe_payments_system_amount) AS sysTotal FROM stripe_payments
         WHERE stripe_payment_admin_id={player_id}
         AND DATE(stripe_payments_created) <= DATE(CURRENT_DATE)
         AND DATE(stripe_payments_created) >= {date}
         AND stripe_payment_refund_id IS NULL''')
-    
-    sysToCommission =0
-    
+
+    sysToCommission = 0
+
     if limit and limit[0] and limit[0]['sysTotal']:
         sysToCommission = limit[0]['sysTotal']
-    
+
     lastGms = LastGm(player_row[0]['ply_id'])
-    
-    #subscriptions = common_utils.bundle_curl('GetOrgSubscriptions', params)
-    #invalidPlayerSubs = common_utils.bundle_curl('GetInvalidPlySubscriptions', params)
-    
-    #stripeData = RetriveCreditCardData(player_row[0]['ply_id'])
-    
-    result = {'PlyID' : player_row[0]['ply_id'],
-              'PlyFname' : urllib.parse.quote(player_row[0]['ply_fname'])if player_row[0]['ply_fname'] else "",
-              'PlyLname': urllib.parse.quote(player_row[0]['ply_lname'])if player_row[0]['ply_lname'] else "",
-              'PlyEmail' :player_row[0]['ply_email'],
-              'PlyEmailAlter' : player_row[0]['ply_email_alternative'] if  player_row[0]['ply_email_alternative'] else player_row[0]['ply_email'],
-              'PlyGdr' : player_row[0]['ply_gender'],
-              'PlyHeight' : player_row[0]['ply_height'],
-              'H_Unt' : player_row[0]['ply_h_unit'],
-              'PlyWeight' : player_row[0]['ply_weight'],
-              'W_Unt' : player_row[0]['ply_w_unit'],
-              'PlyStatus' : player_row[0]['ply_status'],
-              'PlyctyID' : player_row[0]['ply_city_id'],
-              'PlyCty': player_row[0]['city_name'] if player_row[0]['city_name'] else urllib.parse.quote(player_row[0]['typed_city'])if player_row[0]['typed_city'] else "",
-              'CountryID' : player_row[0]['country_id'],
-              'CountryIso' : player_row[0]['iso'],
-              'CountryName' : player_row[0]['country_name'],
-              'Bio': urllib.parse.quote(player_row[0]['ply_bio'])if player_row[0]['ply_bio'] else "",
-              'PlyImg' : player_row[0]['OrgImg'],
-              'PlyImgThumb' : player_row[0]['OrgImgThumb'],
-              'PImg' : 'ply/' + player_row[0]['ply_img'],
-              'PHImg' : header_img,
-              'NState' : notification_state,
-              'LastGms' : lastGms,
-              'Token' : token,
-              'FrReqNum' : FrReqNum(player_row[0]['ply_id']),
-              'UnreadMessNum' : UnreadMessNum(player_row[0]['ply_id']),
-              'GCToken' : player_row[0]['ply_gc_token'] or '',
-              #'StripeAccountType': stripe_acc_type,
-              #'PlyHasExpressDashCode': player_dashcode,
+
+    # subscriptions = common_utils.bundle_curl('GetOrgSubscriptions', params)
+    # invalidPlayerSubs = common_utils.bundle_curl('GetInvalidPlySubscriptions', params)
+
+    # stripeData = RetriveCreditCardData(player_row[0]['ply_id'])
+
+    result = {'PlyID': player_row[0]['ply_id'],
+              'PlyFname': urllib.parse.quote(player_row[0]['ply_fname']) if player_row[0]['ply_fname'] else "",
+              'PlyLname': urllib.parse.quote(player_row[0]['ply_lname']) if player_row[0]['ply_lname'] else "",
+              'PlyEmail': player_row[0]['ply_email'],
+              'PlyEmailAlter': player_row[0]['ply_email_alternative'] if player_row[0]['ply_email_alternative'] else
+              player_row[0]['ply_email'],
+              'PlyGdr': player_row[0]['ply_gender'],
+              'PlyHeight': player_row[0]['ply_height'],
+              'H_Unt': player_row[0]['ply_h_unit'],
+              'PlyWeight': player_row[0]['ply_weight'],
+              'W_Unt': player_row[0]['ply_w_unit'],
+              'PlyStatus': player_row[0]['ply_status'],
+              'PlyctyID': player_row[0]['ply_city_id'],
+              'PlyCty': player_row[0]['city_name'] if player_row[0]['city_name'] else urllib.parse.quote(
+                  player_row[0]['typed_city']) if player_row[0]['typed_city'] else "",
+              'CountryID': player_row[0]['country_id'],
+              'CountryIso': player_row[0]['iso'],
+              'CountryName': player_row[0]['country_name'],
+              'Bio': urllib.parse.quote(player_row[0]['ply_bio']) if player_row[0]['ply_bio'] else "",
+              'PlyImg': player_row[0]['OrgImg'],
+              'PlyImgThumb': player_row[0]['OrgImgThumb'],
+              'PImg': 'ply/' + player_row[0]['ply_img'],
+              'PHImg': header_img,
+              'NState': notification_state,
+              'LastGms': lastGms,
+              'Token': token,
+              'FrReqNum': FrReqNum(player_row[0]['ply_id']),
+              'UnreadMessNum': UnreadMessNum(player_row[0]['ply_id']),
+              'GCToken': player_row[0]['ply_gc_token'] or '',
+              # 'StripeAccountType': stripe_acc_type,
+              # 'PlyHasExpressDashCode': player_dashcode,
               'StripeAdminConnected': stripe_admin_conn,
-              'DevID' : dev_id,
-              
-              'Privacy' : {"mail": 'True' if player_row[0]['ply_email_sett'] == "y" else "False",
-                           "birthdate": 'True' if player_row[0]['ply_brithdate_sett'] == "y" else "False",
+              'DevID': dev_id,
+
+              'Privacy': {"mail": 'True' if player_row[0]['ply_email_sett'] == "y" else "False",
+                          "birthdate": 'True' if player_row[0]['ply_brithdate_sett'] == "y" else "False",
                           "gender": 'True' if player_row[0]['ply_gender_sett'] == "y" else "False",
-                           "city": 'True' if player_row[0]['ply_city_sett'] == "y" else "False"},
+                          "city": 'True' if player_row[0]['ply_city_sett'] == "y" else "False"},
 
               'sysTotCommission': sysToCommission,
               'viewAs': player_row[0]['ply_view_as'] or "",
-              #'PlySubscriptions' : subscriptions,
-              #'invalidPlySubscriptions': invalidPlayerSubs,
+              # 'PlySubscriptions' : subscriptions,
+              # 'invalidPlySubscriptions': invalidPlayerSubs,
               'Business': urllib.parse.quote(player_row[0]['ply_business']) if player_row[0]['ply_business'] else "",
-              'Website' : player_row[0]['ply_website'] or "",
-              #'stripeData' : stripeData,
+              'Website': player_row[0]['ply_website'] or "",
+              # 'stripeData' : stripeData,
               "plyCurrencyId": player_row[0]['plyCurrencyId'],
               "plyCurrencyName": player_row[0]['plyCurrencyName'],
               "plyCurrencySymbol": player_row[0]['plyCurrencySymbol'],
-              "PlyTimeZone" :  urllib.parse.quote(player_row[0]['timezone']) if player_row[0]['timezone'] else  "",
-              "PlyCreatedAt" : player_row[0]['ply_created'] or '' }
+              "PlyTimeZone": urllib.parse.quote(player_row[0]['timezone']) if player_row[0]['timezone'] else "",
+              "PlyCreatedAt": player_row[0]['ply_created'] or ''}
     return result
 
 
-def LastGm(player_id=0, last_gm=0, show_private=0, project_id=1):
-    if player_id:
-        limit = ' LIMIT 0,5 '
-        Private = ''
-        if show_private == 0:
-            Private = "AND gm_scope='Open to public'"
-        if not last_gm or last_gm == 0:
-            limit = " LIMIT 0,1 "
-
-        gm_data = execution.execute(f'''SELECT *
-                                    FROM gm_players 
-                                    LEFT JOIN game ON gm_pid ={project_id} AND gm_id = gm_ply_gm_id
-                                    LEFT JOIN city ON gm_city_id = city_id
-                                    LEFT JOIN country on gm_country_id = country_id
-                                    LEFT JOIN gm_s_types on gm_sub_type_id = gm_s_type_id
-                                    LEFT JOIN notifications on gm_ply_ply_id = notifications_ply_id WHERE (gm_utc_datetime + INTERVAL gm_end_time MINUTE) < CURRENT_TIMESTAMP
-                                    AND gm_ply_ply_id = {player_id}
-                                    AND gm_ply_status = 'y'
-                                    AND gm_status IS NULL {Private} ORDER BY gm_date DESC, gm_start_time DESC 
-                        {limit};''')
-        result = []
-
-        for GmRow in gm_data:
-            # get game image
-            if GmRow['gm_s3_status'] == 1:
-                GmRow['OrgImg'] = s3_bucket_url + "/upload/gm/" + str(GmRow['gm_img'])
-                GmRow['gm_img'] = str(GmRow['gm_img']).replace(
-                    "classes", "classes/thumb")
-                GmRow['OrgImgThumb'] = s3_bucket_url + "/upload/gm/" + str(GmRow['gm_img'])
+def LastGm(player_id=0, last_gm=0, show_private=0, project_id=1, arr=False):
+    try:
+        if player_id:
+            limit = ' LIMIT 0,5 '
+            Private = ''
+            if show_private == 0:
+                Private = "AND gm_scope='Open to public'"
+            if not last_gm or last_gm == 0:
+                limit = " LIMIT 0,1 "
+            if arr == False:
+                ply_id = "AND gm_ply_ply_id =" + str(player_id)
             else:
-                GmRow['OrgImg'] = s3_bucket_url + "/backup/upload/gm/" + str(GmRow['gm_img'])
-                GmRow['OrgImgThumb'] = s3_bucket_url + "/backup/upload/gm/" + str(GmRow['gm_img'])
+                ply_id = "AND gm_ply_ply_id IN " + player_id
 
-            state = GmRow['notifications_state']
-            if GmRow['notifications_game_stop'] and int(GmRow['gm_id']) > 0:
-                notify_data = GmRow['notifications_game_stop'].split(',')
-                if GmRow['gm_id'] in notify_data:
-                    state = 0
+            gm_data = execution.execute(f"""SELECT gm_s3_status, notifications_state, notifications_game_stop, gm_img, gm_end_time,
+                                            gm_loc_desc,city_name, gm_date, gm_s_type_name, country_name, gm_start_time, gm_city_id
+                                            FROM gm_players 
+                                            LEFT JOIN game ON gm_pid ={project_id} AND gm_id = gm_ply_gm_id
+                                            LEFT JOIN city ON gm_city_id = city_id
+                                            LEFT JOIN country on gm_country_id = country_id
+                                            LEFT JOIN gm_s_types on gm_sub_type_id = gm_s_type_id
+                                            LEFT JOIN notifications on gm_ply_ply_id = notifications_ply_id WHERE (gm_utc_datetime + INTERVAL gm_end_time MINUTE) < CURRENT_TIMESTAMP
+                                            {ply_id}
+                                            AND gm_ply_status = 'y'
+                                            AND gm_status IS NULL {Private} ORDER BY gm_date DESC, gm_start_time DESC 
+                                {limit}""")
+            result = []
+            for GmRow in gm_data:
+                # get game image
+                if GmRow['gm_s3_status'] == 1:
+                    GmRow['OrgImg'] = s3_bucket_url + "/upload/gm/" + str(GmRow['gm_img'])
+                    GmRow['gm_img'] = str(GmRow['gm_img']).replace(
+                        "classes", "classes/thumb")
+                    GmRow['OrgImgThumb'] = s3_bucket_url + "/upload/gm/" + str(GmRow['gm_img'])
+                else:
+                    GmRow['OrgImg'] = s3_bucket_url + "/backup/upload/gm/" + str(GmRow['gm_img'])
+                    GmRow['OrgImgThumb'] = s3_bucket_url + "/backup/upload/gm/" + str(GmRow['gm_img'])
 
-            if not GmRow['gm_end_time'] or GmRow['gm_end_time'] == 'NULL':
-                gm_end_time = ''
-            else:
-                gm_end_time = GmRow['gm_end_time']
+                state = GmRow['notifications_state']
+                if GmRow['notifications_game_stop'] and int(GmRow['gm_id']) > 0:
+                    notify_data = GmRow['notifications_game_stop'].split(',')
+                    if GmRow['gm_id'] in notify_data:
+                        state = 0
 
-            if not GmRow['gm_loc_desc'] or GmRow['gm_loc_desc'] == 'NULL':
-                gm_loc_desc = ''
-            else:
-                gm_loc_desc = GmRow['gm_loc_desc']
+                if not GmRow['gm_end_time'] or GmRow['gm_end_time'] == 'NULL':
+                    gm_end_time = ''
+                else:
+                    gm_end_time = GmRow['gm_end_time']
 
-            if not GmRow['city_name'] or GmRow['city_name'] == 'NULL':
-                city_name = ''
-            else:
-                city_name = GmRow['city_name']
+                if not GmRow['gm_loc_desc'] or GmRow['gm_loc_desc'] == 'NULL':
+                    gm_loc_desc = ''
+                else:
+                    gm_loc_desc = GmRow['gm_loc_desc']
 
-            game = {'GmID': GmRow['gm_id'],
-                    'GmT': GmRow['gm_title'],
-                    'GmImg': GmRow['OrgImg'],
-                    'GmImgThumb': GmRow['OrgImgThumb'],
-                    'GImg': 'gm/' + str(GmRow['gm_img']),
-                    'GmDate': GmRow['gm_date'],
-                    'GDate': GmRow['gm_date'],
-                    'SType': GmRow['gm_s_type_name'],
-                    'CountryName': GmRow['country_name'],
-                    'NState': state,
-                    'STime': GmRow['gm_start_time'],
-                    'ETime': gm_end_time,
-                    'CityID': GmRow['gm_city_id'],
-                    'CityName': city_name,
-                    'LocDesc': gm_loc_desc}
-            result.append(game)
-        return result
-    return Exception(response.error(code='100', message="Invalid data"))
+                if not GmRow['city_name'] or GmRow['city_name'] == 'NULL':
+                    city_name = ''
+                else:
+                    city_name = GmRow['city_name']
+
+                game = {'GmID': GmRow['gm_id'],
+                        'GmT': GmRow['gm_title'],
+                        'GmImg': GmRow['OrgImg'],
+                        'GmImgThumb': GmRow['OrgImgThumb'],
+                        'GImg': 'gm/' + str(GmRow['gm_img']),
+                        'GmDate': GmRow['gm_date'],
+                        'GDate': GmRow['gm_date'],
+                        'SType': GmRow['gm_s_type_name'],
+                        'CountryName': GmRow['country_name'],
+                        'NState': state,
+                        'STime': GmRow['gm_start_time'],
+                        'ETime': gm_end_time,
+                        'CityID': GmRow['gm_city_id'],
+                        'CityName': city_name,
+                        'LocDesc': gm_loc_desc}
+                result.append(game)
+            return result
+        return Exception(response.error(code='100', message="Invalid data"))
+    except Exception as e:
+        return "something happened:" + e.__str__()
 
 
 # def RetriveCreditCardData(player_id):
@@ -533,14 +539,12 @@ def check_account_active(email, project_id):
     return True
 
 
-
-
 def player_rem_Qcode(player_id=0):
     if player_id > 0:
         execution.execute(
             f"UPDATE players SET ply_qcode = '', ply_status='' WHERE ply_id = {player_id}")
 
-    
+
 def add_player_token(player_id=0, dev_id='', gcm_reg='', source='', project_id=1):
     try:
         token_data = execution.execute(
@@ -589,7 +593,8 @@ def saveTimeZone(player_id=0, timezone=''):
 
 def check_mail(email, project_id):
     try:
-        player_id = execution.execute(f"SELECT ply_id FROM players WHERE ply_email = '{email}' AND ply_pid = '{project_id}'")
+        player_id = execution.execute(
+            f"SELECT ply_id FROM players WHERE ply_email = '{email}' AND ply_pid = '{project_id}'")
         if str(player_id).__contains__('Something went wrong: '):
             raise Exception(player_id)
         if not player_id:
@@ -605,7 +610,8 @@ def check_mail(email, project_id):
 
 def check_suspended_mail(email, project_id):
     try:
-        player_id = execution.execute(f"SELECT sus_id FROM suspended_players WHERE sus_ply_pid ='{project_id}' AND sus_ply_email = '{email}'")
+        player_id = execution.execute(
+            f"SELECT sus_id FROM suspended_players WHERE sus_ply_pid ='{project_id}' AND sus_ply_email = '{email}'")
         if str(player_id).__contains__('Something went wrong: '):
             raise Exception(player_id)
         if not player_id:
@@ -762,7 +768,8 @@ def org_players(org_id=0, pid=1):
 
     return result
 
-def player_profile_data(organizer_id  , player_id , project_id ) :
+
+def player_profile_data(organizer_id, player_id, project_id):
     player_arr = {}
     player_data = execution.execute(f'''SELECT ply_fname , ply_lname , ply_email , (CASE WHEN ply_gender='m' THEN 'Male'
                     WHEN ply_gender='f' THEN 'Female' END ) AS gender,
@@ -774,10 +781,10 @@ def player_profile_data(organizer_id  , player_id , project_id ) :
                                FROM migrated_users
                                WHERE migrate_usr_orgID = {organizer_id} AND migrate_usr_email= {player_data[0]['ply_email']}
                                AND migrate_usr_pid = {project_id}''')
-        ply_images=[]
+        ply_images = []
         if player_data[0]['ply_img']:
-                # Util::GetPlyImages($plyRow['ply_img'],$plyRow['s3_profile']);
-                ply_images = ""  # calling from image module 
+            # Util::GetPlyImages($plyRow['ply_img'],$plyRow['s3_profile']);
+            ply_images = ""  # calling from image module
         player_arr["fname"] = player_data[0]["ply_fname"]
         player_arr["lname"] = player_data[0]["ply_lname"]
         player_arr["email"] = player_data[0]["ply_email"]
@@ -789,20 +796,21 @@ def player_profile_data(organizer_id  , player_id , project_id ) :
         player_arr["type"] = 'player'
     return player_arr
 
-def contact_profile_data(organizer_id , contact_id ,project_id):
+
+def contact_profile_data(organizer_id, contact_id, project_id):
     player_arr = {}
     contact_data = execution.execute(f'''SELECT contact_f_name , contact_l_name , contact_email , contact_age , contact_phone , 
                     (CASE WHEN contact_gender='m' THEN 'Male'
                     WHEN contact_gender='f' THEN 'Female' END ) AS gender
                     FROM contacts WHERE contact_deleted =0 AND contact_id = {contact_id}''')
-  
+
     if contact_data and contact_data[0]['contact_email']:
         migrate_user_data = execution.execute(f'''SELECT migrate_usr_mobile_phone , migrate_usr_home_phone , migrate_usr_work_phone
                                FROM migrated_users
                                WHERE migrate_usr_orgID = {organizer_id} AND migrate_usr_email= '{contact_data[0]['contact_email']}'
                                AND migrate_usr_pid = {project_id}''')
         contact_phone = ""
-  
+
         # print(migrate_user_data[0]['migrate_usr_mobile_phone'])
         if contact_data[0]['contact_phone']:
             contact_phone = contact_data[0]['contact_phone']
@@ -810,15 +818,15 @@ def contact_profile_data(organizer_id , contact_id ,project_id):
             contact_phone = migrate_user_data[0]['migrate_usr_mobile_phone']
         ply_images = ""
         if contact_data[0]['gender']:
-            if contact_data[0]['gender'] == 'Male' :
+            if contact_data[0]['gender'] == 'Male':
                 # hanle in img module 
                 ply_images = ""
-            if contact_data[0]['gender']== 'Female':
+            if contact_data[0]['gender'] == 'Female':
                 # hanle in img module 
                 ply_images = ""
-        else :
+        else:
             # hanle in img module 
-            ply_images =""
+            ply_images = ""
         player_arr["fname"] = contact_data[0]["contact_f_name"]
         player_arr["lname"] = contact_data[0]["contact_l_name"]
         player_arr["email"] = contact_data[0]["contact_email"]
@@ -830,27 +838,28 @@ def contact_profile_data(organizer_id , contact_id ,project_id):
 
     return player_arr
 
-def get_player_org_contact_data (data):
+
+def get_player_org_contact_data(data):
     # organizer_id=0, player_id=0, contact_id=0):
     arr = []
-    try :
-        if not data['organizer_id'] or  type(data['organizer_id']) != int or int(data['organizer_id']) < 0  :
+    try:
+        if not data['organizer_id'] or type(data['organizer_id']) != int or int(data['organizer_id']) < 0:
             raise Exception("organizer id required")
 
-        if not data['player_id'] or type(data['player_id']) != int  or int(data['player_id']) < 0 :
+        if not data['player_id'] or type(data['player_id']) != int or int(data['player_id']) < 0:
             raise Exception("player id required")
-        else : 
-            arr = player_profile_data(data['organizer_id'] , data['player_id'] ,data ['project_id'])
+        else:
+            arr = player_profile_data(data['organizer_id'], data['player_id'], data['project_id'])
 
-        if not data['contact_id'] or type(data['contact_id']) != int or int(data['contact_id']) < 0  :
+        if not data['contact_id'] or type(data['contact_id']) != int or int(data['contact_id']) < 0:
             raise Exception("contact id required")
-        else :
-            arr = contact_profile_data(data['organizer_id'] , data['contact_id'], data['project_id'])
+        else:
+            arr = contact_profile_data(data['organizer_id'], data['contact_id'], data['project_id'])
         return arr
 
     except Exception as e:
         return e.__str__()
-     
+
 
 def get_all_guest(game_id):
     try:
@@ -865,28 +874,103 @@ def get_all_guest(game_id):
         return e.__str__()
 
 
-def gm_plys(gm_id,limit_start,limit_number,ply_id,org_id,project_id):
+def set_ply_data(game_player_data, gm_id, project_id):
+    # parameter  gm_id = 3521
+    # parameter project_id = 1
+    # parameter game_player_data = [{'ply_id': 848, 'ply_fname': 'classfit', 'ply_lname': '1', 'ply_email': 'dainijis@ob5d31gf3whzcoo.ga',
+    #           'ply_brithdate': '1999-12-16', 'ply_gender': 'Male', 'ply_height': 0, 'ply_h_unit': 'cm', 'ply_weight': 0,
+    #           'ply_w_unit': 'kg', 'ply_email_sett': 'y', 'ply_brithdate_sett': 'n', 'ply_gender_sett': 'n',
+    #           'ply_city_sett': 'n', 'ply_city_id': 0, 'city_name': None, 'ply_country_id': 66, 'country_name': 'Egypt',
+    #           'ply_img': 'bab3eb743ae6268004111323fece0562.jpg', 'Age': 22, 'IsCheckedIn': 0}]
+    # return  [{'PlyID': 848, 'PlyFname': 'classfit', 'PlyLname': '1', 'PlyEmail': 'dainijis@ob5d31gf3whzcoo.ga', 'PlyGdr': 'Male', 'PlyHeight': 0, 'H_Unt': 'cm', 'PlyWeight': 0, 'W_Unt': 'kg', 'PlyctyID': 0, 'PlyCty': None, 'PlyCountryID': 66, 'PlyCountry': 'Egypt', 'PImg': 'ply/bab3eb743ae6268004111323fece0562.jpg', 'LastGm': [], 'Privecy': {'mail': 'True', 'birthdate': 'False', 'gender': 'False', 'city': 'False'}, 'PlyType': 'member', 'Absent': 'false', 'IsCheckedIn': 0, 'Bio': 'bghvbjbilbiubjubjknknk', 'viewAs': None, 'Website': None, 'Business': None, 'PlyEmailAlter': 'dainijis@ob5d31gf3whzcoo.ga'}]
     try:
-        if not gm_id and int(gm_id) <= 0:
-            raise Exception("invalid gm_id")
-        if not limit_start and int(limit_start) < 0:
-            raise Exception("invalid limit_start")
-        if not limit_number and int(limit_number) < 0:
-            raise Exception("invalid limit_number")
-        if not ply_id and int(ply_id) <= 0:
-            raise Exception("invalid ply_id")
-        if not org_id and int(org_id) <= 0:
-            raise Exception("invalid org_id")
-        if not project_id and int(project_id) <= 0:
-            raise Exception("invalid project_id")
+        res_arr_dict = {}
+        plyData_dict = {}
+        result = []
+        gm_ply_array = []
 
-        gm_ply_arr = []
-        gm_plyD = execution.execute(f"CALL GamePlayers('{gm_id}','{project_id}','{limit_start}','{limit_number}')")
-        # all_guests = get_all_guest(gm_id)
+        if not game_player_data:
+            return result
 
+        for game_player_row in game_player_data:
+            gm_ply_array.append(game_player_row['ply_id'])
 
+        ### get last gm for the player ###
+        Id_gm_ply_array = str(tuple([key for key in gm_ply_array])).replace(',)', ')')
+        last_gm = LastGm(Id_gm_ply_array, 1, 0, project_id, True)
+        if str(last_gm).__contains__("something happened:"):
+            raise Exception(last_gm)
+        if not last_gm:
+            last_gm = []
+
+        ### get absent ###
+        Absent = 'false'
+        absent_data = execution.execute(
+            f"SELECT * FROM absence WHERE absence_gm_id='{gm_id}' AND absence_mem_id IN {Id_gm_ply_array}")
+        if str(absent_data).__contains__('Something went wrong'):
+            raise Exception(absent_data)
+        if absent_data:
+            Absent = 'true'
+
+        ### get additional data for player ###
+        plyData = execution.execute(
+            f"SELECT ply_email, ply_email_alternative, ply_view_as , ply_bio , ply_website , ply_business, s3_profile, ply_created FROM players WHERE ply_id IN {Id_gm_ply_array}")
+        if str(plyData).__contains__('Something went wrong'):
+            raise Exception(plyData)
+        if plyData:
+            for ply in plyData:
+                plyData_dict['Bio'] = ply['ply_bio']
+                plyData_dict['viewAs'] = ply['ply_view_as']
+                plyData_dict['Website'] = ply['ply_website']
+                plyData_dict['Business'] = ply['ply_business']
+                plyData_dict['PlyEmailAlter'] = ply['ply_email_alternative'] if ply['ply_email_alternative'] else ply[
+                    'ply_email']
+
+        ### get player typed city if found ##
+        city_data = execution.execute(f"SELECT typed_city FROM ply_typed_city WHERE player_id IN {Id_gm_ply_array}")
+        if str(city_data).__contains__('Something went wrong'):
+            raise Exception(city_data)
+        if city_data:
+            for city in city_data:
+                if city['typed_city']:
+                    for game_player_row in game_player_data:
+                        game_player_row['city_name'] = city['typed_city']
+
+        ### check if player img exists or not ##
+        # PlyImages = GetPlyImages(GProw['ply_img'], plyData['s3_profile'])
+
+        ###     return result
+        for game_player_row in game_player_data:
+            PlyImages = game_utils.get_ply_images(game_player_row['ply_img'], game_player_row['s3_profile'])
+            res_arr_dict['PlyID'] = game_player_row['ply_id']
+            res_arr_dict['PlyFname'] = urllib.parse.unquote(game_player_row['ply_fname'])
+            res_arr_dict['PlyLname'] = urllib.parse.unquote(game_player_row['ply_lname'])
+            res_arr_dict['PlyEmail'] = urllib.parse.unquote(game_player_row['ply_email'])
+            res_arr_dict['PlyGdr'] = game_player_row['ply_gender']
+            res_arr_dict['PlyHeight'] = game_player_row['ply_height']
+            res_arr_dict['H_Unt'] = game_player_row['ply_h_unit']
+            res_arr_dict['PlyWeight'] = game_player_row['ply_weight']
+            res_arr_dict['W_Unt'] = game_player_row['ply_w_unit']
+            res_arr_dict['PlyctyID'] = game_player_row['ply_city_id']
+            res_arr_dict['PlyCty'] = game_player_row['city_name']
+            res_arr_dict['PlyCountryID'] = game_player_row['ply_country_id']
+            res_arr_dict['PlyCountry'] = game_player_row['country_name']
+            res_arr_dict['PImg'] = 'ply/' + game_player_row['ply_img']
+            res_arr_dict['LastGm'] = last_gm
+            res_arr_dict['Privecy'] = {'mail': "True" if game_player_row['ply_email_sett'] == "y" else "False",
+                                       'birthdate': "True" if game_player_row['ply_brithdate_sett'] == "y" else "False",
+                                       'gender': "True" if game_player_row['ply_gender_sett'] == "y" else "False",
+                                       'city': "True" if game_player_row['ply_city_sett'] == "y" else "False"
+                                       }
+            res_arr_dict['PlyType'] = "member"
+            res_arr_dict['Absent'] = Absent
+            res_arr_dict['PlyImg'] = PlyImages['PlyImg']
+            res_arr_dict['PlyImgThumb'] = PlyImages['PlyImgThumb']
+            res_arr_dict['IsCheckedIn'] = game_player_row['IsCheckedIn'] if 'IsCheckedIn' in game_player_row else 0
+            res_arr_dict.update(plyData_dict)
+            result.append(res_arr_dict)
+
+        return result
 
     except Exception as e:
         return "something happened:" + e.__str__()
-
-

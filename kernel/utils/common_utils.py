@@ -61,6 +61,7 @@ def game_curl(service_name, params):
     except Exception:
         return 'Error In callPayment.'
 
+
 def logAllActions(log_data):
     try:
         if not log_data:

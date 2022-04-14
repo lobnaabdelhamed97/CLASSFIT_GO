@@ -7,7 +7,8 @@ class MyTestCase(unittest.TestCase):
 
     def test_create_charge(self):
         response = create_charge(ply_id=6311, class_id=284080, fees=100.00, currency_id=1, ProjectKey="1234",
-                                 ProjectSecret="1234", dev_id='windows_Chrome_172.31.41.60', tkn='8740b5de60191ea54cda278105643aef6ab29b6a',
+                                 ProjectSecret="1234", dev_id='windows_Chrome_172.31.41.60',
+                                 tkn='8740b5de60191ea54cda278105643aef6ab29b6a',
                                  pay_type='stripe')
         print("\n", response)
         self.assertTrue(response, "this player is not an attendee")

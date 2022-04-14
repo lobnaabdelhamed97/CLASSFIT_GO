@@ -349,6 +349,7 @@ def put_needed_keys(data=[]):
 
     return data
 
+
 def checking_notification_for_player(data):
     # project_id , game_id , player_id  , typeo , message , data ,  ProjectKey, ProjectSecret, tkn, dev_id, title =""):
     """
@@ -358,49 +359,49 @@ def checking_notification_for_player(data):
                   - check notifications is stopped or not for this game with this player
     """
     try:
-        if not data['project_id']  or data['project_id'] == "" or type(data['project_id']) != int :
-                raise Exception("invalid project_id")
-        if not data['game_id'] or data['game_id'] == "" or type(data['game_id']) != int :
-                raise Exception("invalid game_id")
-        if not data['player_id'] or data['player_id'] == "" or type(data['player_id']) != int :
-                raise Exception("invalid player_id") 
-        if not data['typeo']  or data['typeo'] == "" or type(data['typeo']) != str :
-                raise Exception("invalid type") 
-        if not data['message'] or data['message'] == "" or type(data['message']) != str :
-                raise Exception("invalid message") 
-        if not data or data == ""  :
-                raise Exception("invalid data") 
-        if not data['ProjectKey'] or data['ProjectKey']  == "" or type(data['ProjectKey']) != str :
-                raise Exception("invalid project key") 
-        if not data['ProjectSecret'] or data['ProjectSecret'] == "" or type(data['ProjectSecret']) != str :
-                raise Exception("invalid project secret") 
-        if not data['tkn'] or data['tkn'] == "" or type(data['tkn']) != str :
-                raise Exception("invalid token") 
-        if not data['dev_id'] or data['dev_id'] == "" or type(data['dev_id']) != str :
-                raise Exception("invalid device_id") 
-    
+        if not data['project_id'] or data['project_id'] == "" or type(data['project_id']) != int:
+            raise Exception("invalid project_id")
+        if not data['game_id'] or data['game_id'] == "" or type(data['game_id']) != int:
+            raise Exception("invalid game_id")
+        if not data['player_id'] or data['player_id'] == "" or type(data['player_id']) != int:
+            raise Exception("invalid player_id")
+        if not data['typeo'] or data['typeo'] == "" or type(data['typeo']) != str:
+            raise Exception("invalid type")
+        if not data['message'] or data['message'] == "" or type(data['message']) != str:
+            raise Exception("invalid message")
+        if not data or data == "":
+            raise Exception("invalid data")
+        if not data['ProjectKey'] or data['ProjectKey'] == "" or type(data['ProjectKey']) != str:
+            raise Exception("invalid project key")
+        if not data['ProjectSecret'] or data['ProjectSecret'] == "" or type(data['ProjectSecret']) != str:
+            raise Exception("invalid project secret")
+        if not data['tkn'] or data['tkn'] == "" or type(data['tkn']) != str:
+            raise Exception("invalid token")
+        if not data['dev_id'] or data['dev_id'] == "" or type(data['dev_id']) != str:
+            raise Exception("invalid device_id")
+
         title = "game"
         result_array = []
         recurr_id = data['Gm']['RecurrID']
 
         if data['player_id']:
-        # and int(player_id) > 0 and type and str(type) == "" and message and str(message) == "" and title and str(title) == ""   :
+            # and int(player_id) > 0 and type and str(type) == "" and message and str(message) == "" and title and str(title) == ""   :
             if recurr_id > 0:
                 recurr_notification = execution.execute(
                     f"SELECT recurr_notifications_stop_days FROM recurr_notifications WHERE recurr_notifications_ply_id = {data['player_id']}  AND recurr_notifications_recurred_gm_id = {recurr_id}"
                 )
-            else :
+            else:
                 recurr_notification = execution.execute(
                     f"SELECT recurr_notifications_stop_days FROM recurr_notifications WHERE recurr_notifications_ply_id = {data['player_id']}  AND recurr_notifications_recurred_gm_id = {data['game_id']}"
                 )
-                
-            if recurr_notification :
+
+            if recurr_notification:
 
                 days_array = recurr_notification['recurr_notifications_stop_days'].split(',')
                 game_date = datetime.strptime(data['Gm'][0]["GmDate"], '%Y-%m-%d')
                 game_day = game_date.day
-                check_member_game =  execution.execute(
-                            f" SELECT * FROM gm_players WHERE gm_ply_gm_id = {data['game_id']}  \
+                check_member_game = execution.execute(
+                    f" SELECT * FROM gm_players WHERE gm_ply_gm_id = {data['game_id']}  \
                             AND gm_ply_status = 'y' \
                             AND (gm_ply_leave IS NULL OR gm_ply_leave = '')\
                             AND gm_ply_ply_id = {data['player_id']} ")
@@ -413,50 +414,51 @@ def checking_notification_for_player(data):
                         AND gm_wait_list_withdrew = 0 \
                         AND gm_wait_list_removed_by_admin = 0")
 
-                if game_day in days_array and check_member_game == False and check_if_waitlist == False :
+                if game_day in days_array and check_member_game == False and check_if_waitlist == False:
                     return result_array
         # check if the notifications is stopped or not for this player
-        if data['player_id'] and data['player_id'] > 0 :
+        if data['player_id'] and data['player_id'] > 0:
             notify_data = execution.execute(
                 f"SELECT notifications_state FROM notifications WHERE notifications_ply_id = {data['player_id']}"
             )
-            if notify_data :
-                for notify_data_row in notify_data :
-                    if notify_data_row['notifications_state'] and notify_data_row['notifications_state'] == 0 :
+            if notify_data:
+                for notify_data_row in notify_data:
+                    if notify_data_row['notifications_state'] and notify_data_row['notifications_state'] == 0:
                         return result_array
         # check if the notifications is stopped or not for this game with this player
-        if data['Gm']['GmID'] :
+        if data['Gm']['GmID']:
             notify_data = execution.execute(
                 f"SELECT notifications_game_stop FROM notifications WHERE notifications_ply_id= {data['player_id']}"
             )
             notify_data_array = notify_data[0]['notifications_game_stop']
             # .split(',')
-          
-            if notify_data_array :
-                if data['Gm']["GmID"] in notify_data_array :
-                    return result_array 
-        if data['Gm'] :
+
+            if notify_data_array:
+                if data['Gm']["GmID"] in notify_data_array:
+                    return result_array
+        if data['Gm']:
             # prevent invitation notifications if admin not connected 
             is_connected = game_utils.get_ply_verified_methods(data['Gm']['OrgID'])
-            if ((data['typeo'] == "InvFriToGmFrmWait" or data['typeo'] == "InvFriToGm" ) and (data['Gm']['PayType']).lower() == 'gc' and is_connected['GoCardless']!= 'y') :
-                return result_array 
-                
-            # filter data to minimize its size
+            if ((data['typeo'] == "InvFriToGmFrmWait" or data['typeo'] == "InvFriToGm") and (
+            data['Gm']['PayType']).lower() == 'gc' and is_connected['GoCardless'] != 'y'):
+                return result_array
+
+                # filter data to minimize its size
             data['Gm']['Req'] = ''
             data['Gm']['Notes'] = ''
             data['Gm']['Rules'] = ''
             data['Gm']['Kits'] = ''
 
             # check type of device to send notification according to it  
-            android_reg_arr = player_utils.android_players_regs(data['project_id'] , data['player_id'] )
+            android_reg_arr = player_utils.android_players_regs(data['project_id'], data['player_id'])
             web_reg_arr = player_utils.web_players_regs(data['project_id'], data['player_id'])
-            ios_reg_arr = player_utils.ios_players_regs(data['project_id'] , data['player_id'])
-           
+            ios_reg_arr = player_utils.ios_players_regs(data['project_id'], data['player_id'])
+
             # params = {'ProjectKey': ProjectKey, 'ProjectSecret': ProjectSecret, 'DevID': dev_id,
             #           'PlyID': data['Gm'][0]['OrgID'], 'Tkn': tkn}
             # print(params)
 
-            if web_reg_arr :
+            if web_reg_arr:
                 if data['Gm']:
                     ply_data = execution.execute(
                         f"SELECT ply_fname,ply_lname from players where ply_id = {data['player_id']}")
@@ -466,33 +468,34 @@ def checking_notification_for_player(data):
                 # if data['Fr']:
                 #     data['AdmData'] = data['Fr']
                 #     data['AdmData'] = data['AdmData'][0]
-                notify_data_array = adabt_notify_array(data['project_id'],data['typeo'],data['message'],data)
+                notify_data_array = adabt_notify_array(data['project_id'], data['typeo'], data['message'], data)
                 # result_notification = send_web_notification(web_reg_arr ,notify_data_array)
-               
+
                 notify_data_array['icon'] = handle_icon_image(data['project_id'])
                 # result_notification = 
-                send_web_notification(web_reg_arr ,notify_data_array)
-                result_array = {'Result' :'True'}
+                send_web_notification(web_reg_arr, notify_data_array)
+                result_array = {'Result': 'True'}
                 # {"output": "true"}
                 # {'Result' :'true'}
             if android_reg_arr:
                 notify_data_array = []
                 notify_data_array['Type'] = data['typeo']
-                notify_data_array['Mess'] = data['message'] 
+                notify_data_array['Mess'] = data['message']
 
                 data['Gm'][0]['Recurr'] = ''
                 data['Gm'][0]['Wait'] = ''
                 data['AdmData'] = ''
 
-                notify_data_array['Data'] = data 
+                notify_data_array['Data'] = data
 
                 # filter data to minimize its size 
-                notify_data_array['Data']=put_needed_keys(notify_data_array['Data'])
-                params = {'ProjectKey': data['ProjectKey'], 'ProjectSecret': data['ProjectSecret'], 'DevID': data['dev_id'],
-                      'PlyID': data['Gm'][0]['OrgID'], 'Tkn': data['tkn']}
+                notify_data_array['Data'] = put_needed_keys(notify_data_array['Data'])
+                params = {'ProjectKey': data['ProjectKey'], 'ProjectSecret': data['ProjectSecret'],
+                          'DevID': data['dev_id'],
+                          'PlyID': data['Gm'][0]['OrgID'], 'Tkn': data['tkn']}
                 # result_notification = 
-                send_notification(android_reg_arr ,data['message'] ,params )
-                result_array = {'Result' :'True'}
+                send_notification(android_reg_arr, data['message'], params)
+                result_array = {'Result': 'True'}
                 # {"output": "true"}
                 # {'Result' :'true'}
                 # 'Result' => 'True'
@@ -505,31 +508,31 @@ def checking_notification_for_player(data):
                 notify_data_array['Title'] = title
 
                 if data['Gm'][0]['GmID'] and data['Gm'][0]['Fees'] and data['Gm'][0]['PayType']:
-                    game_id = data['Gm'][0]['GmID'] 
-                    fees = data['Gm'][0]['Fees'] 
+                    game_id = data['Gm'][0]['GmID']
+                    fees = data['Gm'][0]['Fees']
                     pay_type = data['Gm'][0]['PayType']
-                
-                if data['Members'] :
+
+                if data['Members']:
                     members = data['Members']
 
-                if data['frChat'] :
+                if data['frChat']:
                     fr_chat = data['frChat']
 
-                if data['Fr'] :
+                if data['Fr']:
                     frs = data['Fr']
 
                 notify_data_array['Data'] = {
-                    'GmID':game_id ,
-                    'Fees' : fees, 
-                    'PayType' : pay_type, 
-                    'Frs' : frs, 
-                    'Members' : members, 
-                    'frChat' : fr_chat
+                    'GmID': game_id,
+                    'Fees': fees,
+                    'PayType': pay_type,
+                    'Frs': frs,
+                    'Members': members,
+                    'frChat': fr_chat
                 }
-                
+
                 # result_notification = 
-                send_ios_notification(ios_reg_arr,data['message'],params)
-            
+                send_ios_notification(ios_reg_arr, data['message'], params)
+
             # return result_array
             return result_array
 

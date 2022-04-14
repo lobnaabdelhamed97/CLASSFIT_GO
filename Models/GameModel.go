@@ -39,10 +39,25 @@ type Mem_info struct {
 	PlyType       string     `json:"PlyType"`
 }
 type Input struct {
-	PlyID string `json:"PlyID"`
 	Gm_id string `json:"Gm_id"`
 }
 
+type Final struct {
+     Member      []Mem_info         `json:"member"`
+     Waitlist    []Wait_list_info   `json:"waitlist"`
+
+}
+
+type Wait_list_info struct {
+	Ply_id         string     `json:"PlyID"`
+	Ply_fname      string     `json:"PlyFname"`
+	Ply_lname      string     `json:"PlyLname"`
+	Country_name   string     `json:"PlyCountry"`
+	City_name      string     `json:"PlyCty"`
+    Ply_img        string     `json:"PlyImg"`
+    Privecy        string     `json:"Privecy"`
+    PlyType        string     `json:"PlyType"`
+}
 
 type User_infoandflags struct {
 	Custom_notification_reminder_status int `json:"RemindStat"`
@@ -52,6 +67,21 @@ type User_infoandflags struct {
 	IssetOrgTerms string `json:"IssetOrgTerms"`
 	IsOrg string `json:"IsOrg"`
 	IsMem string `json:"IsMem"`
+	Offline_payments_status string `json:"offline_payments_status"`
+	Offline_payments_currency_amount string `json:"offline_payments_currency_amount"`
+}
+
+type StripeData struct {
+	CardName string `json:"CardName"`
+	CardLast4 string `json:"CardLast4"`
+}
+
+type Organizer_info struct {
+	PlyImg string `json:"PlyImg"`
+	Bio string `json:"Bio"`
+	Business string `json:"Business"`
+	OrgName string `json:"OrgName"` 
+	StripeData StripeData `json:"StripeData"` 
 }
 
 type ViewGame struct {
@@ -63,3 +93,18 @@ type ViewGame struct {
 	DevID         string `json:"DevID"`
 	Source        string `json:"source"`
 }
+type CountryCurrData struct{
+	Currency_code string `json:"currency_code"`
+	Currrency_symbol string  `json:"currrency_symbol"`
+	Currrency_symbol_formatted string `json:"currrency_symbol_formatted"`
+	Country_monthly_commission_cap int `json:"country_monthly_commission_cap"`
+	Country_monthly_offline_payment_fees int `json:"country_monthly_offline_payment_fees"`
+}
+
+type OfflinePayment struct {
+	Result string `json:"Result"`
+	Status string `json:"status"`
+	Next_billing_date string `json:"next_billing_date"`
+	Admin_country_currency_data CountryCurrData  `json:"admin_country_currency_data"`
+}
+

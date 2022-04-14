@@ -5,11 +5,6 @@ from controllers.game_controller import *
 
 
 class MyTestCase(unittest.TestCase):
-    # def test_get_age_title(self):
-    #     output = "something happened:"
-    #     response = get_age_title(AgeID="3")
-    #     print("response", "\n", response)
-    #     assert json.dumps(output) not in json.dumps(response)
 
     def test_get_policy_title(self):
         output = "something happened:"

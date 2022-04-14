@@ -1,5 +1,6 @@
 import database.response as response
 
+
 def ViewGmsCalValidation(data):
     try:
         if data and type(data) is dict:
@@ -43,7 +44,7 @@ def ViewGmsCalValidation(data):
                         Number = data['Number']
                 except:
                     Number = 1000000
-                if 'limit' in data and int(data['limit']) < 0 and int(data['limit']) >Number:
+                if 'limit' in data and int(data['limit']) < 0 and int(data['limit']) > Number:
                     status = "Invalid limit"
                 else:
                     limit_start = data['limit']
@@ -62,15 +63,15 @@ def ViewGmsCalValidation(data):
                     a = 0
 
                 valid = {
-                            "status": status, "m": m, "limit_start": limit_start,
-                            "Number": Number, "date": date, "gm": gm, "a": a
-                        }
+                    "status": status, "m": m, "limit_start": limit_start,
+                    "Number": Number, "date": date, "gm": gm, "a": a
+                }
                 return valid
 
             except:
                 valid = {
-                            "status": "Invalid Input 1"
-                        }
+                    "status": "Invalid Input 1"
+                }
                 return valid
     except Exception as e:
         valid = {

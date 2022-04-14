@@ -155,7 +155,8 @@ def add_guest(data):
                                                     data['GuestCheckinStatus'] == 'true') else 0
                                             if ply_data and 'ply_id' in ply_data[0] and ply_id > 0 and 'ply_fname' in \
                                                     ply_data[0] and 'ply_lname' in ply_data[0]:
-                                                if (guest_mail != "" and ply_data[0]['ply_email'].lower() != guest_mail):
+                                                if (guest_mail != "" and ply_data[0][
+                                                    'ply_email'].lower() != guest_mail):
                                                     raise Exception('Invalid player email')
                                                 plys = execution.execute(
                                                     f"SELECT game.gm_max_players as maxPlys,count(guests.guest_ply_id) as total from game Left Join guests on game.gm_id=guests.guest_gm_id where gm_id={data['GmID']}")
@@ -196,7 +197,9 @@ def add_guest(data):
                                             if (if_connected == 'online'):
                                                 get_bundle_details = game_utils.bundle_details(class_id=data['GmID'],
                                                                                                org_id=PlyID,
-                                                                                               class_datetime=game_validations[0]['gm_utc_datetime'],
+                                                                                               class_datetime=
+                                                                                               game_validations[0][
+                                                                                                   'gm_utc_datetime'],
                                                                                                ply_id=ply_id,
                                                                                                contact_id=contact_id,
                                                                                                dev_id=data['dev_id'],
@@ -450,7 +453,8 @@ def player_login(data):
 
         account_check = execution.execute(
             f"SELECT ply_status FROM players WHERE ply_email = '{data['Email']}' AND ply_pid= {pid}")
-        if account_check and account_check[0]['ply_status'] != '' and account_check[0]['ply_status'].lower() == 'deactive':
+        if account_check and account_check[0]['ply_status'] != '' and account_check[0][
+            'ply_status'].lower() == 'deactive':
             raise Exception(response.error(
                 code='130',
                 message='Please check your email for your registration confirmation and click the link within it. Once you have done this your account will activate.'))
@@ -530,39 +534,47 @@ def guest_After_Reg_Updates(Ply_ID=0, Ply_Email='', Ply_FName='', Ply_LName=''):
         if str(guest_data).__contains__('Something went wrong'):
             raise Exception(guest_data)
         if guest_data and Ply_ID > 0:
-            output = execution.execute(f"UPDATE guests SET guest_ply_id = '{Ply_ID}',guest_fname='{Ply_FName}' , guest_lname='{Ply_LName}' WHERE guest_mail='{Ply_Email}'")
+            output = execution.execute(
+                f"UPDATE guests SET guest_ply_id = '{Ply_ID}',guest_fname='{Ply_FName}' , guest_lname='{Ply_LName}' WHERE guest_mail='{Ply_Email}'")
             if output:
                 raise Exception(output)
             for data in guest_data:
-                output = execution.execute(f"INSERT INTO gm_players (gm_ply_gm_id , gm_ply_ply_id , gm_ply_status , gm_ply_is_checkedIn ) VALUES ('{data['guest_gm_id']}','{Ply_ID}','y', '{data['guest_checkedIn']}')")
+                output = execution.execute(
+                    f"INSERT INTO gm_players (gm_ply_gm_id , gm_ply_ply_id , gm_ply_status , gm_ply_is_checkedIn ) VALUES ('{data['guest_gm_id']}','{Ply_ID}','y', '{data['guest_checkedIn']}')")
                 if output:
                     raise Exception(output)
-        sub_data = execution.execute(f"SELECT * FROM bundles.bundles_subscriptions WHERE ply_email='{Ply_Email}'", db_name='bundles')
+        sub_data = execution.execute(f"SELECT * FROM bundles.bundles_subscriptions WHERE ply_email='{Ply_Email}'",
+                                     db_name='bundles')
         if str(sub_data).__contains__('Something went wrong'):
             raise Exception(sub_data)
         if sub_data and Ply_ID > 0:
-            output = execution.execute(f"UPDATE bundles.bundles_subscriptions SET ply_id = '{Ply_ID}' WHERE ply_email='{Ply_Email}'")
+            output = execution.execute(
+                f"UPDATE bundles.bundles_subscriptions SET ply_id = '{Ply_ID}' WHERE ply_email='{Ply_Email}'")
             if output:
                 raise Exception(output)
         sub_gm = execution.execute(f"SELECT * FROM games_subscriptions WHERE member_email='{Ply_Email}'")
         if str(sub_gm).__contains__('Something went wrong'):
             raise Exception(sub_gm)
         if sub_gm and Ply_ID > 0:
-            output = execution.execute(f"UPDATE games_subscriptions SET member_id = '{Ply_ID}' WHERE member_email='{Ply_Email}'")
+            output = execution.execute(
+                f"UPDATE games_subscriptions SET member_id = '{Ply_ID}' WHERE member_email='{Ply_Email}'")
             if output:
                 raise Exception(output)
         inv_ply = execution.execute(f"SELECT * FROM invitations WHERE inv_ply_to_email ='{Ply_Email}'")
         if str(inv_ply).__contains__('Something went wrong'):
             raise Exception(inv_ply)
         if inv_ply and Ply_ID > 0:
-            output = execution.execute(f"UPDATE invitations SET inv_ply_to_id = '{Ply_ID}' WHERE inv_ply_to_email='{Ply_Email}'")
+            output = execution.execute(
+                f"UPDATE invitations SET inv_ply_to_id = '{Ply_ID}' WHERE inv_ply_to_email='{Ply_Email}'")
             if output:
                 raise Exception(output)
-        contact_ply = execution.execute(f"SELECT contact_id,contact_ply_id FROM contacts WHERE contact_email ='{Ply_Email}'")
+        contact_ply = execution.execute(
+            f"SELECT contact_id,contact_ply_id FROM contacts WHERE contact_email ='{Ply_Email}'")
         if str(contact_ply).__contains__('Something went wrong'):
             raise Exception(contact_ply)
         if contact_ply and Ply_ID > 0:
-            output = execution.execute(f"UPDATE org_notes SET note_ply_id ='{contact_ply[0]['contact_ply_id']}' WHERE note_contact_id='{contact_ply[0]['contact_id']}'")
+            output = execution.execute(
+                f"UPDATE org_notes SET note_ply_id ='{contact_ply[0]['contact_ply_id']}' WHERE note_contact_id='{contact_ply[0]['contact_id']}'")
             if output:
                 raise Exception(output)
     except Exception as e:
@@ -580,6 +592,7 @@ def view_contact(data):
         return response.success(result_data=result)
     else:
         raise Exception("Invalid Data")
+
 
 def checkPlayerAndContactWithOrganizer(data):
     try:
@@ -602,7 +615,6 @@ def checkPlayerAndContactWithOrganizer(data):
             elif int(data['playerId']) < 0:
                 raise Exception("Wrong contact ID given")
 
-
         # **************Function Called player.playerBelongsToOrganizer($organizerId = 0, $playerId = 0)*****************
 
         query = execution.execute(f"SELECT gm_players.gm_ply_ply_id AS ply_id , game.gm_id\
@@ -624,7 +636,7 @@ def checkPlayerAndContactWithOrganizer(data):
         if len(query) > 0:
             return response.success(result_data={"output": "true"})
 
-        #****************function called player.contactBelongsToOrganizer($organizerId = 0, $contactId = 0 , $playerId = 0)****************
+        # ****************function called player.contactBelongsToOrganizer($organizerId = 0, $contactId = 0 , $playerId = 0)****************
 
         elif contactId > 0:
             q = " AND contact_id =" + str(contactId)
@@ -642,4 +654,102 @@ def checkPlayerAndContactWithOrganizer(data):
             return response.success(result_data={"output": "false"})
 
     except Exception as e:
-         return response.error(e.__str__())
+        return response.error(e.__str__())
+
+
+def get_player_offline_payments_data(data):
+    try:
+        playerId = 0
+        projectKey = 0
+        projectSecret = 0
+        # ************************ Validations ***********************
+
+        if 'PlyID' in data:
+            if int(data['PlyID']) > 0:
+                playerId = data['PlyID']
+            elif int(data['PlyID']) < 0:
+                raise Exception("Wrong player ID given")
+        else:
+            raise Exception("player ID not given")
+
+        if 'ProjectSecret' in data:
+            if int(data['ProjectSecret']) > 0:
+                projectSecret = data['ProjectSecret']
+        else:
+            raise Exception("projectSecret not given")
+
+        if 'ProjectKey' in data:
+            if int(data['ProjectKey']) > 0:
+                projectKey = data['ProjectKey']
+        else:
+            raise Exception("projectKey not given")
+
+        # ************************************************************
+
+        params = {'ProjectKey': projectKey, 'ProjectSecret': projectSecret,
+                  'PlyID': int(playerId)}
+        status = common_utils.game_curl('offline/admin/data', params)
+
+        return response.success(result_data=status)
+
+    except Exception as e:
+        return response.error(e.__str__())
+
+
+def get_registered_contacts_data(data):
+    try:
+        if 'pid' in data and int(data['pid']) > 0:
+            pid = data['pid']
+        else:
+            raise Exception("Wrong pid given")
+        if 'contacts_emails' in data:
+            if len(data['contacts_emails']) > 0:
+                contacts_emails = data['contacts_emails']
+            elif len(data['contacts_emails']) < 0:
+                raise Exception("Wrong contacts_emails given")
+        emails = []
+        for x in contacts_emails:
+            strippedStr = x.strip()
+            filteredUser = re.sub(r'[^a-zA-Z0-9@!#$%&*+-/?^_`{|}~]', '', strippedStr)
+            print(filteredUser)
+            if 0 < len(filteredUser) <= 50:
+                emails.append('%s' % filteredUser)
+
+            # username, url = strippedStr.split('@')
+            # website, extension = url.split('.')
+
+            # if username.replace('-', '').replace('_', '').isalnum() is False:
+            #     baduser = ''
+            #     filteredUser = username.strip(baduser)
+            # else:
+
+            # badurl = ''
+            # filteredUrl = url.strip(badurl)
+        email_imploded = ""
+        j = 0
+        for i in emails:
+            if j < len(emails) - 1:
+                email_imploded += "'" + i + "'" + ","
+                j += 1
+            else:
+                email_imploded += "'" + i + "'"
+
+        query = execution.execute(f"SELECT DISTINCT ply_id, ply_fname, ply_lname, ply_email\
+                FROM players\
+                WHERE ply_email IN ({email_imploded})\
+                    AND ply_pid = {pid}")
+        if str(query).__contains__("Something went wrong"):
+            raise Exception(str(query))
+        regEmails = []
+        for row in query:
+            id = row['ply_id']
+            email = row['ply_email']
+            fname = row['ply_fname']
+            lname = row['ply_lname']
+
+            regEmails.append({email: {"id": id, "email": email, "first_name": fname, "last_name": lname}})
+
+        return response.success(result_data=regEmails)
+
+    except Exception as e:
+        return response.error(e.__str__())

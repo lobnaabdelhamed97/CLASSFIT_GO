@@ -1,5 +1,7 @@
 import unittest
 from controllers.game_controller import social
+
+
 class TestSocial(unittest.TestCase):
 
     def test_social(self):
@@ -11,7 +13,8 @@ class TestSocial(unittest.TestCase):
                            'dev_id': '100f11dc8b54fb87', 'source': 'web'},
                 # ,'game_id': 992,'player_id': 7867 , 'ProjectKey': '1234', 'ProjectSecret': '1234','tkn': 'd4f438b4912fb05ac804d3eead97b4b8ed809a8b', 'dev_id': '100f11dc8b54fb87'},
                 'case_2': {'Email': 7, 'project_id': 1, 'ProjectKey': '1234', 'ProjectSecret': '1234',
-                           'tkn': 'd4f438b4912fb05ac804d3eead97b4b8ed809a8b', 'dev_id': '100f11dc8b54fb87', 'source': 'web'},
+                           'tkn': 'd4f438b4912fb05ac804d3eead97b4b8ed809a8b', 'dev_id': '100f11dc8b54fb87',
+                           'source': 'web'},
                 # ,'game_id': 992 ,'player_id': 7867 , 'ProjectKey': '1234', 'ProjectSecret': '1234','tkn': 'd4f438b4912fb05ac804d3eead97b4b8ed809a8b', 'dev_id': '100f11dc8b54fb87'},
                 'case_3': {'Email': '', 'project_id': 1, 'ProjectKey': '1234', 'ProjectSecret': '1234',
                            'tkn': 'd4f438b4912fb05ac804d3eead97b4b8ed809a8b', 'dev_id': '100f11dc8b54fb87'},
@@ -28,14 +31,14 @@ class TestSocial(unittest.TestCase):
                            'ProjectSecret': '1234', 'tkn': 'd4f438b4912fb05ac804d3eead97b4b8ed809a8b',
                            'dev_id': '100f11dc8b54fb87'},
                 'case_7': {'Email': 'am@mailinator.com', 'project_id': 1, 'ProjectKey': '',
-                            'ProjectSecret': '1234', 'tkn': 'd4f438b4912fb05ac804d3eead97b4b8ed809a8b',
-                            'dev_id': '100f11dc8b54fb87'},
+                           'ProjectSecret': '1234', 'tkn': 'd4f438b4912fb05ac804d3eead97b4b8ed809a8b',
+                           'dev_id': '100f11dc8b54fb87'},
                 'case_8': {'Email': 'am@mailinator.com', 'project_id': 1, 'ProjectKey': 9,
-                            'ProjectSecret': '1234', 'tkn': 'd4f438b4912fb05ac804d3eead97b4b8ed809a8b',
-                            'dev_id': '100f11dc8b54fb87'},
+                           'ProjectSecret': '1234', 'tkn': 'd4f438b4912fb05ac804d3eead97b4b8ed809a8b',
+                           'dev_id': '100f11dc8b54fb87'},
                 'case_9': {'Email': 'am@mailinator.com', 'project_id': 1, 'ProjectKey': '1234',
-                            'ProjectSecret': '', 'tkn': 'd4f438b4912fb05ac804d3eead97b4b8ed809a8b',
-                            'dev_id': '100f11dc8b54fb87'},
+                           'ProjectSecret': '', 'tkn': 'd4f438b4912fb05ac804d3eead97b4b8ed809a8b',
+                           'dev_id': '100f11dc8b54fb87'},
                 'case_10': {'Email': 'am@mailinator.com', 'project_id': 1, 'ProjectKey': '1234',
                             'ProjectSecret': 9, 'tkn': 'd4f438b4912fb05ac804d3eead97b4b8ed809a8b',
                             'dev_id': '100f11dc8b54fb87'},
@@ -48,14 +51,20 @@ class TestSocial(unittest.TestCase):
                 # ,'game_id': 992,'player_id': 7867
                 'case_14': {'Email': 'am@mailinator.com', 'player_id': 7867, 'ProjectKey': 9,
                             'ProjectSecret': '1234', 'tkn': 'd4f438b4912fb05ac804d3eead97b4b8ed809a8b', 'dev_id': 9},
-                'case_15': {"source":"Web",'project_id': 1,"ProjectSecret":"1234","ProjectKey":"1234","tkn": "d9a4013b9cba108f12ae950f8ae38a5c0aec3622","dev_id": "windows_Chrome_172.31.35.236","FName":"iii","LName":"iii","Email":"iii@mailinator.com"},
-                'case_16': {"source":"Web",'project_id': 1,"ProjectSecret":"1234","ProjectKey":"1234","tkn": "d9a4013b9cba108f12ae950f8ae38a5c0aec3622","dev_id": "windows_Chrome_172.31.35.236","FName":"lobna","LName":"abdelhamed","Email":"lobna@mailinator.com"},
+                'case_15': {"source": "Web", 'project_id': 1, "ProjectSecret": "1234", "ProjectKey": "1234",
+                            "tkn": "d9a4013b9cba108f12ae950f8ae38a5c0aec3622", "dev_id": "windows_Chrome_172.31.35.236",
+                            "FName": "iii", "LName": "iii", "Email": "iii@mailinator.com"},
+                'case_16': {"source": "Web", 'project_id': 1, "ProjectSecret": "1234", "ProjectKey": "1234",
+                            "tkn": "d9a4013b9cba108f12ae950f8ae38a5c0aec3622", "dev_id": "windows_Chrome_172.31.35.236",
+                            "FName": "lobna", "LName": "abdelhamed", "Email": "lobna@mailinator.com"},
                 'case_17': {"source": "Web", 'project_id': 1, "ProjectSecret": "1234", "ProjectKey": "1234",
                             "tkn": "d9a4013b9cba108f12ae950f8ae38a5c0aec3622", "dev_id": "windows_Chrome_172.31.35.236",
                             "FName": "lllll", "LName": "mmmm", "Email": "lobna@xyzxyz.com"},
                 'case_18': {"source": "Web", 'project_id': 1, "ProjectSecret": "1234", "ProjectKey": "1234",
                             "tkn": "d9a4013b9cba108f12ae950f8ae38a5c0aec3622", "dev_id": "windows_Chrome_172.31.35.236",
-                            "FName": "lobna", "LName": "abdelhamed", "Email": "lobna@yahhooohhh.com","PlyImg":"https://classfit-assets.s3.amazonaws.com/2021/profile/010920219DFHC5stBJVY1bwpzuPmaEZROAMgeoWdhn6xNXy4kfIl20USK7.jpeg","addimg":"y"}
+                            "FName": "lobna", "LName": "abdelhamed", "Email": "lobna@yahhooohhh.com",
+                            "PlyImg": "https://classfit-assets.s3.amazonaws.com/2021/profile/010920219DFHC5stBJVY1bwpzuPmaEZROAMgeoWdhn6xNXy4kfIl20USK7.jpeg",
+                            "addimg": "y"}
             }
             i = 1
             expected_output = {
@@ -88,4 +97,3 @@ class TestSocial(unittest.TestCase):
 
     if __name__ == '__main__':
         unittest.main()
-

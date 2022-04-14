@@ -3,7 +3,7 @@ import mysql.connector
 import database.config as config
 
 
-def execute(query, db_name=config.mysql_db_name):
+def execute(query, db_name=config.mysql_db_name, call_name="", args=tuple()):
     try:
         username = config.mysql_user
         password = config.mysql_password
@@ -20,7 +20,7 @@ def execute(query, db_name=config.mysql_db_name):
                                            database=db_name)
             if mydb.is_connected():
                 mycursor = mydb.cursor(dictionary=True, buffered=True)
-                mycursor.callproc("GamePlayers", ('3521', '1', '0', '50'))
+                mycursor.callproc(call_name, args)
                 for result in mycursor.stored_results():
                     return result.fetchall()
         else:

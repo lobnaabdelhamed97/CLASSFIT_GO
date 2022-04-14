@@ -869,7 +869,8 @@ def get_game_player_data(game_id, player_id, ProjectKey, ProjectSecret, tkn, dev
             game_data[0]['Symbol'] = game_data[0]['currency_symbol']
         elif game_data[0]['attendType'] == 'zoom':
             game_data[0]['Symbol'] = game_data[0]['CurrencyName']
-        if game_data[0]['gm_recurr_type'] and game_data[0]['gm_recurr_type'] != "" and game_data[0]['gm_recurr_type'] == 0:
+        if game_data[0]['gm_recurr_type'] and game_data[0]['gm_recurr_type'] != "" and game_data[0][
+            'gm_recurr_type'] == 0:
             start_month = game_data[0]['GmOrgDate'].month
             end_date = game_data[0]['gm_recurr_type'].split('_')[1]
             end_month = int(end_date.split('-')[1])
@@ -880,7 +881,8 @@ def get_game_player_data(game_id, player_id, ProjectKey, ProjectSecret, tkn, dev
         ply_time_zone = execution.execute(f"SELECT id,timezone FROM ply_timezone WHERE player_id={player_id}")
         if str(ply_time_zone).__contains__('Something went wrong'):
             raise Exception(ply_time_zone)
-        if ply_time_zone and ply_time_zone[0]['id'] and int(ply_time_zone[0]['id']) > 0 and ply_time_zone[0]['timezone']:
+        if ply_time_zone and ply_time_zone[0]['id'] and int(ply_time_zone[0]['id']) > 0 and ply_time_zone[0][
+            'timezone']:
             time_zone = urllib.parse.unquote(urllib.parse.unquote(ply_time_zone[0]['timezone']))
             if time_zone:
                 updated_utc_date = str(game_data[0]['UTCDateTime'])
@@ -2318,7 +2320,8 @@ def specify_game_edits_to_historyLog(EditField, OldData):
             EditField['Desc'] = urllib.parse.quote(EditField['Desc'])
             log_note += " Description : From " + OldData['Desc'] + " to " + EditField['Desc'] + "\n"
 
-        if 'Scope' in EditField and EditField['Scope'] != "" and 'Scope' in OldData and OldData['Scope'] != EditField['Scope']:
+        if 'Scope' in EditField and EditField['Scope'] != "" and 'Scope' in OldData and OldData['Scope'] != EditField[
+            'Scope']:
             showMem = "Privacy : From hidden to public" if (
                     EditField['Scope'] == "Open to public") else "Privacy : From public to hidden"
             log_note += showMem + "\n"
@@ -2332,7 +2335,8 @@ def specify_game_edits_to_historyLog(EditField, OldData):
             new_payment_type = "online" if str(new_payment_type).lower() == "stripe" else new_payment_type
             log_note += " Payment type : From " + old_payment_type + " to " + new_payment_type + "\n"
 
-        if 'PolicyID' in EditField and 'PolicyID' in OldData and OldData['PolicyID'] != EditField['PolicyID'] and new_payment_type != "free":
+        if 'PolicyID' in EditField and 'PolicyID' in OldData and OldData['PolicyID'] != EditField[
+            'PolicyID'] and new_payment_type != "free":
             new_policy = get_policy_title(EditField['PolicyID'])
             if str(new_policy).__contains__('something happened:'):
                 raise Exception(new_policy)
@@ -2561,42 +2565,45 @@ def add_to_subs(class_id, ply_id=0, subs_id=0, mail=""):
 
 def handleClassCurrencySymbol(game_symbol="", currency_name="", ply_country_id=0, org_country_id=0):
     try:
-        if(game_symbol == None or currency_name == None):
+        if (game_symbol == None or currency_name == None):
             return ''
-        if(int(ply_country_id) != int(org_country_id) and currency_name !='' and currency_name!= None):
+        if (int(ply_country_id) != int(org_country_id) and currency_name != '' and currency_name != None):
             return currency_name.upper()
         else:
             return game_symbol
     except Exception as e:
         return e
 
-def getGmLocalDateTime(time_zone,gm_attend_type,gm_utc_date_time):
+
+def getGmLocalDateTime(time_zone, gm_attend_type, gm_utc_date_time):
     try:
-        if(time_zone and time_zone!='' and gm_attend_type and gm_attend_type!='' and gm_utc_date_time and gm_utc_date_time != ''):
-            if(gm_attend_type =='zoom'):
+        if (
+                time_zone and time_zone != '' and gm_attend_type and gm_attend_type != '' and gm_utc_date_time and gm_utc_date_time != ''):
+            if (gm_attend_type == 'zoom'):
                 tz = gm_utc_date_time.replace(tzinfo=pytz.utc).astimezone(time_zone)
                 gmDate = tz.strftime("%Y-%m-%d")
                 gmTime = tz.strftime("%H:%M:%S")
-                return [gmDate,gmTime]
+                return [gmDate, gmTime]
         else:
             return []
 
     except Exception as e:
         return e
 
-def preparePlyStatusWithGame(PlyID=0,game_table_alias = ""):
+
+def preparePlyStatusWithGame(PlyID=0, game_table_alias=""):
     try:
-        if(PlyID == 0):
+        if (PlyID == 0):
             return ''
         else:
-            if(game_table_alias != ""):
+            if (game_table_alias != ""):
                 game_table_alias = game_table_alias + "."
             memberInGm = f"IFNULL((SELECT gm_ply_id FROM gm_players WHERE gm_ply_gm_id = {game_table_alias} gm_id AND gm_ply_ply_id = {PlyID} AND gm_ply_status = 'y' LIMIT 1), 0)"
             invitedToGm = f"IFNULL((SELECT inv_id FROM invitations WHERE inv_gm_id = {game_table_alias} gm_id AND inv_ply_to_id = {PlyID} AND inv_approve = 'y' LIMIT 1), 0)"
             waitlistInGm = f"IFNULL((SELECT gm_wait_list_id FROM gm_waitlist WHERE gm_wait_list_gm_id = {game_table_alias} gm_id AND gm_wait_list_ply_id = {PlyID} AND gm_wait_list_withdrew = 0 AND gm_wait_list_removed_by_admin = 0 LIMIT 1), 0)"
             requestBefore = f"IFNULL((SELECT inv_id FROM invitations WHERE inv_gm_id = {game_table_alias} gm_id AND inv_ply_frm_id = {PlyID} LIMIT 1), 0)"
 
-        return(f"(CASE WHEN ({memberInGm}) > 0 THEN 'Mem' WHEN({waitlistInGm}) > 0 THEN 'Wait'\
+        return (f"(CASE WHEN ({memberInGm}) > 0 THEN 'Mem' WHEN({waitlistInGm}) > 0 THEN 'Wait'\
         WHEN({invitedToGm}) > 0 THEN 'Inv' ELSE 'No' END) AS PlyStatus,\
         (CASE WHEN ({invitedToGm}) > 0 THEN 'True' ELSE 'False' END) AS InvGm,\
         (CASE WHEN ({requestBefore}) > 0 THEN 'True' ELSE 'False' END) AS Req,\
@@ -2611,3 +2618,26 @@ def remove_nulls(result):
         if result[k] is None:
             result[k] = ""
     return result
+
+
+def get_ply_images(img_name = '', player_s3_status = 0):
+    try:
+        if not img_name:
+            img_name = 'ply.png'
+
+        res_arr = {}
+        res_arr['PlyImg'] = s3_bucket_url + 'backup/images/upload/ply/' + img_name
+        res_arr['PlyImgThumb'] = s3_bucket_url + 'backup/images/upload/ply/' + img_name
+
+
+        if int(player_s3_status == 1):
+            thumb_image_path = img_name.str_replace("profile", "profile/thumb")
+
+            res_arr['PlyImg'] = s3_bucket_url +  img_name
+            res_arr['PlyImgThumb'] = s3_bucket_url +  thumb_image_path
+
+
+        return res_arr
+
+    except Exception as e:
+        return "something happened:" + e.__str__()

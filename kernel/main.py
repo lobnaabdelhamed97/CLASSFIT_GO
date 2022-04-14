@@ -5,6 +5,7 @@ import sys
 from controllers.admin_controller import *
 from controllers.game_controller import *
 from database.response import error
+
 if __name__ == "__main__":
     if not sys.argv[1] or not sys.argv[2]:
         # use response error here
@@ -20,8 +21,14 @@ if __name__ == "__main__":
     elif route == "view_game":
         print(view_game(payload))
 
+    elif route == "get_registered_contacts_data":
+        print(get_registered_contacts_data(payload))
+
     elif route == "checkPlayerAndContactWithOrganizer":
         print(checkPlayerAndContactWithOrganizer(payload))
+
+    elif route == "get_player_offline_payments_data":
+        print(get_player_offline_payments_data(payload))
 
     elif route == "withdraw_game":
         print(withdrew(payload))
@@ -31,6 +38,9 @@ if __name__ == "__main__":
 
     elif route == "cron_waitlist":
         print(cron_waitlist(payload))
+
+    elif route == "gm_plys":
+        print(gm_plys(payload))
 
     elif route == "up_inv_contacts":
         print(up_inv_contacts(payload))

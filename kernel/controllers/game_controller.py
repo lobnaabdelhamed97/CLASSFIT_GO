@@ -22,6 +22,7 @@ import utils.validation_utils as validation_utils
 
 s3_bucket_url = config.s3_bucket_url
 
+
 def join_class(data):
     # check game exists, game cancelled,game expired,game pause , age accept player date
     # data={'class_id': 240292, 'org_id': 1928,
@@ -31,7 +32,8 @@ def join_class(data):
     #                   'fees': 50.0, 'sub_id': 0,'currency_id':1,'join_type':"credit"}
     try:
         if 'ply_id' in data and type(data['ply_id']) == int and data['ply_id'] >= 0 and 'class_id' in data and type(
-                data['class_id']) == int and data['class_id'] >= 0 and 'org_id' in data and type(data['org_id']) == int and data['org_id'] >= 0:
+                data['class_id']) == int and data['class_id'] >= 0 and 'org_id' in data and type(
+            data['org_id']) == int and data['org_id'] >= 0:
             # gm_age = execution.execute(
             #     f"SELECT  gm_id AS GmID ,gm_age FROM game  WHERE  gm_utc_datetime >NOW() and (gm_status is NULL or gm_status ='' or gm_status = 'admin') and gm_id={data['class_id']};")
             # if str(gm_age).__contains__('Something went wrong'):
@@ -127,7 +129,8 @@ def withdrew(data):
             check_if_waitlist = execution.execute(
                 f"SELECT gm_wait_list_id,gm_wait_list_withdrew,gm_wait_list_removed_by_admin FROM gm_waitlist WHERE gm_wait_list_gm_id={data['class_id']} AND gm_wait_list_ply_id={data['ply_id']};")
             if check_if_waitlist and check_if_waitlist[0]['gm_wait_list_id'] != []:
-                if check_if_waitlist[0]['gm_wait_list_withdrew'] != 1 and check_if_waitlist[0]['gm_wait_list_removed_by_admin'] != 1:
+                if check_if_waitlist[0]['gm_wait_list_withdrew'] != 1 and check_if_waitlist[0][
+                    'gm_wait_list_removed_by_admin'] != 1:
                     execution.execute(
                         f"UPDATE gm_waitlist SET gm_wait_list_withdrew = 1 WHERE gm_wait_list_gm_id={data['class_id']} AND gm_wait_list_ply_id={data['ply_id']};")
                     invitation = execution.execute(
@@ -407,7 +410,6 @@ def edit_class(EditField):
                         'dev_id': EditField['DevID'], 'ProjectKey': EditField['ProjectKey'],
                         'ProjectSecret': EditField['ProjectSecret']}
                 oldData = view_game(data)
-                # print(oldData)
                 if str(oldData).__contains__("something happened:"):
                     raise Exception(oldData)
                 payMethodMessage = ''
@@ -417,9 +419,11 @@ def edit_class(EditField):
                     # write your query here to update field
                     SetID = 0
                     if 'modify' in EditField:
-                        if EditField['modify'] and type(EditField['modify']) == str and access_old_data['ISRecurr'] == 'True' and int(access_old_data['RecurrID']) == 0:
+                        if EditField['modify'] and type(EditField['modify']) == str and access_old_data[
+                            'ISRecurr'] == 'True' and int(access_old_data['RecurrID']) == 0:
                             SetID = EditField['GmID']
-                        elif EditField['modify'] and type(EditField['modify']) == str and access_old_data['ISRecurr'] == 'True' and int(access_old_data['RecurrID']) > 0:
+                        elif EditField['modify'] and type(EditField['modify']) == str and access_old_data[
+                            'ISRecurr'] == 'True' and int(access_old_data['RecurrID']) > 0:
                             SetID = access_old_data['RecurrID']
                         else:
                             SetID = EditField['GmID']
@@ -491,6 +495,28 @@ def edit_class(EditField):
                     if str(log).__contains__("something happened:"):
                         raise Exception(log)
 
+
+                    if 'PayType' in EditField and EditField['PayType'] and type(EditField['PayType']) == str and \
+                            EditField['PayType'] == "stripe":
+                        if 'modify' in EditField and EditField['modify']:
+                            if EditField['modify'] == 'all':
+                                where_condition = "WHERE (gm_id = " + str(SetID) + "OR gm_recurr_id =" + str(SetID) + ""
+
+                        else:
+                            where_condition = "WHERE gm_id = " + str(EditField['GmID']) + ""
+
+
+                        gm_res = execution.execute(f"""SELECT gm_id as class_id, gm_title AS class_title, gm_recurr_id as parent_id, gm_utc_datetime as UTCDateTime, gm_org_id as Org_id, gm_date AS class_date, gm_start_time AS class_time
+                                                    FROM game {where_condition}
+                                                    AND gm_payment_type != 'onsite'
+                                                    AND(gm_utc_datetime + INTERVAL gm_end_time MINUTE) > CURRENT_TIMESTAMP""")
+                        if str(gm_res).__contains__("something happened:"):
+                            raise Exception(gm_res)
+
+                        if gm_res:
+                            params = {'classes': json.dumps(gm_res)}
+                            BundleResponse = common_utils.bundle_curl('cron/recur_autoenroll', params)
+
                     return response.success(result_data=res_new_data, email_notifications=payMethodMessage)
 
             else:
@@ -508,7 +534,8 @@ def pending_player(pending_data):
     description : pending player in a specific game using the player email
     """
     try:
-        if not pending_data['player_email'] or pending_data['player_email'] is None or pending_data['player_email'] == '' or type(pending_data['player_email']) != str:
+        if not pending_data['player_email'] or pending_data['player_email'] is None or pending_data[
+            'player_email'] == '' or type(pending_data['player_email']) != str:
             return Exception("invalid email")
         if not pending_data['ProjectKey'] or pending_data['ProjectKey'] is None or type(
                 pending_data['ProjectKey']) != str:
@@ -537,8 +564,8 @@ def pending_player(pending_data):
                 LEFT JOIN players ON LOWER(pend_ply_to_email)=LOWER('{pending_data['player_email']}') \
                 WHERE LOWER(pend_ply_to_email) =LOWER('{pending_data['player_email']}') \
                 AND ply_pid = {pending_data['project_id']} AND pend_pid = {pending_data['project_id']} limit 5")
-        if pending_player_data_sql : 
-            for pend_player_data in pending_player_data_sql :
+        if pending_player_data_sql:
+            for pend_player_data in pending_player_data_sql:
 
                 # check that he is in the same project
 
@@ -598,10 +625,11 @@ def pending_player(pending_data):
                             # print('hhh')
                             notify_array = {}
                             notify_array['Type'] = 'InvFriToGm'
-                            notify_array['Mess'] = str(game_data['OrgName']) + " has invited you to join " + str(game_data['GmT']) + ' on ' + str(datetime.strptime(game_data["GmDate"], '%Y-%m-%d'))
+                            notify_array['Mess'] = str(game_data['OrgName']) + " has invited you to join " + str(
+                                game_data['GmT']) + ' on ' + str(datetime.strptime(game_data["GmDate"], '%Y-%m-%d'))
                             notify_array['Data'] = {"Gm": game_data}
-             
-                            if check_invitation_frnd is False and check_member_game is False and check_if_waitlist is False :
+
+                            if check_invitation_frnd is False and check_member_game is False and check_if_waitlist is False:
                                 # insert new invitation to this member for these classes
                                 execution.execute(
                                     f"INSERT INTO invitations (inv_gm_id, inv_ply_frm_id, inv_ply_to_id, inv_approve) "
@@ -625,7 +653,8 @@ def pending_player(pending_data):
                                 f"DELETE FROM pendinreg_players WHERE pend_ply_frm_id = {pend_player_data['pend_ply_frm_id']} \
                                 AND pend_ply_to_email = {pending_data['player_email']} AND pend_gm_id = {pend_player_data['pend_gm_id']}")
 
-                    check_frnd_req = game_utils.check_friennd_req(pend_player_data['pend_ply_frm_id'] ,pend_player_data['ply_id'] , accept = 'p' )
+                    check_frnd_req = game_utils.check_friennd_req(pend_player_data['pend_ply_frm_id'],
+                                                                  pend_player_data['ply_id'], accept='p')
                     # print("d5lt mn hna")
 
                     if check_frnd_req == 0:
@@ -640,7 +669,8 @@ def pending_player(pending_data):
                             where ply_id = {pend_player_data['pend_ply_frm_id']} AND ply_pid= {pending_data['project_id']} ")
                         if str(ply_data).__contains__('Something went wrong'):
                             raise Exception(ply_data)
-                        if not ply_data or 'ply_email_sett' not in ply_data[0] or 'ply_brithdate_sett' not in ply_data[0] or 'ply_city_sett' not in ply_data[0]:
+                        if not ply_data or 'ply_email_sett' not in ply_data[0] or 'ply_brithdate_sett' not in ply_data[
+                            0] or 'ply_city_sett' not in ply_data[0]:
                             raise Exception('invalid player data')
 
                         # # send mail to invite player as friend
@@ -730,11 +760,13 @@ def notifications(gm_id=0, ply_id=0, period=0, period_type='h', remindstate=1):
                         period = period * 24 * 30
                     gm_ids = [{'gm_id': gm_id}]
                     # child class
-                    if ((gm_data[0]['gm_recurr_id'] != 0 and gm_data[0]['gm_recurr_times'] == 0) and gm_data[0]['gm_is_stop_recurred'] == 'n'):
+                    if ((gm_data[0]['gm_recurr_id'] != 0 and gm_data[0]['gm_recurr_times'] == 0) and gm_data[0][
+                        'gm_is_stop_recurred'] == 'n'):
                         gm_ids = execution.execute(
                             f"SELECT gm_id FROM game WHERE (gm_recurr_id={gm_data[0]['gm_recurr_id']} and (gm_utc_datetime + INTERVAL gm_end_time MINUTE) > CURRENT_TIMESTAMP")
                     # parent class
-                    elif (gm_data[0]['gm_recurr_id'] == 0 and gm_data[0]['gm_recurr_times'] == 1 and gm_data[0]['gm_is_stop_recurred'] == 'n'):
+                    elif (gm_data[0]['gm_recurr_id'] == 0 and gm_data[0]['gm_recurr_times'] == 1 and gm_data[0][
+                        'gm_is_stop_recurred'] == 'n'):
                         gm_ids = execution.execute(
                             f"SELECT gm_id FROM game WHERE (gm_recurr_id={gm_id} and (gm_utc_datetime + INTERVAL gm_end_time MINUTE) > CURRENT_TIMESTAMP")
                     ids = []
@@ -992,7 +1024,8 @@ def social(player_arr):
         if not player_arr['source'] or player_arr['source'] is None or type(player_arr['source']) != str:
             raise Exception("invalid source")
 
-        if not ('Email' in player_arr) or not player_arr['Email'] or player_arr['Email'] is None or player_arr['Email'] == '' or type(player_arr['Email']) != str:
+        if not ('Email' in player_arr) or not player_arr['Email'] or player_arr['Email'] is None or player_arr[
+            'Email'] == '' or type(player_arr['Email']) != str:
             raise Exception("invalid Email")
         if not ('GcmReg' in player_arr):
             player_arr['GcmReg'] = ''
@@ -1004,7 +1037,8 @@ def social(player_arr):
             player_arr['CountryID'] = '0'
         if not ('FName' in player_arr) or not player_arr['FName'] or player_arr['FName'] is None or player_arr[
             'FName'] == '' or type(player_arr['FName']) != str \
-                or not ('LName' in player_arr) or not player_arr['LName'] or player_arr['LName'] is None or player_arr['LName'] == '' or type(player_arr['LName']) != str:
+                or not ('LName' in player_arr) or not player_arr['LName'] or player_arr['LName'] is None or player_arr[
+            'LName'] == '' or type(player_arr['LName']) != str:
             raise Exception("Error Empty First Name Or Last Name")
         check_email = player_utils.check_mail(player_arr['Email'], player_arr['project_id'])
         if type(check_email) == str:
@@ -1029,14 +1063,15 @@ def social(player_arr):
                                                       gcm_reg=player_arr['GcmReg'], source=source)
             else:
                 token = player_utils.add_player_token(player_id=PlayerRow[0]["ply_id"], dev_id=player_arr['dev_id'])
-            update_attributes = "ply_fname = " + "'" + str(urllib.parse.quote(player_arr['FName']))+"'" + ",ply_lname = " + "'"+str(
-                urllib.parse.quote(player_arr['LName']))+"'"
+            update_attributes = "ply_fname = " + "'" + str(
+                urllib.parse.quote(player_arr['FName'])) + "'" + ",ply_lname = " + "'" + str(
+                urllib.parse.quote(player_arr['LName'])) + "'"
             if 'Gdr' in player_arr:
-                update_attributes = update_attributes + ",ply_gender = "+"'" + str(player_arr['Gdr'])+"'"
+                update_attributes = update_attributes + ",ply_gender = " + "'" + str(player_arr['Gdr']) + "'"
             if 'CtyID' in player_arr:
-                update_attributes = update_attributes + ",ply_city_id = "+"'" + str(player_arr['CtyID'])+"'"
+                update_attributes = update_attributes + ",ply_city_id = " + "'" + str(player_arr['CtyID']) + "'"
             if 'CountryID' in player_arr:
-                update_attributes = update_attributes + ",ply_country_id = " + "'" + str(player_arr['CountryID'])+"'"
+                update_attributes = update_attributes + ",ply_country_id = " + "'" + str(player_arr['CountryID']) + "'"
             output = execution.execute(
                 f"UPDATE players SET {update_attributes} WHERE ply_id = '{PlayerRow[0]['ply_id']}'")
             if output:
@@ -1044,7 +1079,8 @@ def social(player_arr):
             player_utils.player_rem_Qcode(PlayerRow[0]['ply_id'])
             ply_array = player_utils.player_view(PlayerRow[0]['ply_id'], token, player_arr['dev_id'])
 
-            if 'TimeZone' in player_arr and player_arr['TimeZone'] and player_arr['TimeZone'] != '' and ply_array[0]['PlyTimeZone'] == '':
+            if 'TimeZone' in player_arr and player_arr['TimeZone'] and player_arr['TimeZone'] != '' and ply_array[0][
+                'PlyTimeZone'] == '':
                 player_utils.saveTimeZone(PlayerRow['ply_id'], player_arr['TimeZone'])
             if player_arr['source'] == 'IOS':
                 return json.dumps({'result': "True", "PArr": ply_array})
@@ -1058,13 +1094,15 @@ def social(player_arr):
                 return json.dumps({'result': ply_array})
         else:
             social_Img = ''
-            if 'PlyImg' in player_arr and player_arr['PlyImg'] is not None and 'addimg' in player_arr and player_arr['addimg']:
+            if 'PlyImg' in player_arr and player_arr['PlyImg'] is not None and 'addimg' in player_arr and player_arr[
+                'addimg']:
                 img_name = str(binascii.hexlify(os.urandom(16))) + '.png'
                 responses = urlopen(player_arr['PlyImg'])
                 image = base64.b64encode(responses.read())
                 params = {"imgName": img_name, "Secret": "", 'image': image,
                           'oldimg': '', 'Type': 'setplyimg'}
-                curl_result = common_utils.internal_curl("https://classfit-assets.s3.amazonaws.com/backup/index.php", params)
+                curl_result = common_utils.internal_curl("https://classfit-assets.s3.amazonaws.com/backup/index.php",
+                                                         params)
                 if curl_result['Result'] == 'true':
                     social_Img = curl_result['ImageName']
                     PlyImg = social_Img
@@ -1283,7 +1321,7 @@ def ViewGmsCal(data):
                                 GmDatee = GmData[row]['gm_date']
                                 GamesArray = str(GmData[row]['gm_s_type_name'])
                         else:
-                            resArr[row].update({"games":GmData[row]['gm_s_type_name']})
+                            resArr[row].update({"games": GmData[row]['gm_s_type_name']})
                         if len(GamesArray) > 0:
                             resArr[row].update({"date": GmDatee, "games": GamesArray})
             else:
@@ -1291,7 +1329,9 @@ def ViewGmsCal(data):
                 GmDatee = ''
                 if len(GmData) > 0:
                     for row in range(len(GmData)):
-                        game_info = game_utils.get_game_player_data(str(GmData[row]["gm_id"]), str(PlyId), data['ProjectKey'], data['ProjectSecret'],data['Tkn'], data['dev_id'],gmcals=1)
+                        game_info = game_utils.get_game_player_data(str(GmData[row]["gm_id"]), str(PlyId),
+                                                                    data['ProjectKey'], data['ProjectSecret'],
+                                                                    data['Tkn'], data['dev_id'], gmcals=1)
                         if type(game_info) == str:
                             raise Exception(response.error(message=game_info))
                         game_flags = game_utils.get_game_flags(int(GmData[row]["gm_id"]), int(PlyId))
@@ -1332,9 +1372,9 @@ def ViewGmsCal(data):
                                 plyTimeZone)
                             localDateTime = datetime.strptime(localDateTime, '%Y-%m-%d %I:%M %p')
                         if localDateTime != "":
-                                GmData[row]['gm_date'] = str(localDateTime)
-                                GmArr['GmDate'] = str(localDateTime).split(" ")[0]
-                                GmArr['SSTime'] = str(localDateTime).split(" ")[1]
+                            GmData[row]['gm_date'] = str(localDateTime)
+                            GmArr['GmDate'] = str(localDateTime).split(" ")[0]
+                            GmArr['SSTime'] = str(localDateTime).split(" ")[1]
                         if int(daygroup) == 1:
                             if GmDatee != GmData[row]['gm_date']:
                                 GmDatee = GmData[row]['gm_date']
@@ -1358,19 +1398,20 @@ def ViewGmsCal(data):
 def invitations_tab(data):
     try:
         if 'PlyID' in data or 'Type' in data or 'Limit' in data or 'Lat' in data or 'Long' in data:
-             where = f" And inv_ply_to_id ={data['PlyID']} " if(data['Type'] == 'Rec') else f" And inv_ply_frm_id ={data['PlyID']} "
-             limit = 1 if(int(data['Limit']) < 1) else data['Limit']
-             if limit == '':
-                 raise Exception(response.error(message='Limit needed',data=data))
-             number = 50 if 'Number' not in data else data['Number']
-             if number == '':
-                 raise Exception(response.error(message='Number should not be empty',data=data))
-             limit_start = (limit - 1) * number
-             limit_start = 0 if limit_start == 0.0 else limit_start
-             ResArr = []
-             adminSql = f"AND gm_org_id" if('adminId' in data and int(data['adminId']) > 0) else ""
-             status=game_utils.preparePlyStatusWithGame(data['PlyID'])
-             games_data =execution.execute(f"SELECT invitations.*,\
+            where = f" And inv_ply_to_id ={data['PlyID']} " if (
+                        data['Type'] == 'Rec') else f" And inv_ply_frm_id ={data['PlyID']} "
+            limit = 1 if (int(data['Limit']) < 1) else data['Limit']
+            if limit == '':
+                raise Exception(response.error(message='Limit needed', data=data))
+            number = 50 if 'Number' not in data else data['Number']
+            if number == '':
+                raise Exception(response.error(message='Number should not be empty', data=data))
+            limit_start = (limit - 1) * number
+            limit_start = 0 if limit_start == 0.0 else limit_start
+            ResArr = []
+            adminSql = f"AND gm_org_id" if ('adminId' in data and int(data['adminId']) > 0) else ""
+            status = game_utils.preparePlyStatusWithGame(data['PlyID'])
+            games_data = execution.execute(f"SELECT invitations.*,\
                     (((acos(sin(({data['Lat']} * pi()/180)) * sin((gm_loc_lat*pi()/180)) + cos(({data['Lat']} * pi()/180)) *\
                     cos((gm_loc_lat*pi()/180)) * cos((({data['Long']} - gm_loc_long)* pi()/180))))*180/pi())*60*1.609344 ) AS GmDist,\
                     gm_id AS GmID,\
@@ -1415,32 +1456,36 @@ def invitations_tab(data):
                     AND (gm_utc_datetime + INTERVAL gm_end_time MINUTE) >= CURRENT_TIMESTAMP\
                      {where} {adminSql} ORDER BY gm_date ASC LIMIT {limit_start}, 50 ;")
 
-             if games_data and len(games_data) != 0:
-                country_id= execution.execute(f"SELECT ply_country_id FROM players WHERE ply_id= {int(data['PlyID'])} AND (ply_status IS NULL OR ply_status = '') ")
+            if games_data and len(games_data) != 0:
+                country_id = execution.execute(
+                    f"SELECT ply_country_id FROM players WHERE ply_id= {int(data['PlyID'])} AND (ply_status IS NULL OR ply_status = '') ")
                 player_country_id = country_id[0]['ply_country_id'] if country_id and len(country_id) > 0 else 0
-                ply_time_zone = execution.execute(f"SELECT timezone FROM ply_timezone WHERE player_id={int(data['PlyID'])};")
+                ply_time_zone = execution.execute(
+                    f"SELECT timezone FROM ply_timezone WHERE player_id={int(data['PlyID'])};")
                 time_zone = ply_time_zone[0]['timezone'] if ply_time_zone and len(ply_time_zone) > 0 else ''
                 currPlyMethods = game_utils.get_ply_verified_methods(int(data['PlyID']))
                 lastDate = ''
-                lastDateGms=[]
-                games=[]
+                lastDateGms = []
+                games = []
                 for row in games_data:
-                    local_time = game_utils.getGmLocalDateTime(time_zone.encode("UTF-8"), row['attendType'], row['UTCDateTime'])
-                    if(len(local_time) > 0):
+                    local_time = game_utils.getGmLocalDateTime(time_zone.encode("UTF-8"), row['attendType'],
+                                                               row['UTCDateTime'])
+                    if (len(local_time) > 0):
                         row['GmDate'] = local_time[0]
                         row['SSTime'] = local_time[1]
-                    row['Symbol'] = game_utils.handleClassCurrencySymbol(row['Symbol'],row['currencyName'],player_country_id,row['CountryID'])
+                    row['Symbol'] = game_utils.handleClassCurrencySymbol(row['Symbol'], row['currencyName'],
+                                                                         player_country_id, row['CountryID'])
                     row['currPlyMethods'] = currPlyMethods
-                    if(int(row['gm_s3_status']) == 1):
+                    if (int(row['gm_s3_status']) == 1):
                         row['GmImg'] = s3_bucket_url + str(row['GmImg'])
-                        row['GmImgThumb'] = s3_bucket_url + str(row['GmImg'].replace("classes","classes/thumb"))
+                        row['GmImgThumb'] = s3_bucket_url + str(row['GmImg'].replace("classes", "classes/thumb"))
                     else:
                         row['GmImg'] = s3_bucket_url + "backup/images/upload/gm/" + str(row['GmImg'])
                         row['GmImgThumb'] = s3_bucket_url + "backup/images/upload/gm/thumb/" + row['GmImgThumb']
-                    if('DayGroup' in data and data['DayGroup'] == 1):
-                        if(lastDate != row['GmDate']):
+                    if ('DayGroup' in data and data['DayGroup'] == 1):
+                        if (lastDate != row['GmDate']):
                             lastDate = row['GmDate']
-                            lastDateGms.append({"date": lastDate,"games":row})
+                            lastDateGms.append({"date": lastDate, "games": row})
                         else:
                             leng = len(lastDateGms) - 1
                             games[leng]['games'] = games.append(row)
@@ -1449,12 +1494,12 @@ def invitations_tab(data):
                     else:
                         ResArr.append(row)
                 for i in ResArr:
-                    for key,value in i.items():
+                    for key, value in i.items():
                         if value == None or value == ' ':
                             i[key] = ''
                 return response.success(result_data=ResArr)
-             else:
-                 return response.success(result_data=ResArr)
+            else:
+                return response.success(result_data=ResArr)
         else:
             raise Exception(response.error(message='Input is missing'))
     except Exception as e:
@@ -1470,3 +1515,150 @@ def check_notification(data):
             return response.success(result_data=check)
     except Exception as e:
         return e
+
+
+###  gm_plys part ###
+def gm_plys(data):
+    try:
+        if 'gm_id' not in data and not data['gm_id'] and int(data['gm_id']) <= 0:
+            raise Exception("invalid gm_id")
+        # if 'limit_start' not in data and not data['limit_start'] and int(data['limit_start']) <= 0:
+        #     raise Exception("invalid limit_start")
+        # if 'limit_number' not in data and not data['limit_number'] and int(data['limit_number']) <= 0:
+        #     raise Exception("invalid limit_number")
+        # if 'project_id' not in data and not data['project_id'] and int(data['project_id']) <= 0:
+        #     raise Exception("invalid project_id")
+
+        gm_id = data['gm_id']
+        limit_start = data['limit_start'] if 'limit_start' in data else 0
+        limit_number = data['limit_number'] if 'limit_number' in data else 0
+        project_id = data['project_id'] if 'project_id' in data else 1
+
+        gm_ply_arr = []
+        result = []
+        res_arr_dict = {}
+        guest_mail_array = []
+        contact_ply_id_array = []
+        new_dict = {}
+        contactID = []
+
+        game_player_data = execution.execute(f"CALL", call_name="GamePlayers",
+                                             args=(gm_id, project_id, limit_start, limit_number))
+        if str(game_player_data).__contains__("Something went wrong"):
+            raise Exception(game_player_data)
+
+        all_guests = player_utils.get_all_guest(gm_id)
+        if str(all_guests).__contains__("Something went wrong"):
+            raise Exception(all_guests)
+
+        gm_ply_arr = player_utils.set_ply_data(game_player_data, gm_id, project_id)
+        if str(gm_ply_arr).__contains__("something happened:"):
+            raise Exception(gm_ply_arr)
+
+        gm_PlyD = execution.execute(f"""SELECT * FROM guests
+                     LEFT JOIN players ON players.ply_id = guests.guest_ply_id
+                     LEFT JOIN city ON city.city_id = players.ply_city_id
+                     LEFT JOIN country ON country.country_id = players.ply_country_id
+                     WHERE guest_gm_id = {gm_id} Limit {limit_start},{limit_number}""")
+        if str(gm_PlyD).__contains__('Something went wrong'):
+            raise Exception(gm_PlyD)
+
+        if not gm_PlyD:
+            return gm_ply_arr
+
+        for gm_Prow in gm_PlyD:
+            # Check if player img exists or not
+            PlyImages = {}
+            if 'ply_img' in gm_Prow and gm_Prow['ply_img']:
+                PlyImages = game_utils.get_ply_images(gm_Prow['ply_img'],gm_Prow['s3_profile'])
+
+            gstGender = ""
+            if 'ply_gender' in gm_Prow and gm_Prow['ply_gender']:
+                if gm_Prow['ply_gender'] == 'm':
+                    gm_Prow['ply_gender'] = "Male"
+                elif gm_Prow['ply_gender'] == 'f':
+                    gm_Prow['ply_gender'] = "Female"
+
+            if 'ply_id' in gm_Prow and not gm_Prow['ply_id']:
+                if 'guest_mail' in gm_Prow:
+                    guest_mail_array.append(gm_Prow['guest_mail'])
+
+        if guest_mail_array:
+            Id_guest_mail_array = str(tuple([key for key in guest_mail_array])).replace(',)', ')')
+            contact_data = execution.execute(f"""SELECT contact_id,contact_ply_id FROM contacts
+                                         LEFT JOIN game ON contacts.contact_org_id = game.gm_org_id
+                                        WHERE game.gm_id = {gm_id}
+                                        AND contacts.contact_email IN {Id_guest_mail_array}""")
+            if str(contact_data).__contains__('Something went wrong'):
+                raise Exception(contact_data)
+            if contact_data:
+                for row in contact_data:
+                    if 'contact_ply_id' in row and row['contact_ply_id'] and int(row['contact_ply_id']) > 0:
+                        contact_ply_id_array.append(row['contact_ply_id'])
+                    elif 'contact_id' in row and row['contact_id']:
+                        contactID.append(row['contact_id'])
+
+            Id_contact_array = str(tuple([key for key in contact_ply_id_array])).replace(',)', ')')
+            playe_data_sql = execution.execute(f"""SELECT * FROM players
+                            LEFT JOIN city ON city.city_id = players.ply_city_id
+                            LEFT JOIN country ON country.country_id = players.ply_country_id
+                            WHERE ply_id IN {Id_contact_array} """)
+            if str(playe_data_sql).__contains__('Something went wrong'):
+                raise Exception(playe_data_sql)
+
+            if playe_data_sql:
+                for gm_Prow in gm_PlyD:
+                    for player in playe_data_sql:
+                        if 'ply_id' in player and player['ply_id'] and int(player['ply_id']) > 0:
+                            gm_Prow['ply_id'] = player['ply_id']
+                            gm_Prow['ply_city_id'] = player['ply_city_id']
+                            gm_Prow['city_name'] = player['city_name']
+                            gm_Prow['ply_country_id'] = player['ply_country_id']
+                            gm_Prow['country_name'] = player['country_name']
+                            gm_Prow['ply_email_sett'] = player['ply_email_sett']
+                            gm_Prow['ply_brithdate_sett'] = player['ply_brithdate_sett']
+                            gm_Prow['ply_gender_sett'] = player['ply_gender_sett']
+                            gm_Prow['ply_city_sett'] = player['ply_city_sett']
+                        if player['ply_gender']:
+                            if player['ply_gender'] == 'm':
+                                player['ply_gender'] = "Male"
+                            elif player['ply_gender'] == 'f':
+                                player['ply_gender'] = "Female"
+                        gm_Prow['ply_gender'] = player['ply_gender']
+
+        for gm_Prow in gm_PlyD:
+            res_arr_dict['PlyID'] = gm_Prow['ply_id'] if gm_Prow['ply_id'] else gm_Prow['guest_id'],
+            res_arr_dict['PlyFname'] = urllib.parse.unquote(gm_Prow['guest_fname']),
+            res_arr_dict['PlyLname'] = urllib.parse.unquote(gm_Prow['guest_fname']),
+            res_arr_dict['PlyEmail'] = gm_Prow['guest_mail'],
+            res_arr_dict['PlyGdr'] = gm_Prow['ply_gender'],
+            res_arr_dict['PlyHeight'] = "",
+            res_arr_dict['H_Unt'] = "",
+            res_arr_dict['PlyWeight'] = "",
+            res_arr_dict['W_Unt'] = "",
+            res_arr_dict['PlyctyID'] = gm_Prow['ply_city_id'] if gm_Prow['ply_city_id'] else "",
+            res_arr_dict['PlyCty'] = gm_Prow['city_name'] if gm_Prow['city_name'] else "",
+            res_arr_dict['PlyCountryID'] = gm_Prow['ply_country_id'] if gm_Prow['ply_country_id'] else "",
+            res_arr_dict['PlyCountry'] = gm_Prow['country_name'] if gm_Prow['country_name'] else "",
+            res_arr_dict['PImg'] = 'ply/' + gm_Prow['ply_img'] if gm_Prow['ply_img'] else "",
+            res_arr_dict['LastGm'] = [],
+            res_arr_dict['Privecy'] = {'mail': "True" if gm_Prow['ply_email_sett'] == "y" else "False",
+                                       'birthdate': "True" if gm_Prow['ply_brithdate_sett'] == "y" else "False",
+                                       'gender': "True" if gm_Prow['ply_gender_sett'] == "y" else "False",
+                                       'city': "True" if gm_Prow['ply_city_sett'] == "y" else "False"
+                                       },
+            res_arr_dict['FrStatus'] = "",
+            res_arr_dict['FrStatusAdmin'] = "",
+            res_arr_dict['PlyImg'] = gm_Prow['PlyImg'] if PlyImages else "",
+            res_arr_dict['PlyImgThumb'] = gm_Prow['PlyImgThumb'] if PlyImages else "",
+            res_arr_dict['PlyType'] = "member" if gm_Prow['ply_id'] else "guest",
+            res_arr_dict['IsCheckedIn'] = gm_Prow['guest_checkedIn'],
+            for id in contactID:
+                res_arr_dict['ContactID'] = id
+            result.append(res_arr_dict)
+
+        return response.success(result_data=result)
+
+
+    except Exception as e:
+        return response.error(e.__str__())
