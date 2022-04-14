@@ -1,41 +1,15 @@
 package Controllers
 
 import (
-	"bytes"
-	b64 "encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Responses"
-	"net/http"
-	"os/exec"
-	"strings"
 )
 
-func python_binds(c *gin.Context, arg1 string, input map[string]string) (string, error) {
-	app := "venv/bin/python3.10"
-	arg0 := "kernel/main.py"
-	arg2, _ := json.Marshal(input)
-	arg2 = []byte(b64.StdEncoding.EncodeToString(arg2))
-	arg3 := "2>&1"
-	cmd := exec.Command(app, arg0, arg1, string(arg2), arg3)
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err := cmd.Run()
-	if err != nil {
-		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
-		return "", nil
-	}
-	if strings.Contains(out.String(), "error") {
-		return "", errors.New(out.String())
-	} else {
-		return out.String(), nil
-	}
-}
 func GetGames(c *gin.Context) {
 	var game Models.Game
 	err := Models.GetAllGames(&game)

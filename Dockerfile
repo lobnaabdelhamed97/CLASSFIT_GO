@@ -17,9 +17,11 @@ WORKDIR /api
 COPY go.mod .
 COPY go.sum .
 RUN go mod download
-RUN pip install -r ./app ./kernel/requirements.txt
 COPY . .
 RUN go build -o ./app ./main.go
+RUN apk add python3-dev mariadb-dev mariadb-client 
+RUN pip install --upgrade setuptools && pip install mysql-connector-python \ mysqlclient \
+ -r ./kernel/requirements.txt
 
 FROM alpine:latest
 

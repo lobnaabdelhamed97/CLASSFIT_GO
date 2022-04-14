@@ -30,6 +30,9 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+	moul.io/http2curl v1.0.0
 	gorm.io/gorm v1.23.0 // indirect
 	gorm.io/plugin/soft_delete v1.1.0 // indirect
 )
+
+require github.com/hiroakis/go-requests v0.0.0-20170719061630-7a1a21a17e46 // indirect

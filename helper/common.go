@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"os/exec"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 func python_binds(c *gin.Context, arg1 string, input map[string]string) (string, error) {
