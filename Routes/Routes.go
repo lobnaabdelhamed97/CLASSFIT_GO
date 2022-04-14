@@ -26,8 +26,6 @@ func SetupRouter() *gin.Engine {
 	r.POST("/user-info", Controllers.User_infoandflags)
 // 	r.POST("/GetActionLogReport", Controllers.GetActionLogReport)
 	r.POST("/organizer-info", Controllers.Organizer_info)
-
-//  r.POST("/wait-list-info", Controllers.Wait_list_info)
 // 	r.GET("/DEMO", Controllers.Demo)
 
 	return r
