@@ -1,17 +1,15 @@
 package common
+
 import (
 	"bytes"
 	b64 "encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"os/exec"
 	"strings"
-	"github.com/hiroakis/go-requests"
+
 	"github.com/gin-gonic/gin"
-	"moul.io/http2curl"
 )
 
 func python_binds(c *gin.Context, arg1 string, input map[string]string) (string, error) {
@@ -36,26 +34,3 @@ func python_binds(c *gin.Context, arg1 string, input map[string]string) (string,
 		return out.String(), nil
 	}
 }
- func curl(c *gin.Context, arg1 string, input map[string]string) (string, error){
-
-payload = "{\n\t\"dict\": {\n\t\t\"key1\": \"value1\",\n\t\t\"key2\": \"value2\"\n\t}\n}"
-headers = {
-    'Content-Type': "application/json",
-    'cache-control': "no-cache",
-    'Postman-Token': <TOKEN>
-    }
-
-resp, err := requests.Get("https://httpbin.org/", headers, nil)
-
-postData := &bytes.Buffer{}
-postData.WriteString("postdata")
-resp, err := requests.Post("https://httpbin.org/", headers, &requests.RequestParams{
-    Data:    postData,
-})
-	if err != nil {
-		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
-		return "", nil
-	} else {
-		return resp, nil
-	}
- }
