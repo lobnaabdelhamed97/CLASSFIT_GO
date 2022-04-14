@@ -28,7 +28,7 @@ func SetupRouter() *gin.Engine {
 	r.POST("/organizer-info", Controllers.Organizer_info)
 
 //  r.POST("/wait-list-info", Controllers.Wait_list_info)
-	// r.GET("/DEMO", Controllers.Demo)
+// 	r.GET("/DEMO", Controllers.Demo)
 
 	return r
 }

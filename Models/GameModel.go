@@ -27,16 +27,17 @@ type Game struct {
  }
 
 type Mem_info struct {
-	PlyID         string     `json:"PlyID"`
-	PlyFname      string     `json:"PlyFname"`
-	PlyLname      string     `json:"PlyLname"`
-	Country_name  string     `json:"PlyCountry"`
-	City_name     string     `json:"PlyCty"`
-	ContactID     int        `json:"ContactID"`
-	Gm_ply_ply_id int        `json:"-"`
-	Guest_ply_id  int        `json:"-"`
-	Privecy       string     `json:"Privecy"`
-	PlyType       string     `json:"PlyType"`
+	PlyID           string     `json:"PlyID"`
+	PlyFname        string     `json:"PlyFname"`
+	PlyLname        string     `json:"PlyLname"`
+	Country_name    string     `json:"PlyCountry"`
+	City_name       string     `json:"PlyCty"`
+	ContactID       int        `json:"ContactID"`
+	Gm_ply_ply_id   int        `json:"-"`
+	Guest_ply_id    int        `json:"-"`
+	Privecy         string     `json:"Privecy"`
+	PlyType         string     `json:"PlyType"`
+	Ply_typed_city  string      `json:"-"`
 }
 type Input struct {
 	Gm_id string `json:"Gm_id"`
@@ -49,14 +50,15 @@ type Final struct {
 }
 
 type Wait_list_info struct {
-	Ply_id         string     `json:"PlyID"`
-	Ply_fname      string     `json:"PlyFname"`
-	Ply_lname      string     `json:"PlyLname"`
-	Country_name   string     `json:"PlyCountry"`
-	City_name      string     `json:"PlyCty"`
-    Ply_img        string     `json:"PlyImg"`
-    Privecy        string     `json:"Privecy"`
-    PlyType        string     `json:"PlyType"`
+	Ply_id          string     `json:"PlyID"`
+	Ply_fname       string     `json:"PlyFname"`
+	Ply_lname       string     `json:"PlyLname"`
+	Country_name    string     `json:"PlyCountry"`
+	City_name       string     `json:"PlyCty"`
+    Ply_img         string     `json:"PlyImg"`
+    Privecy         string     `json:"Privecy"`
+    PlyType         string     `json:"PlyType"`
+	Ply_typed_city  string     `json:"-"`
 }
 
 type User_infoandflags struct {

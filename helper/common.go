@@ -1,18 +1,26 @@
+<<<<<<< HEAD
 package Helper
+=======
+package common
+
+>>>>>>> 5355630f18718810fc1d99a9717a53bd3406cc9a
 import (
 	"bytes"
 	b64 "encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"os/exec"
 	"strings"
+<<<<<<< HEAD
 	//"github.com/hiroakis/go-requests"
 	"github.com/gin-gonic/gin"
 	//"moul.io/http2curl"
 	//"log"
+=======
+
+	"github.com/gin-gonic/gin"
+>>>>>>> 5355630f18718810fc1d99a9717a53bd3406cc9a
 )
 
 func python_binds(c *gin.Context, arg1 string, input map[string]string) (string, error) {
