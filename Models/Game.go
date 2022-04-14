@@ -99,6 +99,21 @@ func (validate *Input) Validate() error {
 	return nil
 }
 
+func (log * Log_input) Validate() error{
+
+//     if (log.PostData == nil){
+//         return errors.New("No Data Sent")
+//     }
+//     Org_id, _ := strconv.Atoi(log.PostData["PlyID"])
+//     if Org_id  <= 0 {
+// 		return errors.New("GmID Required")
+// 	}
+//     if log.PostData.Type  == "" {
+// 		return errors.New("Type Required")
+// 	}
+    return nil
+}
+
 func Member_info(validate *Input, mem_info *[]Mem_info,wait_list_info *[]Wait_list_info) (final Final,err error) {
 
       if err = Config.DB.Table("players").Select("distinct ply_id, ply_fname ,ply_lname ,country_name, city_name,typed_city,contact_id,gm_ply_ply_id,guest_ply_id,CASE WHEN ply_city_sett = 'y' THEN 'true' ELSE 'false' END AS privecy").

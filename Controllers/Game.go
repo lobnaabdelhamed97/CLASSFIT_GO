@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
+//     "github.com/lobnaabdelhamed97/CLASSFIT_GO/History_log"
 	"github.com/gin-gonic/gin"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Responses"
@@ -77,6 +77,25 @@ func ViewGame(c *gin.Context) {
 	}
 }
 
+
+// func GetActionLogReport(c *gin.Context) {
+// 	var input Models.Log_input
+// 	var check Models.PostData
+// 	c.BindJSON(&input)
+// 	c.BindJSON(&check)
+// 	//create validation here
+// 	err := input.Validate()
+// 	if err != nil {
+// 		Responses.ERROR(c, err.Error())
+// 	} else {
+// 		data,err  := History_log.getActionLog()
+//         if err != nil{
+//             Responses.ERROR(c, err.Error())
+//         } else{
+//             c.JSON(http.StatusOK, data)
+// 	}
+// }
+// }
 
 func Participants(c *gin.Context) {
 	var wait_list_info []Models.Wait_list_info

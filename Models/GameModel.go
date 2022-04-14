@@ -49,6 +49,24 @@ type Final struct {
 
 }
 
+type Log_input struct{
+     PostData   []PostData
+}
+
+type PostData struct{
+     PlyID           string
+     Type            string
+     ActionFrom      int
+     Limit           int
+     SearchTxt       string
+  }
+
+type Enter struct{
+    Org_id           string
+    Type             string
+    SearchArr        PostData
+
+}
 type Wait_list_info struct {
 	Ply_id          string     `json:"PlyID"`
 	Ply_fname       string     `json:"PlyFname"`

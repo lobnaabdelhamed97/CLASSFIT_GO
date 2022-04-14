@@ -156,3 +156,5 @@ gorm.io/gorm v1.23.4 h1:1BKWM67O6CflSLcwGQR7ccfmC4ebOxQrTfOQGRE9wjg=
 gorm.io/gorm v1.23.4/go.mod h1:l2lP/RyAtc1ynaTjFksBde/O8v9oOGIApu2/xRitmZk=
 gorm.io/plugin/soft_delete v1.1.0 h1:LcE4L+GD29RkkMLxMYHpT4wQCJ/9945FsdU/mHGaDuE=
 gorm.io/plugin/soft_delete v1.1.0/go.mod h1:Zv7vQctOJTGOsJ/bWgrN1n3od0GBAZgnLjEx+cApLGk=
+moul.io/http2curl v1.0.0 h1:6XwpyZOYsgZJrU8exnG87ncVkU1FVCcTRpwzOkTDUi8=
+moul.io/http2curl v1.0.0/go.mod h1:f6cULg+e4Md/oW1cYmwW4IWQOVl2lGbmCNGOHvzX2kE=
