@@ -6,9 +6,8 @@ import (
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Helper"
 	"strconv"
-	"fmt"
 	"encoding/json"
-
+	"net/url"
 )
 
 func GetAllGames(game *Game) (err error) {
@@ -84,15 +83,15 @@ func Userinfoandflags(in *ViewGame, user_infoandflags *User_infoandflags) (err e
 	return err 
 }}
 user_infoandflags.PlyID=in.PlyID
-if err = Config.DB.Table("admin_terms").Where("admin_id = ?",in.PlyID).Select("terms as IssetOrgTerms").Scan(&user_infoandflags).Error; err != nil {
+if err = Config.DB.Table("admin_terms").Where("admin_id = ?",in.PlyID).Select("terms as Terms").Scan(&user_infoandflags).Error; err != nil {
 	if string(err.Error()) == "record not found"{
-		user_infoandflags.IssetOrgTerms="false"
+		user_infoandflags.Terms="false"
 		}else {
 			return err
 		}	
 }
-if user_infoandflags.IssetOrgTerms != "false"{
-	user_infoandflags.IssetOrgTerms="true"
+if user_infoandflags.Terms != "false"{
+	user_infoandflags.Terms="true"
 }
 type IdDummy struct {
 	Gm_org_id int
@@ -150,14 +149,44 @@ func Organizerinfo(in *ViewGame, organizer_info *Organizer_info) (err error) {
 		Gm_org_id int
 	}
 	var iddata IdDummy
-
 	if err = Config.DB.Table("game").Where("gm_id = ?",in.GmID).Select("gm_org_id").Scan(&iddata).Error; err != nil {
 		return err 
 	}
-	if err = Config.DB.Table("players").Where("ply_id = ?",iddata.Gm_org_id).Select("ply_bio as Bio,ply_business as Business").Scan(&organizer_info).Error; err != nil {
+	if err = Config.DB.Table("players").Where("ply_id = ?",iddata.Gm_org_id).Select("ply_bio,ply_business").Scan(&organizer_info).Error; err != nil {
 		return err 
 	}
-	fmt.Println(organizer_info.Business)
+	organizer_info.Ply_bio,_=url.PathUnescape(organizer_info.Ply_bio)
+	organizer_info.Ply_bio=url.PathEscape(organizer_info.Ply_bio)
+	organizer_info.Ply_business,_=url.PathUnescape(organizer_info.Ply_business)
+	organizer_info.Ply_business=url.PathEscape(organizer_info.Ply_business)
+	type Name struct {
+		Ply_fname string
+		Ply_lname string
+	}
+	var name Name
+	if err = Config.DB.Table("players").Where("ply_id = ?",iddata.Gm_org_id).Select("ply_fname,ply_lname").Scan(&name).Error; err != nil {
+		return err 
+	}
+	name.Ply_fname,_=url.PathUnescape(name.Ply_fname)
+	name.Ply_lname,_=url.PathUnescape(name.Ply_lname)
+	organizer_info.OrgName=name.Ply_fname+" "+name.Ply_lname
+	
+	type Image struct {
+		Aws_server string
+		Ply_img string
+		S3_profile int
+	}
+	var image Image
+	if err = Config.DB.Table("players").Where("ply_id = ?",iddata.Gm_org_id).Select("ply_img,s3_profile").Scan(&image).Error; err != nil {
+		return err 
+	}	
+	image.Aws_server="https://classfit-assets.s3.amazonaws.com/"
+	if image.S3_profile == 1{
+		organizer_info.PlyImg = image.Aws_server + image.Ply_img
+	} else {
+		organizer_info.PlyImg = image.Aws_server +"backup/images/upload/ply/"+ image.Ply_img
+
+	}
 
 return nil}
 
