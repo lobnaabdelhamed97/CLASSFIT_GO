@@ -84,7 +84,7 @@ type User_infoandflags struct {
 	Custom_notification_period string	`json:"RemindPeriod"`
 	PlyID         int    `json:"PlyID"`
 	GmMem	string    `json:"GmMem"`  
-	IssetOrgTerms string `json:"IssetOrgTerms"`
+	Terms string `json:"IssetOrgTerms"`
 	IsOrg string `json:"IsOrg"`
 	IsMem string `json:"IsMem"`
 	Offline_payments_status string `json:"offline_payments_status"`
@@ -98,10 +98,10 @@ type StripeData struct {
 
 type Organizer_info struct {
 	PlyImg string `json:"PlyImg"`
-	Bio string `json:"Bio"`
-	Business string `json:"Business"`
+	Ply_bio string `json:"Bio"`
+	Ply_business string `json:"Business"`
 	OrgName string `json:"OrgName"` 
-	StripeData StripeData `json:"StripeData"` 
+	StripeData StripeData `json:"StripeData"`
 }
 
 type ViewGame struct {

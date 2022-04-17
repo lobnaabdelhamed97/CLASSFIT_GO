@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"encoding/json"
 	"net/url"
+	"fmt"
 )
 
 func GetAllGames(game *Game) (err error) {
@@ -185,10 +186,23 @@ func Organizerinfo(in *ViewGame, organizer_info *Organizer_info) (err error) {
 		organizer_info.PlyImg = image.Aws_server + image.Ply_img
 	} else {
 		organizer_info.PlyImg = image.Aws_server +"backup/images/upload/ply/"+ image.Ply_img
-
 	}
-
-return nil}
+	type CustomerID struct {
+		Stripe_users_cust_id string
+		Stripe_users_card_id string
+	}
+	var customerID CustomerID
+	if err = Config.DB.Table("stripe_users").Where("stripe_users_ply_id = ?",iddata.Gm_org_id).Select("stripe_users_cust_id,stripe_users_card_id").Scan(&customerID).Error; err != nil {
+		return err 
+	}		
+	organizer_info.StripeData.CardName,organizer_info.StripeData.CardLast4,err= Helper.RetrieveData(customerID.Stripe_users_cust_id,customerID.Stripe_users_card_id)
+	if err != nil{
+		organizer_info.StripeData.CardName=""
+		organizer_info.StripeData.CardLast4=""
+}
+	fmt.Println(organizer_info.StripeData.CardName)
+fmt.Println(organizer_info.StripeData.CardLast4)
+	return nil}
 
 func (validate *Input) Validate() error {
     Gm_id, _:= strconv.Atoi(validate.Gm_id)
