@@ -14,13 +14,7 @@ func SetupRouter() *gin.Engine {
 		grp1.GET("game/:gm_id", Controllers.GetGameByID)
 
 	}
-	grp2 := r.Group("/view-absence")
-	{
-		grp2.GET("absence", Controllers.GetAbsences)
-		grp2.GET("absence/:absence_id", Controllers.GetAbsenceByID)
-		grp2.POST("absence", Controllers.CreateAbsence)
 
-	}
 	r.POST("/view-game", Controllers.ViewGame)
 	r.POST("/participants", Controllers.Participants)
 	r.POST("/user-info", Controllers.User_infoandflags)
