@@ -39,14 +39,13 @@ func python_binds(c *gin.Context, arg1 string, input map[string]string) (string,
 func PaymentCurl(keysec string,url string, input []byte)([]byte){
 
 req, _ := http.NewRequest("POST", url, bytes.NewBuffer(input))
+
 req.Header.Add("content-type", "application/json")
 req.Header.Add("cache-control", "no-cache")
 req.Header.Add("Key-Sec", keysec)
 res, _ := http.DefaultClient.Do(req)
-
 defer res.Body.Close()
 body, _ := ioutil.ReadAll(res.Body)
-
 return body
 }
 func KeySecured(projectkey string,projectsecret string)(string){

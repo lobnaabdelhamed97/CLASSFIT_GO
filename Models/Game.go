@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"encoding/json"
 	"net/url"
-	"fmt"
 )
 
 func GetAllGames(game *Game) (err error) {
@@ -50,15 +49,15 @@ func (v *ViewGame) Validate() error {
 	if v.PlyID < 0 {
 		return errors.New("required Player ID")
 	}
-	// if v.DevID == "" {
-	// 	return errors.New("required Device ID")
-	// }
-	// if v.Source == "" {
-	// 	return errors.New("required Source")
-	// }
-	// if v.Tkn == "" {
-	// 	return errors.New("required token")
-	// }
+	if v.DevID == "" {
+		return errors.New("required Device ID")
+	}
+	if v.Source == "" {
+		return errors.New("required Source")
+	}
+	if v.Tkn == "" {
+		return errors.New("required token")
+	}
 	 if v.ProjectKey == "" {
 	 	return errors.New("required project key")
 	 }
@@ -200,8 +199,7 @@ func Organizerinfo(in *ViewGame, organizer_info *Organizer_info) (err error) {
 		organizer_info.StripeData.CardName=""
 		organizer_info.StripeData.CardLast4=""
 }
-	fmt.Println(organizer_info.StripeData.CardName)
-fmt.Println(organizer_info.StripeData.CardLast4)
+
 	return nil}
 
 func (validate *Input) Validate() error {
