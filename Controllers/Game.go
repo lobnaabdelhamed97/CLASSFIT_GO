@@ -82,6 +82,23 @@ if err != nil {
 }
 }
 
+func Game_Details(c *gin.Context) {
+	var viewgame Models.ViewGame
+	c.BindJSON(&viewgame)
+	err := viewgame.Validate()
+	if err != nil {
+		Responses.ERROR(c, err.Error())
+	} else {
+		var Game_details Models.Game_details
+		err := Models.GameDetails(&viewgame, &Game_details)
+		if err != nil {
+			Responses.ERROR(c, err.Error())
+		} else {
+			data, _ := json.Marshal(Game_details)
+			Responses.SUCCESS(c, string(data))
+		}
+	}
+	}
 
 func ViewGame(c *gin.Context) {
 	var viewgame Models.ViewGame
@@ -95,7 +112,6 @@ func ViewGame(c *gin.Context) {
 		Responses.SUCCESS(c, string(data))
 	}
 }
-
 
 // func GetActionLogReport(c *gin.Context) {
 // 	var input Models.Log_input
