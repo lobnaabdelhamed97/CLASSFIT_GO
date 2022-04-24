@@ -229,11 +229,6 @@ type Ply_Methods struct {
     Stripe_users_account_id string `json:"-"`
 }
 
-type Player_input struct{
-    PlyID string
-
-}
-
 type ViewGame struct {
 	GmID          int    `json:"GmID"`
 	PlyID         int    `json:"PlyID"`
