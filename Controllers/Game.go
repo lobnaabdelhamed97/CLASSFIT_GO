@@ -2,12 +2,13 @@ package Controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 //     "github.com/lobnaabdelhamed97/CLASSFIT_GO/History_log"
 	"github.com/gin-gonic/gin"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Responses"
+	"fmt"
+    "reflect"
 )
 
 func GetGames(c *gin.Context) {
@@ -85,6 +86,7 @@ if err != nil {
 func Game_Details(c *gin.Context) {
 	var viewgame Models.ViewGame
 	c.BindJSON(&viewgame)
+	fmt.Println(reflect.TypeOf(viewgame.PlyID))
 	err := viewgame.Validate()
 	if err != nil {
 		Responses.ERROR(c, err.Error())

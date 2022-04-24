@@ -36,11 +36,11 @@ func python_binds(arg1 string, input map[string]string) (string, error) {
   }
 }
 
-func PaymentCurl(keysec string, url string, input []byte) []byte {
+func PaymentCurl(keysec string, url string, input []byte,ContentType string) []byte {
 
   req, _ := http.NewRequest("POST", url, bytes.NewBuffer(input))
 
-  req.Header.Add("content-type", "application/json")
+  req.Header.Add("content-type", ContentType)
   req.Header.Add("cache-control", "no-cache")
   req.Header.Add("Key-Sec", keysec)
   res, _ := http.DefaultClient.Do(req)

@@ -189,7 +189,7 @@ type Game_details struct {
 	Court_title            string `json:"CourtT"`    //org //get court id from game then get courtt name from court
 	Policy_title           string `json:"PolicyT"`   //org //get policy id from game then get policyt name from policy
 	Gm_s_type_name         string `json:"STypeName"` ////checkout  //org //get stype id from game then get stype name from gm s types
-	IsHis                  string							//org //done
+	IsHis                  string `json:"IsHis"`							//org //done
 	Gm_s3_status   int    `json:"gm_s3_status"` //done
 	Gm_showMem     int    `json:"Gm_showMem"` ///checkout //check if 1 from db then then true else false ///// //done
 	Gm_court_id    int    `json:"gm_court_id"` //done
@@ -209,7 +209,7 @@ type Game_details struct {
 	Days                   string ////checkout   //org
 	GmPlys                 int    ////checkout    //org //get_players_count_in_game in kernel
 	ParentState            string 					///checkout  //org
-	OrgOfflineStatus       string `json:"OrgOfflineStatus"` ///checkout //curl on status
+	OrgOfflineStatus       string `json:"OrgOfflineStatus"` ///checkout //curl on payment status
 	GmImgThumb           string `json:"GmImgThumb"` ///checkout
 
 //not in kernel

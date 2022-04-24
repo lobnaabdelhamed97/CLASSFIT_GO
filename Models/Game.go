@@ -137,9 +137,8 @@ if err = Config.DB.Table("admin_terms").Where("admin_id = ?",in.PlyID).Select("t
 		user_infoandflags.IsMem = "true"
 	}
 	keysec := Helper.KeySecured(in.ProjectKey, in.ProjectSecret)
-
 	values, err := json.Marshal(in)
-	body := Helper.PaymentCurl(keysec, "https://v2.classfit.com/payment/offline/admin/data", values)
+	body := Helper.PaymentCurl(keysec, "https://v2.classfit.com/payment/offline/admin/data", values,"application/json")
 	var payment OfflinePayment
 	err = json.Unmarshal(body, &payment)
 	if err != nil {
@@ -291,6 +290,19 @@ func Member_info(validate *Input, mem_info *[]Mem_info, wait_list_info *[]Wait_l
 	final = Final{Member: *mem_info, Waitlist: *wait_list_info}
 
 	return final, nil
+}
+func CommonGameKeys(in *ViewGame, game_details *Game_details) (Game_details,err error) {
+	keysec := Helper.KeySecured(in.ProjectKey, in.ProjectSecret)
+
+	values, err := json.Marshal(in)
+	body := Helper.PaymentCurl(keysec, "https://v2.classfit.com/payment/offline/admin/data", values,"application/json")
+	var payment OfflinePayment
+	err = json.Unmarshal(body, &payment)
+	if err != nil {
+		return nil,err
+	}
+
+	return nil,nil
 }
 func GameDetails(in *ViewGame, game_details *Game_details) (err error) {
 	if err = Config.DB.Table("game").Where("gm_id = ? AND (gm_status IS NULL OR gm_status NOT LIKE '%deleted%')",in.GmID).Select("gm_org_id,gm_id,gm_title,gm_desc,gm_age,gm_reqQues,gm_payment_type,gm_is_free,gm_status,gm_start_time,gm_end_time,attend_type,zoom_url,gm_utc_datetime,gm_max_players,gm_available_to_join,gm_date,gm_fees,gm_loc_desc,gm_is_stop_recurred,gm_loc_lat,gm_loc_long,gm_img,gm_scope,gm_gender,gm_currency_symbol,gm_display_org,gm_showMem,gm_sub_type_id,gm_s_type_name,gm_court_id,gm_level_id,gm_policy_id,level_title,court_title,policy_title,gm_s3_status,currency_name,(CASE WHEN ((gm_org_id = "+strconv.Itoa(in.PlyID)+" && (gm_utc_datetime + INTERVAL gm_end_time MINUTE) >= CURRENT_TIMESTAMP) OR (gm_org_id != "+strconv.Itoa(in.PlyID)+" && (gm_utc_datetime + INTERVAL gm_end_time MINUTE) >= CURRENT_TIMESTAMP)) THEN 'n' ELSE 'y' END) AS IsHis").Joins("FULL JOIN players org ON gm_org_id =org.ply_id"+" left JOIN gm_s_types ON gm_sub_type_id = gm_s_type_id"+" LEFT JOIN court ON gm_court_id = court_id"+" LEFT JOIN level ON gm_level_id = level_id"+" LEFT JOIN `policy` ON gm_policy_id = policy_id"+" LEFT JOIN currencies ON currency_id=gm_currency_symbol").Scan(&game_details).Error; err != nil {
