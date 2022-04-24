@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Controllers"
-	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Controllers"
+	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 )
 
 func TestViewGame(t *testing.T) {
@@ -48,12 +49,12 @@ func TestViewGame(t *testing.T) {
 		if err != nil {
 			t.Fatalf("encoding problem")
 		}
-		// Switch to test mode so you don't get such noisy output
+		// Switch to test mode ,so you don't get such noisy output
 
 		gin.SetMode(gin.TestMode)
 
-		// Setup your router, just like you did in your main function, and
-		// register your routes
+		// Set up your router, just like you did in your main function, and register your
+		// routes
 		r := gin.Default()
 		r.POST("/view-game", Controllers.ViewGame)
 

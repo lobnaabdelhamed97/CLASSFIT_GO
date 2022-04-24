@@ -9,8 +9,6 @@ require (
 )
 
 require (
-	github.com/denisenkom/go-mssqldb v0.0.0-20191124224453-732737034ffd // indirect
-	github.com/fatih/structs v1.1.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
@@ -30,13 +28,6 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gorm.io/gorm v1.23.0 // indirect
-	gorm.io/plugin/soft_delete v1.1.0 // indirect
-	moul.io/http2curl v1.0.0
 )
 
-require (
-	github.com/hiroakis/go-requests v0.0.0-20170719061630-7a1a21a17e46 // indirect
-	github.com/stripe/stripe-go v70.15.0+incompatible // indirect
-	github.com/stripe/stripe-go/v72 v72.101.0 // indirect
-)
+require github.com/stripe/stripe-go v70.15.0+incompatible

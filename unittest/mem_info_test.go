@@ -4,15 +4,17 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Controllers"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
+
 func Test_Mem_info(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	views := []Models.Input{
@@ -36,7 +38,7 @@ func Test_Mem_info(t *testing.T) {
 		},
 		{
 			Gm_id: "284136",
-            },
+		},
 	}
 
 	for i := range views {
@@ -52,8 +54,8 @@ func Test_Mem_info(t *testing.T) {
 			t.Fatalf("encoding problem")
 
 		}
-		// Setup your router, just like you did in your main function, and
-		// register your routes
+		// Set up your router, just like you did in your main function, and register your
+		// routes
 		r := gin.Default()
 		r.POST("/participants", Controllers.Participants)
 
@@ -78,5 +80,5 @@ func Test_Mem_info(t *testing.T) {
 		} else {
 			t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, w.Code)
 		}
-	}}
-
+	}
+}
