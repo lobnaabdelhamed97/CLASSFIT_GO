@@ -18,11 +18,11 @@ func SetupRouter() *gin.Engine {
 	r.POST("/view-game", Controllers.ViewGame)
 	r.POST("/participants", Controllers.Participants)
 	r.POST("/user-info", Controllers.User_infoandflags)
-// 	r.POST("/GetActionLogReport", Controllers.GetActionLogReport)
 	r.POST("/organizer-info", Controllers.Organizer_info)
 	r.POST("/game-details", Controllers.Game_Details)
+// 	r.POST("/player-data", Controllers.Player_data)
 
-// 	r.GET("/DEMO", Controllers.Demo)
+
 
 	return r
 }

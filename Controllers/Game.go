@@ -113,25 +113,6 @@ func ViewGame(c *gin.Context) {
 	}
 }
 
-// func GetActionLogReport(c *gin.Context) {
-// 	var input Models.Log_input
-// 	var check Models.PostData
-// 	c.BindJSON(&input)
-// 	c.BindJSON(&check)
-// 	//create validation here
-// 	err := input.Validate()
-// 	if err != nil {
-// 		Responses.ERROR(c, err.Error())
-// 	} else {
-// 		data,err  := History_log.getActionLog()
-//         if err != nil{
-//             Responses.ERROR(c, err.Error())
-//         } else{
-//             c.JSON(http.StatusOK, data)
-// 	}
-// }
-// }
-
 func Participants(c *gin.Context) {
 	var wait_list_info []Models.Wait_list_info
 	var mem_info       []Models.Mem_info
@@ -149,3 +130,16 @@ func Participants(c *gin.Context) {
         }
     }
 }
+
+// func Player_data(c *gin.Context) {
+// 	var validate       Models.Player_input
+// 	c.BindJSON(&validate)
+//         members  := Models.Get_ply_verified_methods(&validate)
+//         if members != ""{
+//             c.JSON(http.StatusOK, members)
+//         }else {
+//             Responses.ERROR(c, "No data")
+//         }
+//
+//
+// }
