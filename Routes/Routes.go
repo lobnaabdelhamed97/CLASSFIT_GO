@@ -21,6 +21,8 @@ func SetupRouter() *gin.Engine {
 	r.POST("/organizer-info", Controllers.Organizer_info)
 	r.POST("/game-details", Controllers.Game_Details)
 // 	r.POST("/player-data", Controllers.Player_data)
+//  	r.POST("/game-data", Controllers.Game_data)
+
 
 
 

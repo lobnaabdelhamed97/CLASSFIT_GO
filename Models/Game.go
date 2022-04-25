@@ -237,20 +237,6 @@ func (validate *Input) Validate() error {
 	return nil
 }
 
-func (log *Log_input) Validate() error {
-
-	//     if (log.PostData == nil){
-	//         return errors.New("No Data Sent")
-	//     }
-	//     Org_id, _ := strconv.Atoi(log.PostData["PlyID"])
-	//     if Org_id  <= 0 {
-	// 		return errors.New("GmID Required")
-	// 	}
-	//     if log.PostData.Type  == "" {
-	// 		return errors.New("Type Required")
-	// 	}
-	return nil
-}
 
 func Member_info(validate *Input, mem_info *[]Mem_info, wait_list_info *[]Wait_list_info) (final Final, err error) {
 
@@ -305,6 +291,28 @@ func Get_ply_verified_methods(PlyID int) (data string){
             data  = "y"
         }
     return data
+}
+
+func Get_players_count_in_game(Gm_id int, result *[]Count_game) (players int){
+    if Gm_id < 1{
+        return 0
+    }
+    if err := Config.DB.Raw("SELECT gm_ply_ply_id FROM gm_players where gm_ply_gm_id= "+strconv.Itoa(Gm_id)+" Union ALL SELECT guest_ply_id FROM guests WHERE guest_gm_id= "+strconv.Itoa(Gm_id)+" ").Scan(&result).Error; err != nil{
+        return 0
+    }
+     unique := make([]int,0)
+     for i:=0 ; i < len(*result) ; i++{
+             unique = append(unique,(*result)[i].Gm_ply_ply_id)
+         }
+    keys := make(map[int]bool)
+    list := []int{}
+    for _, entry := range unique {
+        if _, value := keys[entry]; !value || entry == 0 {
+            keys[entry] = true
+            list = append(list, entry)
+        }
+    }
+    return len(list)
 }
 
 func GameDetails(in *ViewGame, game_details *Game_details) (err error) {

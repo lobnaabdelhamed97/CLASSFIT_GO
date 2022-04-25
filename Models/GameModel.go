@@ -229,6 +229,12 @@ type Ply_Methods struct {
     Stripe_users_account_id string `json:"-"`
 }
 
+type Count_game struct{
+    Gm_ply_ply_id   int `json:"-"`
+}
+type PP struct{
+    Gm_id int
+}
 type ViewGame struct {
 	GmID          int    `json:"GmID"`
 	PlyID         int    `json:"PlyID"`
