@@ -293,6 +293,29 @@ func Get_ply_verified_methods(PlyID int) (data string){
     return data
 }
 
+func GetGmInstructorData (GmID int , GmRecurID int) (inst_data Instructor){
+     if GmID < 1 {
+         return inst_data
+     }
+     var check Instructor
+          Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors_parents_only JOIN instructors ON instructors.id = gm_instructors_parents_only.instructor_id WHERE gm_id = "+strconv.Itoa(GmID)+"  ").Scan(&inst_data)
+     if inst_data == check{
+          Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors JOIN instructors ON instructors.id = gm_instructors.instructor_id WHERE gm_id = "+strconv.Itoa(GmID)+" ").Scan(&inst_data)
+     }
+     if inst_data == check && GmRecurID > 0 {
+        type Game struct {
+            Gm_copy_id int
+        }
+        var game_copy_id Game
+        Config.DB.Table("game").Select("gm_copy_id").Where("gm_id= "+strconv.Itoa(GmID)+" ").Scan(&game_copy_id)
+        if game_copy_id.Gm_copy_id > 0{
+            GmRecurID = game_copy_id.Gm_copy_id
+        }
+          Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors JOIN instructors ON instructors.id = gm_instructors.instructor_id WHERE gm_id = "+strconv.Itoa(GmRecurID)+" ").Scan(&inst_data)
+     }
+     return inst_data
+}
+
 func Get_players_count_in_game(Gm_id int, result *[]Count_game) (players int){
     if Gm_id < 1{
         return 0

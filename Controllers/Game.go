@@ -152,3 +152,12 @@ func Participants(c *gin.Context) {
 //          c.JSON(http.StatusOK, members)
 //
 //  }
+
+// func Inst_data(c *gin.Context){
+//         var validate       Models.PP
+//         c.BindJSON(&validate)
+//         members  := Models.GetGmInstructorData(&validate)
+//
+//         c.JSON(http.StatusOK, members)
+//
+// }

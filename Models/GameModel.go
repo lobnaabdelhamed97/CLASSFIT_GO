@@ -233,8 +233,17 @@ type Count_game struct{
     Gm_ply_ply_id   int `json:"-"`
 }
 type PP struct{
-    Gm_id int
+    GmID int
+    GmRecurID int
 }
+
+type Instructor struct{
+    Instructor_id int `json:"id"`
+    Name string `json:"name"`
+    Bio string `json:"bio"`
+    Image string `json:"image"`
+}
+
 type ViewGame struct {
 	GmID          int    `json:"GmID"`
 	PlyID         int    `json:"PlyID"`
