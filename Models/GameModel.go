@@ -150,6 +150,7 @@ type Game_org_info struct {
 	WithdrawMess string ////checkout   ??????		//org
 	PlyMethods   string ///checkout as currPlyMethods?????  //org
 	InstructorData         string							//org
+	GmImgThumb           string `json:"GmImgThumb"` ///checkout
 
 }
 
@@ -180,7 +181,8 @@ type Game_details struct {
 	Gm_loc_lat             string `json:"Lat"`
 	Gm_loc_long            string `json:"Long"`
 	Gm_gender              string `json:"Gdr"`              ////checkout
-	Gm_currency_symbol     string `json:"Symbol"`           ///checkout
+	Gm_currency_symbol     string `json:"Gm_currency_symbol"`           ///checkout
+	Symbol					string `json:"Symbol"`
 	Gm_scope			   string `json:"Scope"`    //org
 	Gm_sub_type_id int    `json:"gm_sub_type_id"`
 	Gm_display_org string `json:"gm_display_org"`
@@ -195,22 +197,25 @@ type Game_details struct {
 	Gm_court_id    int    `json:"gm_court_id"` //done
 	Gm_level_id    int    `json:"gm_level_id"`	//done
 	Gm_policy_id    int    `json:"Gm_policy_id"` //org  //done
+	Gm_recurr_times	int
+	Gm_recurr_id	int    `json:"RecurrID"`
+	Gm_recurr_type  string
 	Currency_name           string `json:"CurrencyName"`     ///checkout
 	MemGm                  string ///checkout    //org
 	ISRecurr               string 					///checkout			//org
-
+	ParentState            string 					///checkout  //org
 	PlyMethods   string ///checkout as currPlyMethods?????  //org //get_ply_verified_methods in kernel
-	Subscriptions          string ///checkout		//org //curl on bundles
-	PlySubscriptions       string ///checkout		//org //curl on bundles
+	GmImgThumb           string `json:"GmImgThumb"` ///checkout
+	OrgBundles          string  `json:"Subscriptions"` ///checkout		//org //curl on bundles
+	PlySubscriptions       string `json:"PlySubscriptions"`///checkout		//org //curl on bundles
 	ValidJoinSubscriptions string ///checkout		//org //curl on bundles
+	InvalidPlySubscriptions string
+	OrgOfflineStatus       string `json:"OrgOfflineStatus"` ///checkout //curl on payment status
 	SSTime                 string ////checkout  //org
 	EETime                 string ////checkout  //org
 	Day                    string ///checkout
 	Days                   string ////checkout   //org
 	GmPlys                 int    ////checkout    //org //get_players_count_in_game in kernel
-	ParentState            string 					///checkout  //org
-	OrgOfflineStatus       string `json:"OrgOfflineStatus"` ///checkout //curl on payment status
-	GmImgThumb           string `json:"GmImgThumb"` ///checkout
 
 //not in kernel
 	WithdrawMess string ////checkout   ??????		//org
@@ -223,6 +228,10 @@ type Game_details struct {
 
 	//try to delete after finishing
 
+}
+
+type Ply_Methods struct {
+    Stripe_users_account_id string `json:"-"`
 }
 
 type ViewGame struct {
@@ -247,4 +256,25 @@ type OfflinePayment struct {
 	Status                      string          `json:"status"`
 	Next_billing_date           string          `json:"next_billing_date"`
 	Admin_country_currency_data CountryCurrData `json:"admin_country_currency_data"`
+}
+
+type BundleLoad struct{
+	New_client	int `json:"new_client"`
+	ProjectSecret string 
+	ProjectKey string
+	Dev_id string `json:"dev_id"`
+	Ply_id  int `json:"ply_id"`
+	Class_id int `json:"class_id"`
+	Tkn string `json:"tkn"`
+	Org_id int `json:"org_id"`
+	Class_datetime string  `json:"class_datetime"`
+}
+type BundleOutput struct{
+	Result string
+	Message string
+	OrgBundles          string  `json:"Subscriptions"` ///checkout		//org //curl on bundles
+	PlySubscriptions       string `json:"PlySubscriptions"`///checkout		//org //curl on bundles
+	ValidJoinSubscriptions string ///checkout		//org //curl on bundles
+	InvalidPlySubscriptions string
+
 }

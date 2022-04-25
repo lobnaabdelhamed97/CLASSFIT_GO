@@ -7,8 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Responses"
-	"fmt"
-    "reflect"
+"fmt"
 )
 
 func GetGames(c *gin.Context) {
@@ -86,7 +85,6 @@ if err != nil {
 func Game_Details(c *gin.Context) {
 	var viewgame Models.ViewGame
 	c.BindJSON(&viewgame)
-	fmt.Println(reflect.TypeOf(viewgame.PlyID))
 	err := viewgame.Validate()
 	if err != nil {
 		Responses.ERROR(c, err.Error())
@@ -115,25 +113,6 @@ func ViewGame(c *gin.Context) {
 	}
 }
 
-// func GetActionLogReport(c *gin.Context) {
-// 	var input Models.Log_input
-// 	var check Models.PostData
-// 	c.BindJSON(&input)
-// 	c.BindJSON(&check)
-// 	//create validation here
-// 	err := input.Validate()
-// 	if err != nil {
-// 		Responses.ERROR(c, err.Error())
-// 	} else {
-// 		data,err  := History_log.getActionLog()
-//         if err != nil{
-//             Responses.ERROR(c, err.Error())
-//         } else{
-//             c.JSON(http.StatusOK, data)
-// 	}
-// }
-// }
-
 func Participants(c *gin.Context) {
 	var wait_list_info []Models.Wait_list_info
 	var mem_info       []Models.Mem_info
@@ -151,3 +130,16 @@ func Participants(c *gin.Context) {
         }
     }
 }
+
+// func Player_data(c *gin.Context) {
+// 	var validate       Models.Player_input
+// 	c.BindJSON(&validate)
+//         members  := Models.Get_ply_verified_methods(&validate)
+//         if members != ""{
+//             c.JSON(http.StatusOK, members)
+//         }else {
+//             Responses.ERROR(c, "No data")
+//         }
+//
+//
+// }
