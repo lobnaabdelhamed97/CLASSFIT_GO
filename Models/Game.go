@@ -292,19 +292,18 @@ func Member_info(validate *Input, mem_info *[]Mem_info, wait_list_info *[]Wait_l
 	return final, nil
 }
 
-func Get_ply_verified_methods(PlyID string) (data string){
-    Player_id, _ := strconv.Atoi(PlyID)
-    if Player_id < 1 {
+func Get_ply_verified_methods(PlyID int) (data string){
+   if PlyID < 1 {
          return ""
       }
    var result Ply_Methods
-   if err := Config.DB.Table("stripe_users").Select("stripe_users_account_id").Where("stripe_users_ply_id = "+PlyID+" ").Scan(&result).Error; err != nil{
+   if err := Config.DB.Table("stripe_users").Select("stripe_users_account_id").Where("stripe_users_ply_id = "+strconv.Itoa(PlyID)+" ").Scan(&result).Error; err != nil{
         return ""
-    }
-    data = "n"
-    if result.Stripe_users_account_id != ""{
-        data  = "y"
-    }
+     }
+   data = "n"
+   if result.Stripe_users_account_id != ""{
+            data  = "y"
+        }
     return data
 }
 
