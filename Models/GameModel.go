@@ -1,5 +1,4 @@
 package Models
-
 type Game struct {
 	Gm_id               int    `json:"gm_id"`
 	Gm_title            string `json:"gm_title"`
@@ -134,9 +133,10 @@ type Game_org_info struct {
 	Level_title            string `json:"LevelT"`    //org //get level id from game then get levelt from level
 	Court_title            string `json:"CourtT"`    //org //get court id from game then get courtt name from court
 	Policy_title           string `json:"PolicyT"`   //org //get policy id from game then get policyt name from plicy
-	Subscriptions          string ///checkout		//org
-	PlySubscriptions       string ///checkout		//org
-	ValidJoinSubscriptions string ///checkout		//org
+	Subscriptions          []string ///checkout		//org
+	PlySubscriptions       []string ///checkout		//org
+	ValidJoinSubscriptions []string ///checkout		//org
+	InvalidPlySubscriptions []string
 	IsHis                  string							//org
 	ISRecurr               string 					///checkout			//org
 	ParentState            string 					///checkout  //org
@@ -206,20 +206,19 @@ type Game_details struct {
 	ParentState            string 					///checkout  //org
 	PlyMethods   string ///checkout as currPlyMethods?????  //org //get_ply_verified_methods in kernel
 	GmImgThumb           string `json:"GmImgThumb"` ///checkout
-	OrgBundles          string  `json:"Subscriptions"` ///checkout		//org //curl on bundles
-	PlySubscriptions       string `json:"PlySubscriptions"`///checkout		//org //curl on bundles
-	ValidJoinSubscriptions string ///checkout		//org //curl on bundles
-	InvalidPlySubscriptions string
+	Subscriptions          []string  `json:"Subscriptions"` ///checkout		//org //curl on bundles
+	PlySubscriptions       []string `json:"PlySubscriptions"`///checkout		//org //curl on bundles
+	ValidJoinSubscriptions []string ///checkout		//org //curl on bundles
+	InvalidPlySubscriptions []string
 	OrgOfflineStatus       string `json:"OrgOfflineStatus"` ///checkout //curl on payment status
 	SSTime                 string ////checkout  //org
 	EETime                 string ////checkout  //org
 	Day                    string ///checkout
 	Days                   string ////checkout   //org
 	GmPlys                 int    ////checkout    //org //get_players_count_in_game in kernel
+	InstructorData         string							//org
 
 //not in kernel
-	WithdrawMess string ////checkout   ??????		//org
-	InstructorData         string							//org
 	AllowRejoin            string `json:"AllowRejoin"`      ///checkout
 	PlyStatus              string `json:"PlyStatus"`        ///checkout
 	GmIsPaused             string
@@ -232,6 +231,21 @@ type Game_details struct {
 
 type Ply_Methods struct {
     Stripe_users_account_id string `json:"-"`
+}
+
+type Count_game struct{
+    Gm_ply_ply_id   int `json:"-"`
+}
+type PP struct{
+    GmID int
+    GmRecurID int
+}
+
+type Instructor struct{
+    Instructor_id int `json:"id"`
+    Name string `json:"name"`
+    Bio string `json:"bio"`
+    Image string `json:"image"`
 }
 
 type ViewGame struct {
@@ -272,9 +286,8 @@ type BundleLoad struct{
 type BundleOutput struct{
 	Result string
 	Message string
-	OrgBundles          string  `json:"Subscriptions"` ///checkout		//org //curl on bundles
-	PlySubscriptions       string `json:"PlySubscriptions"`///checkout		//org //curl on bundles
-	ValidJoinSubscriptions string ///checkout		//org //curl on bundles
-	InvalidPlySubscriptions string
-
+	OrgBundles          []string  `json:"Subscriptions"` ///checkout		//org //curl on bundles
+	PlySubscriptions       []string `json:"PlySubscriptions"`///checkout		//org //curl on bundles
+	ValidJoinSubscriptions []string ///checkout		//org //curl on bundles
+	InvalidPlySubscriptions []string
 }

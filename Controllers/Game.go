@@ -143,3 +143,21 @@ func Participants(c *gin.Context) {
 //
 //
 // }
+
+// func Game_data(c *gin.Context) {
+//     var result         []Models.Count_game
+//  	var validate       Models.PP
+//  	c.BindJSON(&validate)
+//          members  := Models.Get_players_count_in_game(&validate,&result)
+//          c.JSON(http.StatusOK, members)
+//
+//  }
+
+// func Inst_data(c *gin.Context){
+//         var validate       Models.PP
+//         c.BindJSON(&validate)
+//         members  := Models.GetGmInstructorData(&validate)
+//
+//         c.JSON(http.StatusOK, members)
+//
+// }

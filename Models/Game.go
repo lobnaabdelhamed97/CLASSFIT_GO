@@ -3,13 +3,14 @@ package Models
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 	"net/url"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Helper"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
+	"time"
+	 "fmt"
 )
 
 func GetAllGames(game *Game) (err error) {
@@ -243,20 +244,6 @@ func (validate *Input) Validate() error {
 	return nil
 }
 
-func (log *Log_input) Validate() error {
-
-	//     if (log.PostData == nil){
-	//         return errors.New("No Data Sent")
-	//     }
-	//     Org_id, _ := strconv.Atoi(log.PostData["PlyID"])
-	//     if Org_id  <= 0 {
-	// 		return errors.New("GmID Required")
-	// 	}
-	//     if log.PostData.Type  == "" {
-	// 		return errors.New("Type Required")
-	// 	}
-	return nil
-}
 
 func Member_info(validate *Input, mem_info *[]Mem_info, wait_list_info *[]Wait_list_info) (final Final, err error) {
 
@@ -297,8 +284,13 @@ func Member_info(validate *Input, mem_info *[]Mem_info, wait_list_info *[]Wait_l
 
 	return final, nil
 }
-
 func CommonGameKeys(in *ViewGame, game_details *Game_details) (game *Game_details, err error) {
+	res1 := strings.Split(game_details.Gm_utc_datetime, "T")
+	res2 := strings.Split(res1[1], "+")
+	game_details.Gm_date=res1[0]
+	game_details.Gm_utc_datetime=res1[0]+" "+res2[0]
+	game_details.SSTime=res2[0]
+	
 	if game_details.Gm_recurr_times > 0 && game_details.Gm_recurr_type != "" {
 		game_details.ParentState = "p"
 	} else if game_details.Gm_recurr_id > 0 {
@@ -314,7 +306,27 @@ func CommonGameKeys(in *ViewGame, game_details *Game_details) (game *Game_detail
 		game_details.GmImgThumb = "https://classfit-assets.s3.amazonaws.com" + "/images/upload/gm/thumb/" + game_details.Gm_img
 	}
 
-	//time part donot forget
+//time part donot forget
+type TimeResult struct {
+	Id int
+	Timezone string
+}
+var timeresult TimeResult
+
+if err := Config.DB.Table("ply_timezone").Select("id,timezone").Where("player_id = ?", in.PlyID).Scan(&timeresult).Error; err != nil {
+return nil,err}
+
+if timeresult.Id>0 && timeresult.Timezone != "" {
+	timeresult.Timezone, _ = url.PathUnescape(timeresult.Timezone)
+	t, err := time.Parse("2006-01-02", game_details.Gm_date)
+if err != nil {
+   return nil,err
+}
+game_details.Day=t.Weekday().String()
+fmt.Print(time.Now())
+	//res2 := strings.Split(res1[1], "+")
+}
+
 	type Result struct {
 		Contact_id int `json:"Contact_id"`
 	}
@@ -338,49 +350,98 @@ func CommonGameKeys(in *ViewGame, game_details *Game_details) (game *Game_detail
 	data.Set("tkn", in.Tkn)
 	data.Set("org_id", strconv.Itoa(game_details.Gm_org_id))
 	data.Set("class_datetime", game_details.Gm_utc_datetime)
-
-	// load.New_client=new_client
-	// load.ProjectSecret=in.ProjectSecret
-	// load.ProjectKey=in.ProjectKey
-	// load.Dev_id=in.DevID
-	// load.Ply_id=in.PlyID
-	// load.Class_id=in.GmID
-	// load.Tkn=in.Tkn
-	// load.Org_id=game_details.Gm_org_id
-	// load.Class_datetime=game_details.Gm_utc_datetime
-	// fmt.Println(load)
 	keysec := Helper.KeySecured(in.ProjectKey, in.ProjectSecret)
-	fmt.Println(keysec)
-	// values, err := json.Marshal(lod)
 	body := Helper.BundleCurl(keysec, "https://v2.classfit.com/bundles/playerBundles", data, "application/x-www-form-urlencoded")
 	var output BundleOutput
 	err = json.Unmarshal(body, &output)
-	fmt.Println(output)
-
 	if err != nil {
 		return nil, err
 	}
+	if output.Result=="error"{
+		return nil,errors.New(output.Message)
+	}
+game_details.Subscriptions=output.OrgBundles
+game_details.PlySubscriptions=output.PlySubscriptions
+game_details.ValidJoinSubscriptions=output.ValidJoinSubscriptions
+game_details.InvalidPlySubscriptions=output.InvalidPlySubscriptions
+in.PlyID=game_details.Gm_org_id
+values, err := json.Marshal(in)
+body = Helper.PaymentCurl(keysec, "https://v2.classfit.com/payment/offline/admin/status", values, "application/json")
+var payment OfflinePayment
+err = json.Unmarshal(body, &payment)
+if err != nil {
+	return nil,err
+}
+game_details.OrgOfflineStatus = payment.Status
+
 	return game_details, nil
 }
 
-func Get_ply_verified_methods(PlyID int) (data string) {
+func Get_ply_verified_methods(PlyID int) (data string){
+   if PlyID < 1 {
+         return ""
+      }
+   var result Ply_Methods
+   if err := Config.DB.Table("stripe_users").Select("stripe_users_account_id").Where("stripe_users_ply_id = "+strconv.Itoa(PlyID)+" ").Scan(&result).Error; err != nil{
+        return ""
+     }
+   data = "n"
+   if result.Stripe_users_account_id != ""{
+            data  = "y"
+        }
+    return data
+}
 
-	var result Ply_Methods
-	if err := Config.DB.Table("stripe_users").Select("stripe_users_account_id").Where("stripe_users_ply_id = " + strconv.Itoa(PlyID) + " ").Scan(&result).Error; err != nil {
-		return err.Error()
-	}
-	data = "n"
-	if result.Stripe_users_account_id != "" {
-		data = "y"
-	}
-	return data
+func GetGmInstructorData (GmID int , GmRecurID int) (inst_data Instructor){
+     if GmID < 1 {
+         return inst_data
+     }
+     var check Instructor
+          Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors_parents_only JOIN instructors ON instructors.id = gm_instructors_parents_only.instructor_id WHERE gm_id = "+strconv.Itoa(GmID)+"  ").Scan(&inst_data)
+     if inst_data == check{
+          Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors JOIN instructors ON instructors.id = gm_instructors.instructor_id WHERE gm_id = "+strconv.Itoa(GmID)+" ").Scan(&inst_data)
+     }
+     if inst_data == check && GmRecurID > 0 {
+        type Game struct {
+            Gm_copy_id int
+        }
+        var game_copy_id Game
+        Config.DB.Table("game").Select("gm_copy_id").Where("gm_id= "+strconv.Itoa(GmID)+" ").Scan(&game_copy_id)
+        if game_copy_id.Gm_copy_id > 0{
+            GmRecurID = game_copy_id.Gm_copy_id
+        }
+          Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors JOIN instructors ON instructors.id = gm_instructors.instructor_id WHERE gm_id = "+strconv.Itoa(GmRecurID)+" ").Scan(&inst_data)
+     }
+     return inst_data
+}
+
+func Get_players_count_in_game(Gm_id int, result *[]Count_game) (players int){
+    if Gm_id < 1{
+        return 0
+    }
+    if err := Config.DB.Raw("SELECT gm_ply_ply_id FROM gm_players where gm_ply_gm_id= "+strconv.Itoa(Gm_id)+" Union ALL SELECT guest_ply_id FROM guests WHERE guest_gm_id= "+strconv.Itoa(Gm_id)+" ").Scan(&result).Error; err != nil{
+        return 0
+    }
+     unique := make([]int,0)
+     for i:=0 ; i < len(*result) ; i++{
+             unique = append(unique,(*result)[i].Gm_ply_ply_id)
+         }
+    keys := make(map[int]bool)
+    list := []int{}
+    for _, entry := range unique {
+        if _, value := keys[entry]; !value || entry == 0 {
+            keys[entry] = true
+            list = append(list, entry)
+        }
+    }
+    return len(list)
 }
 
 func GameDetails(in *ViewGame, game_details *Game_details) (err error) {
 	if err = Config.DB.Table("game").Where("gm_id = ? AND (gm_status IS NULL OR gm_status NOT LIKE '%deleted%')", in.GmID).Select("gm_org_id,gm_id,gm_title,gm_desc,gm_age,gm_reqQues,gm_payment_type,gm_is_free,gm_status,gm_start_time,gm_end_time,attend_type,zoom_url,gm_utc_datetime,gm_max_players,gm_available_to_join,gm_date,gm_fees,gm_loc_desc,gm_is_stop_recurred,gm_loc_lat,gm_loc_long,gm_img,gm_scope,gm_gender,gm_currency_symbol,gm_display_org,gm_showMem,gm_sub_type_id,gm_s_type_name,gm_court_id,gm_level_id,gm_policy_id,level_title,court_title,policy_title,gm_s3_status,gm_recurr_times,gm_recurr_type,gm_recurr_id,currency_name,(CASE WHEN ((gm_org_id = " + strconv.Itoa(in.PlyID) + " && (gm_utc_datetime + INTERVAL gm_end_time MINUTE) >= CURRENT_TIMESTAMP) OR (gm_org_id != " + strconv.Itoa(in.PlyID) + " && (gm_utc_datetime + INTERVAL gm_end_time MINUTE) >= CURRENT_TIMESTAMP)) THEN 'n' ELSE 'y' END) AS IsHis").Joins("FULL JOIN players org ON gm_org_id =org.ply_id" + " left JOIN gm_s_types ON gm_sub_type_id = gm_s_type_id" + " LEFT JOIN court ON gm_court_id = court_id" + " LEFT JOIN level ON gm_level_id = level_id" + " LEFT JOIN `policy` ON gm_policy_id = policy_id" + " LEFT JOIN currencies ON currency_id=gm_currency_symbol").Scan(&game_details).Error; err != nil {
 		return err
 	}
-	fmt.Println(game_details.Gm_utc_datetime)
+
 	if game_details.Gm_showMem == 1 {
 		game_details.ShowMem = "True"
 	} else {

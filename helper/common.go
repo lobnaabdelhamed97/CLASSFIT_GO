@@ -48,7 +48,7 @@ func PaymentCurl(keysec string, url string, input []byte, ContentType string) []
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
-
+			fmt.Print(err)
 		}
 	}(res.Body)
 	body, _ := ioutil.ReadAll(res.Body)
@@ -69,26 +69,11 @@ func BundleCurl(keysec string, url string, data url.Values, ContentType string) 
 		fmt.Print(err)
 	}
 
-	fmt.Println(res.Status)
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(string(body))
-	// req, _ := http.NewRequest("POST", url, bytes.NewBuffer(input))
-	// req.Header.Add("content-type", ContentType)
-	// req.Header.Add("cache-control", "no-cache")
-	// req.Header.Add("Key-Sec", keysec)
-	// res, _ := http.DefaultClient.Do(req)
-	// defer func(Body io.ReadCloser) {
-	//   err := Body.Close()
-	//   if err != nil {
-
-	//   }
-	// }(res.Body)
-	// body, _ := ioutil.ReadAll(res.Body)
-	// return body
 	return body
 }
 
@@ -97,27 +82,3 @@ func KeySecured(projectkey string, projectsecret string) string {
 	EncodedKey := b64.StdEncoding.EncodeToString([]byte(key))
 	return EncodedKey
 }
-
-//  func curl(arg1 string, input map[string]string) (string, error){
-
-// payload = "{\n\t\"dict\": {\n\t\t\"key1\": \"value1\",\n\t\t\"key2\": \"value2\"\n\t}\n}"
-// headers = {
-//     'Content-Type': "application/json",
-//     'cache-control': "no-cache",
-//     'Postman-Token': <TOKEN>
-//     }
-
-// resp, err := requests.Get("https://httpbin.org/", headers, nil)
-
-// postData := &bytes.Buffer{}
-// postData.WriteString("postdata")
-// resp, err := requests.Post("https://httpbin.org/", headers, &requests.RequestParams{
-//     Data:    postData,
-// })
-// 	if err != nil {
-// 		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
-// 		return "", nil
-// 	} else {
-// 		return resp, nil
-// 	}
-//  }
