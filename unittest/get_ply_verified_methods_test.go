@@ -15,7 +15,7 @@ import (
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 )
 
-func Test_Player_data(t *testing.T) {
+func Test_Player_verify_data(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	views := []Models.Player_input{
 		{
@@ -38,7 +38,12 @@ func Test_Player_data(t *testing.T) {
 		if err != nil {
 			fmt.Println("Status:", err)
 		}
-		defer Config.DB.Close()
+		defer func(DB *gorm.DB) {
+			err := DB.Close()
+			if err != nil {
+
+			}
+		}(Config.DB)
 		var buf bytes.Buffer
 		err = json.NewEncoder(&buf).Encode(views[i])
 		if err != nil {

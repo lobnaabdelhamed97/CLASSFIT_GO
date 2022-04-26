@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/url"
 	"strconv"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Helper"
@@ -58,12 +59,12 @@ func (v *ViewGame) Validate() error {
 	// if v.Tkn == "" {
 	// 	return errors.New("required token")
 	// }
-	 if v.ProjectKey == "" {
-	 	return errors.New("required project key")
-	 }
-	 if v.ProjectSecret == "" {
-	 	return errors.New("required project Secret")
-	 }
+	if v.ProjectKey == "" {
+		return errors.New("required project key")
+	}
+	if v.ProjectSecret == "" {
+		return errors.New("required project Secret")
+	}
 	return nil
 }
 
@@ -77,17 +78,19 @@ func (v *ViewGame) Validate() error {
 // 	return nil
 // }
 func Userinfoandflags(in *ViewGame, user_infoandflags *User_infoandflags) (err error) {
- if err = Config.DB.Table("custom_notifications").Where("custom_notification_gm_id = ? AND custom_notification_ply_id = ?",in.GmID,in.PlyID).Select("custom_notification_reminder_status, custom_notification_period").Scan(&user_infoandflags).Error; err != nil {
-	if string(err.Error()) == "record not found"{
-		user_infoandflags.Custom_notification_reminder_status=0
-		user_infoandflags.Custom_notification_period="" } else {
-	return err 
-}}
-user_infoandflags.PlyID=in.PlyID
-if err = Config.DB.Table("admin_terms").Where("admin_id = ?",in.PlyID).Select("terms").Scan(&user_infoandflags).Error; err != nil {
-	if string(err.Error()) == "record not found"{
-		user_infoandflags.Terms="false"
-		}else {
+	if err = Config.DB.Table("custom_notifications").Where("custom_notification_gm_id = ? AND custom_notification_ply_id = ?", in.GmID, in.PlyID).Select("custom_notification_reminder_status, custom_notification_period").Scan(&user_infoandflags).Error; err != nil {
+		if string(err.Error()) == "record not found" {
+			user_infoandflags.Custom_notification_reminder_status = 0
+			user_infoandflags.Custom_notification_period = ""
+		} else {
+			return err
+		}
+	}
+	user_infoandflags.PlyID = in.PlyID
+	if err = Config.DB.Table("admin_terms").Where("admin_id = ?", in.PlyID).Select("terms").Scan(&user_infoandflags).Error; err != nil {
+		if string(err.Error()) == "record not found" {
+			user_infoandflags.Terms = "false"
+		} else {
 			return err
 		}
 	}
@@ -168,9 +171,9 @@ func Organizerinfo(in *ViewGame, organizer_info *Organizer_info) (err error) {
 	if err = Config.DB.Table("game").Where("gm_id = ?", in.GmID).Select("gm_org_id").Scan(&iddata).Error; err != nil {
 		return err
 	}
-	organizer_info.OrgID=iddata.Gm_org_id
-	if err = Config.DB.Table("players").Where("ply_id = ?",iddata.Gm_org_id).Select("ply_bio,ply_business,ply_brithdate,ply_email").Scan(&organizer_info).Error; err != nil {
-		return err 
+	organizer_info.OrgID = iddata.Gm_org_id
+	if err = Config.DB.Table("players").Where("ply_id = ?", iddata.Gm_org_id).Select("ply_bio,ply_business,ply_brithdate,ply_email").Scan(&organizer_info).Error; err != nil {
+		return err
 	}
 	organizer_info.Ply_bio, _ = url.PathUnescape(organizer_info.Ply_bio)
 	organizer_info.Ply_bio = url.PathEscape(organizer_info.Ply_bio)
@@ -208,26 +211,27 @@ func Organizerinfo(in *ViewGame, organizer_info *Organizer_info) (err error) {
 		Stripe_users_card_id string
 	}
 	var customerID CustomerID
-	if err = Config.DB.Table("stripe_users").Where("stripe_users_ply_id = ?",iddata.Gm_org_id).Select("stripe_users_cust_id,stripe_users_card_id").Scan(&customerID).Error; err != nil {
-		return err 
-	}		
-	organizer_info.StripeData.CardName,organizer_info.StripeData.CardLast4,err= Helper.RetrieveData(customerID.Stripe_users_cust_id,customerID.Stripe_users_card_id)
-	if err != nil{
-		organizer_info.StripeData.CardName=""
-		organizer_info.StripeData.CardLast4=""
-}
-if err = Config.DB.Table("admin_terms").Where("admin_id = ?",in.PlyID).Select("terms").Scan(&organizer_info).Error; err != nil {
-	if string(err.Error()) == "record not found"{
-		organizer_info.Terms="false"
-		}else {
+	if err = Config.DB.Table("stripe_users").Where("stripe_users_ply_id = ?", iddata.Gm_org_id).Select("stripe_users_cust_id,stripe_users_card_id").Scan(&customerID).Error; err != nil {
+		return err
+	}
+	organizer_info.StripeData.CardName, organizer_info.StripeData.CardLast4, err = Helper.RetrieveData(customerID.Stripe_users_cust_id, customerID.Stripe_users_card_id)
+	if err != nil {
+		organizer_info.StripeData.CardName = ""
+		organizer_info.StripeData.CardLast4 = ""
+	}
+	if err = Config.DB.Table("admin_terms").Where("admin_id = ?", in.PlyID).Select("terms").Scan(&organizer_info).Error; err != nil {
+		if string(err.Error()) == "record not found" {
+			organizer_info.Terms = "false"
+		} else {
 			return err
-		}	
+		}
+	}
+	if organizer_info.Terms != "false" {
+		organizer_info.Terms = "true"
+	}
+	return nil
 }
-if organizer_info.Terms != "false"{
-	organizer_info.Terms="true"
-}
-	return nil}
-	
+
 func (validate *Input) Validate() error {
 	Gm_id, _ := strconv.Atoi(validate.Gm_id)
 	if Gm_id <= 0 {
@@ -236,7 +240,6 @@ func (validate *Input) Validate() error {
 
 	return nil
 }
-
 
 func Member_info(validate *Input, mem_info *[]Mem_info, wait_list_info *[]Wait_list_info) (final Final, err error) {
 
@@ -278,68 +281,68 @@ func Member_info(validate *Input, mem_info *[]Mem_info, wait_list_info *[]Wait_l
 	return final, nil
 }
 
-func Get_ply_verified_methods(PlyID int) (data string){
-   if PlyID < 1 {
-         return ""
-      }
-   var result Ply_Methods
-   if err := Config.DB.Table("stripe_users").Select("stripe_users_account_id").Where("stripe_users_ply_id = "+strconv.Itoa(PlyID)+" ").Scan(&result).Error; err != nil{
-        return ""
-     }
-   data = "n"
-   if result.Stripe_users_account_id != ""{
-            data  = "y"
-        }
-    return data
+func Get_ply_verified_methods(PlyID int) (data string) {
+	if PlyID < 1 {
+		return ""
+	}
+	var result Ply_Methods
+	if err := Config.DB.Table("stripe_users").Select("stripe_users_account_id").Where("stripe_users_ply_id = " + strconv.Itoa(PlyID) + " ").Scan(&result).Error; err != nil {
+		return ""
+	}
+	data = "n"
+	if result.Stripe_users_account_id != "" {
+		data = "y"
+	}
+	return data
 }
 
-func GetGmInstructorData (GmID int , GmRecurID int) (inst_data Instructor){
-     if GmID < 1 {
-         return inst_data
-     }
-     var check Instructor
-          Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors_parents_only JOIN instructors ON instructors.id = gm_instructors_parents_only.instructor_id WHERE gm_id = "+strconv.Itoa(GmID)+"  ").Scan(&inst_data)
-     if inst_data == check{
-          Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors JOIN instructors ON instructors.id = gm_instructors.instructor_id WHERE gm_id = "+strconv.Itoa(GmID)+" ").Scan(&inst_data)
-     }
-     if inst_data == check && GmRecurID > 0 {
-        type Game struct {
-            Gm_copy_id int
-        }
-        var game_copy_id Game
-        Config.DB.Table("game").Select("gm_copy_id").Where("gm_id= "+strconv.Itoa(GmID)+" ").Scan(&game_copy_id)
-        if game_copy_id.Gm_copy_id > 0{
-            GmRecurID = game_copy_id.Gm_copy_id
-        }
-          Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors JOIN instructors ON instructors.id = gm_instructors.instructor_id WHERE gm_id = "+strconv.Itoa(GmRecurID)+" ").Scan(&inst_data)
-     }
-     return inst_data
+func GetGmInstructorData(GmID int, GmRecurID int) (inst_data Instructor) {
+	if GmID < 1 {
+		return inst_data
+	}
+	var check Instructor
+	Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors_parents_only JOIN instructors ON instructors.id = gm_instructors_parents_only.instructor_id WHERE gm_id = " + strconv.Itoa(GmID) + "  ").Scan(&inst_data)
+	if inst_data == check {
+		Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors JOIN instructors ON instructors.id = gm_instructors.instructor_id WHERE gm_id = " + strconv.Itoa(GmID) + " ").Scan(&inst_data)
+	}
+	if inst_data == check && GmRecurID > 0 {
+		type Game struct {
+			Gm_copy_id int
+		}
+		var game_copy_id Game
+		Config.DB.Table("game").Select("gm_copy_id").Where("gm_id= " + strconv.Itoa(GmID) + " ").Scan(&game_copy_id)
+		if game_copy_id.Gm_copy_id > 0 {
+			GmRecurID = game_copy_id.Gm_copy_id
+		}
+		Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors JOIN instructors ON instructors.id = gm_instructors.instructor_id WHERE gm_id = " + strconv.Itoa(GmRecurID) + " ").Scan(&inst_data)
+	}
+	return inst_data
 }
 
-func Get_players_count_in_game(Gm_id int, result *[]Count_game) (players int){
-    if Gm_id < 1{
-        return 0
-    }
-    if err := Config.DB.Raw("SELECT gm_ply_ply_id FROM gm_players where gm_ply_gm_id= "+strconv.Itoa(Gm_id)+" Union ALL SELECT guest_ply_id FROM guests WHERE guest_gm_id= "+strconv.Itoa(Gm_id)+" ").Scan(&result).Error; err != nil{
-        return 0
-    }
-     unique := make([]int,0)
-     for i:=0 ; i < len(*result) ; i++{
-             unique = append(unique,(*result)[i].Gm_ply_ply_id)
-         }
-    keys := make(map[int]bool)
-    list := []int{}
-    for _, entry := range unique {
-        if _, value := keys[entry]; !value || entry == 0 {
-            keys[entry] = true
-            list = append(list, entry)
-        }
-    }
-    return len(list)
+func Get_players_count_in_game(Gm_id int, result *[]Count_game) (players int) {
+	if Gm_id < 1 {
+		return 0
+	}
+	if err := Config.DB.Raw("SELECT gm_ply_ply_id FROM gm_players where gm_ply_gm_id= " + strconv.Itoa(Gm_id) + " Union ALL SELECT guest_ply_id FROM guests WHERE guest_gm_id= " + strconv.Itoa(Gm_id) + " ").Scan(&result).Error; err != nil {
+		return 0
+	}
+	unique := make([]int, 0)
+	for i := 0; i < len(*result); i++ {
+		unique = append(unique, (*result)[i].Gm_ply_ply_id)
+	}
+	keys := make(map[int]bool)
+	var list []int
+	for _, entry := range unique {
+		if _, value := keys[entry]; !value || entry == 0 {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+	return len(list)
 }
 
 func GameDetails(in *ViewGame, game_details *Game_details) (err error) {
-	if err = Config.DB.Table("game").Where("gm_id = ? AND (gm_status IS NULL OR gm_status NOT LIKE '%deleted%')",in.GmID).Select("gm_org_id,gm_id,gm_title,gm_desc,gm_age,gm_reqQues,gm_payment_type,gm_is_free,gm_status,gm_start_time,gm_end_time,attend_type,zoom_url,gm_utc_datetime,gm_max_players,gm_available_to_join,gm_date,gm_fees,gm_loc_desc,gm_is_stop_recurred,gm_loc_lat,gm_loc_long,gm_img,gm_scope,gm_gender,gm_currency_symbol,gm_display_org,gm_showMem,gm_sub_type_id,gm_s_type_name,gm_court_id,gm_level_id,gm_policy_id,level_title,court_title,policy_title,gm_s3_status,currency_name,(CASE WHEN ((gm_org_id = "+strconv.Itoa(in.PlyID)+" && (gm_utc_datetime + INTERVAL gm_end_time MINUTE) >= CURRENT_TIMESTAMP) OR (gm_org_id != "+strconv.Itoa(in.PlyID)+" && (gm_utc_datetime + INTERVAL gm_end_time MINUTE) >= CURRENT_TIMESTAMP)) THEN 'n' ELSE 'y' END) AS IsHis").Joins("FULL JOIN players org ON gm_org_id =org.ply_id"+" left JOIN gm_s_types ON gm_sub_type_id = gm_s_type_id"+" LEFT JOIN court ON gm_court_id = court_id"+" LEFT JOIN level ON gm_level_id = level_id"+" LEFT JOIN `policy` ON gm_policy_id = policy_id"+" LEFT JOIN currencies ON currency_id=gm_currency_symbol").Scan(&game_details).Error; err != nil {
+	if err = Config.DB.Table("game").Where("gm_id = ? AND (gm_status IS NULL OR gm_status NOT LIKE '%deleted%')", in.GmID).Select("gm_org_id,gm_id,gm_title,gm_desc,gm_age,gm_reqQues,gm_payment_type,gm_is_free,gm_status,gm_start_time,gm_end_time,attend_type,zoom_url,gm_utc_datetime,gm_max_players,gm_available_to_join,gm_date,gm_fees,gm_loc_desc,gm_is_stop_recurred,gm_loc_lat,gm_loc_long,gm_img,gm_scope,gm_gender,gm_currency_symbol,gm_display_org,gm_showMem,gm_sub_type_id,gm_s_type_name,gm_court_id,gm_level_id,gm_policy_id,level_title,court_title,policy_title,gm_s3_status,currency_name,(CASE WHEN ((gm_org_id = " + strconv.Itoa(in.PlyID) + " && (gm_utc_datetime + INTERVAL gm_end_time MINUTE) >= CURRENT_TIMESTAMP) OR (gm_org_id != " + strconv.Itoa(in.PlyID) + " && (gm_utc_datetime + INTERVAL gm_end_time MINUTE) >= CURRENT_TIMESTAMP)) THEN 'n' ELSE 'y' END) AS IsHis").Joins("FULL JOIN players org ON gm_org_id =org.ply_id" + " left JOIN gm_s_types ON gm_sub_type_id = gm_s_type_id" + " LEFT JOIN court ON gm_court_id = court_id" + " LEFT JOIN level ON gm_level_id = level_id" + " LEFT JOIN `policy` ON gm_policy_id = policy_id" + " LEFT JOIN currencies ON currency_id=gm_currency_symbol").Scan(&game_details).Error; err != nil {
 		return err
 	}
 	if game_details.Gm_showMem == 1 {
@@ -347,35 +350,38 @@ func GameDetails(in *ViewGame, game_details *Game_details) (err error) {
 	} else {
 		game_details.ShowMem = "False"
 	}
-	if game_details.Gm_is_stop_recurred=="n"{
-		game_details.ISRecurr="True"
+	if game_details.Gm_is_stop_recurred == "n" {
+		game_details.ISRecurr = "True"
 	} else {
-		game_details.ISRecurr="False"
+		game_details.ISRecurr = "False"
 
 	}
-	game_details.PlyID=in.PlyID
+	game_details.PlyID = in.PlyID
 	type Name struct {
 		Ply_fname string
 		Ply_lname string
 	}
 	var name Name
-	if err = Config.DB.Table("players").Where("ply_id = ?",game_details.Gm_org_id).Select("ply_fname,ply_lname").Scan(&name).Error; err != nil {
-		return err 
-}
-	name.Ply_fname,_=url.PathUnescape(name.Ply_fname)
-	name.Ply_lname,_=url.PathUnescape(name.Ply_lname)
-	game_details.OrgName=name.Ply_fname+" "+name.Ply_lname
+	if err = Config.DB.Table("players").Where("ply_id = ?", game_details.Gm_org_id).Select("ply_fname,ply_lname").Scan(&name).Error; err != nil {
+		return err
+	}
+	name.Ply_fname, _ = url.PathUnescape(name.Ply_fname)
+	name.Ply_lname, _ = url.PathUnescape(name.Ply_lname)
+	game_details.OrgName = name.Ply_fname + " " + name.Ply_lname
 	type IdDummy struct {
 		Gm_ply_id int
 	}
-	var iddata IdDummy	
-	if err = Config.DB.Table("gm_players").Where("gm_ply_gm_id = ? AND gm_ply_ply_id = ? AND gm_ply_status = 'y'",in.GmID,in.PlyID).Select("gm_ply_id").Scan(&iddata).Error; err != nil {
-		if string(err.Error()) == "record not found"{
-			game_details.MemGm="False"
+	var iddata IdDummy
+	if err = Config.DB.Table("gm_players").Where("gm_ply_gm_id = ? AND gm_ply_ply_id = ? AND gm_ply_status = 'y'", in.GmID, in.PlyID).Select("gm_ply_id").Scan(&iddata).Error; err != nil {
+		if string(err.Error()) == "record not found" {
+			game_details.MemGm = "False"
 		} else {
-			return err}}
-			if game_details.MemGm != "false"{
-				game_details.MemGm="True"
-			}
+			return err
+		}
+	}
+	if game_details.MemGm != "false" {
+		game_details.MemGm = "True"
+	}
 
-return nil}
+	return nil
+}
