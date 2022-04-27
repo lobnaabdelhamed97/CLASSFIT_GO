@@ -69,7 +69,12 @@ func TestOrganizerInfo(t *testing.T) {
 		if err != nil {
 			fmt.Println("Status:", err)
 		}
-		defer Config.DB.Close()
+		defer func(DB *gorm.DB) {
+			err := DB.Close()
+			if err != nil {
+
+			}
+		}(Config.DB)
 		var buf bytes.Buffer
 		err = json.NewEncoder(&buf).Encode(views[i])
 		if err != nil {

@@ -103,36 +103,36 @@ type Organizer_info struct {
 	Ply_brithdate string     `json:"PlyBirthDate"`
 	Ply_email     string     `json:"OrgEmail"`
 	Terms         string     `json:"IssetOrgTerms"`
-
 }
 
 type Game_org_info struct {
-	Gm_id                  int    `json:"GmID"`  ///checkout	//org
-	Gm_title               string `json:"GmT"`   ///checkout  //org
-	Gm_desc                string `json:"Desc"`  ///checkout  //org
-	Gm_age                 int    `json:"Age"`        ///checkout   //org
-	Gm_img                 string `json:"GmImg"`      //check on gm_s3_status			///checkout   //org
-	Gm_reqQues             int    `json:"GmReqQues"`  ////checkout  //org
-	Gm_payment_type        string `json:"PayType"`    ///checkout   //org
-	Gm_is_free             string `json:"IsFree"`					//org
-	Gm_status              string `json:"GmStatus"` ///checkout  ///org
-	Gm_start_time          string `json:"STime"` ////checkout   //org
-	Gm_end_time            string `json:"ETime"` ////checkout		//org
-	Attend_type            string `json:"attendType"` ////checkout   //org
-	Zoom_url               string `json:"zoomUrl "`  //org
-	Gm_utc_datetime        string `json:"UTCDateTime"` ///checkout  //org
-	Gm_available_to_join   int    `json:"GmIsAvailableToJoin"` ///checkout  //org
-	Gm_date                string `json:"GmDate"`     ////checkout  //org
-	Gm_fees                string `json:"Fees"`     //org ///checkout
-	Gm_loc_desc            string `json:"LocDesc"` ///checkout  //org
-	Gm_is_stop_recurred    string `json:"IsStopRecurred"` ////checkout  //org
-	Gm_scope			   string `json:"Scope"`    //org
-	Gm_policy_id    		int    `json:"Gm_policy_id"` //org
+	Gm_id                int    `json:"GmID"`                ///checkout	//org
+	Gm_title             string `json:"GmT"`                 ///checkout  //org
+	Gm_desc              string `json:"Desc"`                ///checkout  //org
+	Gm_age               int    `json:"Age"`                 ///checkout   //org
+	Gm_img               string `json:"GmImg"`               //check on gm_s3_status			///checkout   //org
+	Gm_reqQues           int    `json:"GmReqQues"`           ////checkout  //org
+	Gm_payment_type      string `json:"PayType"`             ///checkout   //org
+	Gm_is_free           string `json:"IsFree"`              //org
+	Gm_status            string `json:"GmStatus"`            ///checkout  ///org
+	Gm_start_time        string `json:"STime"`               ////checkout   //org
+	Gm_end_time          string `json:"ETime"`               ////checkout		//org
+	Attend_type          string `json:"attendType"`          ////checkout   //org
+	Zoom_url             string `json:"zoomUrl "`            //org
+	Gm_utc_datetime      string `json:"UTCDateTime"`         ///checkout  //org
+	Gm_available_to_join int    `json:"GmIsAvailableToJoin"` ///checkout  //org
+	Gm_date              string `json:"GmDate"`              ////checkout  //org
+	Gm_fees              string `json:"Fees"`                //org ///checkout
+	Gm_loc_desc          string `json:"LocDesc"`             ///checkout  //org
+	Gm_is_stop_recurred  string `json:"IsStopRecurred"`      ////checkout  //org
+	Gm_scope             string `json:"Scope"`               //org
+	Gm_policy_id         int    `json:"Gm_policy_id"`        //org
 
 	Gm_s_type_name         string `json:"STypeName"` ////checkout  //org //get stype id from game then get stype name from gm s types
 	Level_title            string `json:"LevelT"`    //org //get level id from game then get levelt from level
 	Court_title            string `json:"CourtT"`    //org //get court id from game then get courtt name from court
-	Policy_title           string `json:"PolicyT"`   //org //get policy id from game then get policyt name from plicy
+	Policy_title           string `json:"PolicyT"`   //org //get policy id from game then get policyt name from policy
+	
 	Subscriptions          []string ///checkout		//org
 	PlySubscriptions       []string ///checkout		//org
 	ValidJoinSubscriptions []string ///checkout		//org
@@ -230,22 +230,22 @@ type Game_details struct {
 }
 
 type Ply_Methods struct {
-    Stripe_users_account_id string `json:"-"`
+	Stripe_users_account_id string `json:"-"`
 }
 
-type Count_game struct{
-    Gm_ply_ply_id   int `json:"-"`
+type Count_game struct {
+	Gm_ply_ply_id int `json:"-"`
 }
-type PP struct{
-    GmID int
-    GmRecurID int
+type PP struct {
+	GmID      int
+	GmRecurID int
 }
 
-type Instructor struct{
-    Instructor_id int `json:"id"`
-    Name string `json:"name"`
-    Bio string `json:"bio"`
-    Image string `json:"image"`
+type Instructor struct {
+	Instructor_id int    `json:"id"`
+	Name          string `json:"name"`
+	Bio           string `json:"bio"`
+	Image         string `json:"image"`
 }
 
 type ViewGame struct {

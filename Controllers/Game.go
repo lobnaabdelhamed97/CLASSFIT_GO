@@ -3,7 +3,7 @@ package Controllers
 import (
 	"encoding/json"
 	"net/http"
-//     "github.com/lobnaabdelhamed97/CLASSFIT_GO/History_log"
+	//     "github.com/lobnaabdelhamed97/CLASSFIT_GO/History_log"
 	"github.com/gin-gonic/gin"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Responses"
@@ -22,7 +22,10 @@ func GetGames(c *gin.Context) {
 
 func CreateGame(c *gin.Context) {
 	var game Models.Game
-	c.BindJSON(&game)
+	eror := c.BindJSON(&game)
+	if eror != nil {
+		return
+	}
 	err := Models.CreateGame(&game)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -44,10 +47,12 @@ func GetGameByID(c *gin.Context) {
 	}
 }
 
-
 func User_infoandflags(c *gin.Context) {
 	var viewgame Models.ViewGame
-	c.BindJSON(&viewgame)
+	eror := c.BindJSON(&viewgame)
+	if eror != nil {
+		return
+	}
 	err := viewgame.Validate()
 
 	if err != nil {
@@ -65,26 +70,32 @@ func User_infoandflags(c *gin.Context) {
 }
 
 func Organizer_info(c *gin.Context) {
-var viewgame Models.ViewGame
-c.BindJSON(&viewgame)
-err := viewgame.Validate()
-if err != nil {
-	Responses.ERROR(c, err.Error())
-} else {
-	var Organizer_info Models.Organizer_info
-	err := Models.Organizerinfo(&viewgame, &Organizer_info)
+	var viewgame Models.ViewGame
+	eror := c.BindJSON(&viewgame)
+	if eror != nil {
+		return
+	}
+	err := viewgame.Validate()
 	if err != nil {
 		Responses.ERROR(c, err.Error())
 	} else {
-		data, _ := json.Marshal(Organizer_info)
-		Responses.SUCCESS(c, string(data))
+		var Organizer_info Models.Organizer_info
+		err := Models.Organizerinfo(&viewgame, &Organizer_info)
+		if err != nil {
+			Responses.ERROR(c, err.Error())
+		} else {
+			data, _ := json.Marshal(Organizer_info)
+			Responses.SUCCESS(c, string(data))
+		}
 	}
-}
 }
 
 func Game_Details(c *gin.Context) {
 	var viewgame Models.ViewGame
-	c.BindJSON(&viewgame)
+	eror := c.BindJSON(&viewgame)
+	if eror != nil {
+		return
+	}
 	err := viewgame.Validate()
 	if err != nil {
 		Responses.ERROR(c, err.Error())
@@ -98,11 +109,14 @@ func Game_Details(c *gin.Context) {
 			Responses.SUCCESS(c, string(data))
 		}
 	}
-	}
+}
 
 func ViewGame(c *gin.Context) {
 	var viewgame Models.ViewGame
-	c.BindJSON(&viewgame)
+	eror := c.BindJSON(&viewgame)
+	if eror != nil {
+		return
+	}
 	//create validation here
 	err := viewgame.Validate()
 	if err != nil {
@@ -115,20 +129,23 @@ func ViewGame(c *gin.Context) {
 
 func Participants(c *gin.Context) {
 	var wait_list_info []Models.Wait_list_info
-	var mem_info       []Models.Mem_info
-	var validate       Models.Input
-	c.BindJSON(&validate)
-	err_validate_mem  := validate.Validate()
-	  if err_validate_mem != nil {
+	var mem_info []Models.Mem_info
+	var validate Models.Input
+	eror := c.BindJSON(&validate)
+	if eror != nil {
+		return
+	}
+	err_validate_mem := validate.Validate()
+	if err_validate_mem != nil {
 		Responses.ERROR(c, err_validate_mem.Error())
-	   }else {
-        members,err_mem  := Models.Member_info(&validate, &mem_info,&wait_list_info)
-        if err_mem != nil{
-            Responses.ERROR(c, err_mem.Error())
-        }else{
-            c.JSON(http.StatusOK, members)
-        }
-    }
+	} else {
+		members, err_mem := Models.Member_info(&validate, &mem_info, &wait_list_info)
+		if err_mem != nil {
+			Responses.ERROR(c, err_mem.Error())
+		} else {
+			c.JSON(http.StatusOK, members)
+		}
+	}
 }
 
 // func Player_data(c *gin.Context) {

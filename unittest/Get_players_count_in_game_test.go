@@ -11,7 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
-	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Controllers"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Models"
 )
 
@@ -19,16 +18,16 @@ func Test_Player_data(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	views := []Models.PP{
 		{
-			Gm_id: 252470,
+			GmID: 252470,
 		},
 		{
-			Gm_id: 5286,
+			GmID: 5286,
 		},
 		{
-			Gm_id: 279731,
+			GmID: 279731,
 		},
 		{
-			Gm_id: 0,
+			GmID: 0,
 		},
 	}
 
@@ -38,7 +37,12 @@ func Test_Player_data(t *testing.T) {
 		if err != nil {
 			fmt.Println("Status:", err)
 		}
-		defer Config.DB.Close()
+		defer func(DB *gorm.DB) {
+			err := DB.Close()
+			if err != nil {
+
+			}
+		}(Config.DB)
 		var buf bytes.Buffer
 		err = json.NewEncoder(&buf).Encode(views[i])
 		if err != nil {
@@ -48,7 +52,7 @@ func Test_Player_data(t *testing.T) {
 		// Set up your router, just like you did in your main function, and register your
 		// routes
 		r := gin.Default()
-		r.POST("/game-data", Controllers.Game_data)
+		//r.POST("/game-data", Controllers.Game_data)
 
 		// Create the mock request you'd like to test. Make sure the second argument
 		// here is the same as one of the routes you defined in the router setup

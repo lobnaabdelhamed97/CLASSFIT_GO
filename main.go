@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/jinzhu/gorm"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Routes"
@@ -14,8 +15,16 @@ func main() {
 	if err != nil {
 		fmt.Println("Status:", err)
 	}
-	defer Config.DB.Close()
+	defer func(DB *gorm.DB) {
+		err := DB.Close()
+		if err != nil {
+
+		}
+	}(Config.DB)
 	r := Routes.SetupRouter()
 	//running
-	r.Run()
+	err := r.Run()
+	if err != nil {
+		return
+	}
 }

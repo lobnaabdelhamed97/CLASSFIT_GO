@@ -10,7 +10,8 @@ import (
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Helper"
 	"github.com/lobnaabdelhamed97/CLASSFIT_GO/Config"
 	"time"
-	 "fmt"
+	//  "fmt"
+	//  "github.com/leekchan/timeutil"
 )
 
 func GetAllGames(game *Game) (err error) {
@@ -244,7 +245,6 @@ func (validate *Input) Validate() error {
 	return nil
 }
 
-
 func Member_info(validate *Input, mem_info *[]Mem_info, wait_list_info *[]Wait_list_info) (final Final, err error) {
 
 	if err = Config.DB.Table("players").Select("distinct ply_id, ply_fname ,ply_lname ,country_name, city_name,typed_city,contact_id,gm_ply_ply_id,guest_ply_id,CASE WHEN ply_city_sett = 'y' THEN 'true' ELSE 'false' END AS privecy").
@@ -289,8 +289,7 @@ func CommonGameKeys(in *ViewGame, game_details *Game_details) (game *Game_detail
 	res2 := strings.Split(res1[1], "+")
 	game_details.Gm_date=res1[0]
 	game_details.Gm_utc_datetime=res1[0]+" "+res2[0]
-	game_details.SSTime=res2[0]
-	
+
 	if game_details.Gm_recurr_times > 0 && game_details.Gm_recurr_type != "" {
 		game_details.ParentState = "p"
 	} else if game_details.Gm_recurr_id > 0 {
@@ -323,8 +322,14 @@ if err != nil {
    return nil,err
 }
 game_details.Day=t.Weekday().String()
-fmt.Print(time.Now())
-	//res2 := strings.Split(res1[1], "+")
+myDate, err := time.Parse("2006-01-02 15:04:00", game_details.Gm_utc_datetime)
+game_details.SSTime=myDate.Format("03:04 PM")
+// td:= timeutil.Timedelta{Minutes: game_details.Gm_end_time}
+
+//     result := myDate.Add(td.Duration())
+//     fmt.Println(result)
+// game_details.EETime= result.String()
+
 }
 
 	type Result struct {
@@ -377,64 +382,64 @@ game_details.OrgOfflineStatus = payment.Status
 	return game_details, nil
 }
 
-func Get_ply_verified_methods(PlyID int) (data string){
-   if PlyID < 1 {
-         return ""
-      }
-   var result Ply_Methods
-   if err := Config.DB.Table("stripe_users").Select("stripe_users_account_id").Where("stripe_users_ply_id = "+strconv.Itoa(PlyID)+" ").Scan(&result).Error; err != nil{
-        return ""
-     }
-   data = "n"
-   if result.Stripe_users_account_id != ""{
-            data  = "y"
-        }
-    return data
+func Get_ply_verified_methods(PlyID int) (data string) {
+	if PlyID < 1 {
+		return ""
+	}
+	var result Ply_Methods
+	if err := Config.DB.Table("stripe_users").Select("stripe_users_account_id").Where("stripe_users_ply_id = " + strconv.Itoa(PlyID) + " ").Scan(&result).Error; err != nil {
+		return ""
+	}
+	data = "n"
+	if result.Stripe_users_account_id != "" {
+		data = "y"
+	}
+	return data
 }
 
-func GetGmInstructorData (GmID int , GmRecurID int) (inst_data Instructor){
-     if GmID < 1 {
-         return inst_data
-     }
-     var check Instructor
-          Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors_parents_only JOIN instructors ON instructors.id = gm_instructors_parents_only.instructor_id WHERE gm_id = "+strconv.Itoa(GmID)+"  ").Scan(&inst_data)
-     if inst_data == check{
-          Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors JOIN instructors ON instructors.id = gm_instructors.instructor_id WHERE gm_id = "+strconv.Itoa(GmID)+" ").Scan(&inst_data)
-     }
-     if inst_data == check && GmRecurID > 0 {
-        type Game struct {
-            Gm_copy_id int
-        }
-        var game_copy_id Game
-        Config.DB.Table("game").Select("gm_copy_id").Where("gm_id= "+strconv.Itoa(GmID)+" ").Scan(&game_copy_id)
-        if game_copy_id.Gm_copy_id > 0{
-            GmRecurID = game_copy_id.Gm_copy_id
-        }
-          Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors JOIN instructors ON instructors.id = gm_instructors.instructor_id WHERE gm_id = "+strconv.Itoa(GmRecurID)+" ").Scan(&inst_data)
-     }
-     return inst_data
+func GetGmInstructorData(GmID int, GmRecurID int) (inst_data Instructor) {
+	if GmID < 1 {
+		return inst_data
+	}
+	var check Instructor
+	Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors_parents_only JOIN instructors ON instructors.id = gm_instructors_parents_only.instructor_id WHERE gm_id = " + strconv.Itoa(GmID) + "  ").Scan(&inst_data)
+	if inst_data == check {
+		Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors JOIN instructors ON instructors.id = gm_instructors.instructor_id WHERE gm_id = " + strconv.Itoa(GmID) + " ").Scan(&inst_data)
+	}
+	if inst_data == check && GmRecurID > 0 {
+		type Game struct {
+			Gm_copy_id int
+		}
+		var game_copy_id Game
+		Config.DB.Table("game").Select("gm_copy_id").Where("gm_id= " + strconv.Itoa(GmID) + " ").Scan(&game_copy_id)
+		if game_copy_id.Gm_copy_id > 0 {
+			GmRecurID = game_copy_id.Gm_copy_id
+		}
+		Config.DB.Raw("SELECT instructor_id, name, bio, image FROM gm_instructors JOIN instructors ON instructors.id = gm_instructors.instructor_id WHERE gm_id = " + strconv.Itoa(GmRecurID) + " ").Scan(&inst_data)
+	}
+	return inst_data
 }
 
-func Get_players_count_in_game(Gm_id int, result *[]Count_game) (players int){
-    if Gm_id < 1{
-        return 0
-    }
-    if err := Config.DB.Raw("SELECT gm_ply_ply_id FROM gm_players where gm_ply_gm_id= "+strconv.Itoa(Gm_id)+" Union ALL SELECT guest_ply_id FROM guests WHERE guest_gm_id= "+strconv.Itoa(Gm_id)+" ").Scan(&result).Error; err != nil{
-        return 0
-    }
-     unique := make([]int,0)
-     for i:=0 ; i < len(*result) ; i++{
-             unique = append(unique,(*result)[i].Gm_ply_ply_id)
-         }
-    keys := make(map[int]bool)
-    list := []int{}
-    for _, entry := range unique {
-        if _, value := keys[entry]; !value || entry == 0 {
-            keys[entry] = true
-            list = append(list, entry)
-        }
-    }
-    return len(list)
+func Get_players_count_in_game(Gm_id int, result *[]Count_game) (players int) {
+	if Gm_id < 1 {
+		return 0
+	}
+	if err := Config.DB.Raw("SELECT gm_ply_ply_id FROM gm_players where gm_ply_gm_id= " + strconv.Itoa(Gm_id) + " Union ALL SELECT guest_ply_id FROM guests WHERE guest_gm_id= " + strconv.Itoa(Gm_id) + " ").Scan(&result).Error; err != nil {
+		return 0
+	}
+	unique := make([]int, 0)
+	for i := 0; i < len(*result); i++ {
+		unique = append(unique, (*result)[i].Gm_ply_ply_id)
+	}
+	keys := make(map[int]bool)
+	var list []int
+	for _, entry := range unique {
+		if _, value := keys[entry]; !value || entry == 0 {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+	return len(list)
 }
 
 func GameDetails(in *ViewGame, game_details *Game_details) (err error) {
